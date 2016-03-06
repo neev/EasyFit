@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         // Session class instance
         session = new SessionManagement(getApplicationContext());
         // get user data from session
-        HashMap<String, String> user = session.getUserDetails();
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
         // name
         String name = user.get(SessionManagement.KEY_NAME);
 

@@ -30,60 +30,67 @@ public class EasyfitnessDataProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private EasyfitnessDbHelper mOpenHelper;
 
-    static final int WEATHER = 100;
-    static final int WEATHER_WITH_LOCATION = 101;
-    static final int WEATHER_WITH_LOCATION_AND_DATE = 102;
-    static final int LOCATION = 300;
+    static final int USER = 100;
+    static final int USER_WITH_WORKOUT = 101;
+    static final int USER_WITH_WORKOUT_AND_DATE = 102;
+    static final int WORKOUT = 300;
 
-    private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
-
+    private static final SQLiteQueryBuilder sUserDeatilByUserAuthIdQueryBuilder;
     static{
-        sWeatherByLocationSettingQueryBuilder = new SQLiteQueryBuilder();
-        
+        sUserDeatilByUserAuthIdQueryBuilder = new SQLiteQueryBuilder();
+
         //This is an inner join which looks like
         //weather INNER JOIN location ON weather.location_id = location._id
-        sWeatherByLocationSettingQueryBuilder.setTables(
-                EasyFitnessContract.WeatherEntry.TABLE_NAME + " INNER JOIN " +
-                        EasyFitnessContract.LocationEntry.TABLE_NAME +
-                        " ON " + EasyFitnessContract.WeatherEntry.TABLE_NAME +
-                        "." + EasyFitnessContract.WeatherEntry.COLUMN_LOC_KEY +
-                        " = " + EasyFitnessContract.LocationEntry.TABLE_NAME +
-                        "." + EasyFitnessContract.LocationEntry._ID);
+        sUserDeatilByUserAuthIdQueryBuilder.setTables(
+                EasyFitnessContract.UserDetailEntry.COLUMN_USER_NAME +
+                        EasyFitnessContract.UserDetailEntry.COLUMN_USER_EMAIL );
     }
 
-    //location.location_setting = ?
-    private static final String sLocationSettingSelection =
-            EasyFitnessContract.LocationEntry.TABLE_NAME+
-                    "." + EasyFitnessContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? ";
+    /****
+ * sUserDeatilByUserAuthIdQueryBuilder.setTables(
+    EasyFitnessContract.UserDetailEntry.TABLE_NAME + " INNER JOIN " +
+    EasyFitnessContract.WorkOutEntry.TABLE_NAME +
+            " ON " + EasyFitnessContract.UserDetailEntry.TABLE_NAME +
+            "." + EasyFitnessContract.UserDetailEntry.COLUMN_USER_WORKOUT_KEY +
+            " = " + EasyFitnessContract.WorkOutEntry.TABLE_NAME +
+            "." + EasyFitnessContract.WorkOutEntry._ID);
+ *****/
 
-    //location.location_setting = ? AND date >= ?
-    private static final String sLocationSettingWithStartDateSelection =
-            EasyFitnessContract.LocationEntry.TABLE_NAME+
-                    "." + EasyFitnessContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
-                    EasyFitnessContract.WeatherEntry.COLUMN_DATE + " >= ? ";
+    //USER DETAILS WITH UserAuthID
+    private static final String sUserWithUserAuthIdSelection =
+            EasyFitnessContract.UserDetailEntry.TABLE_NAME+
+                    "." + EasyFitnessContract.UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? ";
 
-    //location.location_setting = ? AND date = ?
-    private static final String sLocationSettingAndDaySelection =
-            EasyFitnessContract.LocationEntry.TABLE_NAME +
-                    "." + EasyFitnessContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
-                    EasyFitnessContract.WeatherEntry.COLUMN_DATE + " = ? ";
+    //user details with workout date
+    private static final String sUserWithCreatedDateSelection =
+            EasyFitnessContract.UserDetailEntry.TABLE_NAME+
+                    "." + EasyFitnessContract.UserDetailEntry.COLUMN_USER_WORKOUT_DATE + " = ? ";
 
-    private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
-        String locationSetting = EasyFitnessContract.WeatherEntry.getLocationSettingFromUri(uri);
-        long startDate = EasyFitnessContract.WeatherEntry.getStartDateFromUri(uri);
 
+    //user details with workout date for a month
+    private static final String sUserWithMonthSelection =
+            EasyFitnessContract.UserDetailEntry.TABLE_NAME+
+                    "." + EasyFitnessContract.UserDetailEntry.COLUMN_USER_WORKOUT_DATE + "BETWEEN" +
+                    " datetime('now','start of month') AND datetime('now', 'localtime'); ";
+
+
+    private Cursor getUserNameByUserAuthIdSelection(Uri uri, String[] projection, String
+            sortOrder) {
+        String _UserAuthId = EasyFitnessContract.UserDetailEntry.getUserAuthIdFromUri(uri);
+        //long createdDate = EasyFitnessContract.UserDetailEntry.getUserCreatedDateFromUri(uri);
         String[] selectionArgs;
         String selection;
 
-        if (startDate == 0) {
-            selection = sLocationSettingSelection;
-            selectionArgs = new String[]{locationSetting};
-        } else {
-            selectionArgs = new String[]{locationSetting, Long.toString(startDate)};
-            selection = sLocationSettingWithStartDateSelection;
-        }
 
-        return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+
+            selection = sUserWithUserAuthIdSelection;
+            selectionArgs = new String[]{_UserAuthId};
+         /*else {
+            selectionArgs = new String[]{_UserAuthId, Long.toString(createdDate)};
+            selection = sUserWithCreatedDateSelection;
+        }*/
+
+        return sUserDeatilByUserAuthIdQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -93,7 +100,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
         );
     }
 
-    private Cursor getWeatherByLocationSettingAndDate(
+   /* private Cursor getWeatherByLocationSettingAndDate(
             Uri uri, String[] projection, String sortOrder) {
         String locationSetting = EasyFitnessContract.WeatherEntry.getLocationSettingFromUri(uri);
         long date = EasyFitnessContract.WeatherEntry.getDateFromUri(uri);
@@ -106,7 +113,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 null,
                 sortOrder
         );
-    }
+    }*/
 
     /*
         Students: Here is where you need to create the UriMatcher. This UriMatcher will
@@ -125,11 +132,11 @@ public class EasyfitnessDataProvider extends ContentProvider {
         final String authority = EasyFitnessContract.CONTENT_AUTHORITY;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, EasyFitnessContract.PATH_WEATHER, WEATHER);
-        matcher.addURI(authority, EasyFitnessContract.PATH_WEATHER + "/*", WEATHER_WITH_LOCATION);
-        matcher.addURI(authority, EasyFitnessContract.PATH_WEATHER + "/*/#", WEATHER_WITH_LOCATION_AND_DATE);
+        matcher.addURI(authority, EasyFitnessContract.PATH_USERDETAIL, USER );
+        matcher.addURI(authority, EasyFitnessContract.PATH_USERDETAIL + "/*", USER_WITH_WORKOUT );
+        matcher.addURI(authority, EasyFitnessContract.PATH_USERDETAIL + "/*/#", USER_WITH_WORKOUT_AND_DATE );
 
-        matcher.addURI(authority, EasyFitnessContract.PATH_LOCATION, LOCATION);
+        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUT, WORKOUT );
         return matcher;
     }
 
@@ -156,14 +163,14 @@ public class EasyfitnessDataProvider extends ContentProvider {
 
         switch (match) {
             // Student: Uncomment and fill out these two cases
-            case WEATHER_WITH_LOCATION_AND_DATE:
-                return EasyFitnessContract.WeatherEntry.CONTENT_ITEM_TYPE;
-            case WEATHER_WITH_LOCATION:
-                return EasyFitnessContract.WeatherEntry.CONTENT_TYPE;
-            case WEATHER:
-                return EasyFitnessContract.WeatherEntry.CONTENT_TYPE;
-            case LOCATION:
-                return EasyFitnessContract.LocationEntry.CONTENT_TYPE;
+            case USER_WITH_WORKOUT_AND_DATE :
+                return EasyFitnessContract.UserDetailEntry.CONTENT_ITEM_TYPE;
+            case USER_WITH_WORKOUT :
+                return EasyFitnessContract.UserDetailEntry.CONTENT_TYPE;
+            case USER :
+                return EasyFitnessContract.UserDetailEntry.CONTENT_TYPE;
+            case WORKOUT :
+                return EasyFitnessContract.WorkOutEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -177,20 +184,20 @@ public class EasyfitnessDataProvider extends ContentProvider {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
             // "weather/*/*"
-            case WEATHER_WITH_LOCATION_AND_DATE:
+            case USER_WITH_WORKOUT_AND_DATE :
             {
-                retCursor = getWeatherByLocationSettingAndDate(uri, projection, sortOrder);
+                retCursor = getUserNameByUserAuthIdSelection(uri, projection, sortOrder);
                 break;
             }
             // "weather/*"
-            case WEATHER_WITH_LOCATION: {
-                retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
+            case USER_WITH_WORKOUT : {
+                retCursor = getUserNameByUserAuthIdSelection(uri, projection, sortOrder);
                 break;
             }
             // "weather"
-            case WEATHER: {
+            case USER : {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        EasyFitnessContract.WeatherEntry.TABLE_NAME,
+                        EasyFitnessContract.UserDetailEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -201,9 +208,9 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 break;
             }
             // "location"
-            case LOCATION: {
+            case WORKOUT : {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        EasyFitnessContract.LocationEntry.TABLE_NAME,
+                        EasyFitnessContract.UserDetailEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -231,19 +238,19 @@ public class EasyfitnessDataProvider extends ContentProvider {
         Uri returnUri;
 
         switch (match) {
-            case WEATHER: {
+            case USER: {
                 normalizeDate(values);
-                long _id = db.insert(EasyFitnessContract.WeatherEntry.TABLE_NAME, null, values);
+                long _id = db.insert(EasyFitnessContract.UserDetailEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = EasyFitnessContract.WeatherEntry.buildWeatherUri(_id);
+                    returnUri = EasyFitnessContract.UserDetailEntry.buildUserDetailUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
-            case LOCATION: {
-                long _id = db.insert(EasyFitnessContract.LocationEntry.TABLE_NAME, null, values);
+            case WORKOUT: {
+                long _id = db.insert(EasyFitnessContract.WorkOutEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = EasyFitnessContract.LocationEntry.buildLocationUri(_id);
+                    returnUri = EasyFitnessContract.WorkOutEntry.buildWorkoutUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -263,13 +270,13 @@ public class EasyfitnessDataProvider extends ContentProvider {
         // this makes delete all rows return the number of rows deleted
         if ( null == selection ) selection = "1";
         switch (match) {
-            case WEATHER:
+            case USER:
                 rowsDeleted = db.delete(
-                        EasyFitnessContract.WeatherEntry.TABLE_NAME, selection, selectionArgs);
+                        EasyFitnessContract.UserDetailEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-            case LOCATION:
+            case WORKOUT:
                 rowsDeleted = db.delete(
-                        EasyFitnessContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
+                        EasyFitnessContract.WorkOutEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -283,9 +290,10 @@ public class EasyfitnessDataProvider extends ContentProvider {
 
     private void normalizeDate(ContentValues values) {
         // normalize the date value
-        if (values.containsKey(EasyFitnessContract.WeatherEntry.COLUMN_DATE)) {
-            long dateValue = values.getAsLong(EasyFitnessContract.WeatherEntry.COLUMN_DATE);
-            values.put(EasyFitnessContract.WeatherEntry.COLUMN_DATE, EasyFitnessContract.normalizeDate(dateValue));
+        if (values.containsKey(EasyFitnessContract.UserDetailEntry.COLUMN_USER_CREATED_DATE)) {
+            long dateValue = values.getAsLong(EasyFitnessContract.UserDetailEntry.COLUMN_USER_CREATED_DATE);
+            values.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_CREATED_DATE, EasyFitnessContract.normalizeDate
+                    (dateValue));
         }
     }
 
@@ -297,13 +305,13 @@ public class EasyfitnessDataProvider extends ContentProvider {
         int rowsUpdated;
 
         switch (match) {
-            case WEATHER:
+            case USER:
                 normalizeDate(values);
-                rowsUpdated = db.update(EasyFitnessContract.WeatherEntry.TABLE_NAME, values, selection,
+                rowsUpdated = db.update(EasyFitnessContract.UserDetailEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
-            case LOCATION:
-                rowsUpdated = db.update(EasyFitnessContract.LocationEntry.TABLE_NAME, values, selection,
+            case WORKOUT:
+                rowsUpdated = db.update(EasyFitnessContract.WorkOutEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
             default:
@@ -320,13 +328,13 @@ public class EasyfitnessDataProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            case WEATHER:
+            case USER:
                 db.beginTransaction();
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         normalizeDate(value);
-                        long _id = db.insert(EasyFitnessContract.WeatherEntry.TABLE_NAME, null, value);
+                        long _id = db.insert(EasyFitnessContract.UserDetailEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
                         }

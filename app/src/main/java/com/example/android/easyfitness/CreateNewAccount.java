@@ -1,6 +1,7 @@
 package com.example.android.easyfitness;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,8 +23,7 @@ public class CreateNewAccount extends AppCompatActivity {
 
     private static final String TAG = "CreateNewAccount";
 
-    @Bind(R.id.input_name)
-    EditText _nameText;
+
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.btn_signup)
@@ -53,7 +53,8 @@ public class CreateNewAccount extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
-                finish();
+                Intent intent = new Intent(CreateNewAccount.this, Login.class);
+                startActivity(intent);
             }
         });
     }
@@ -74,7 +75,7 @@ public class CreateNewAccount extends AppCompatActivity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-         name = _nameText.getText().toString();
+
          email = _emailText.getText().toString();
          password = _passwordText.getText().toString();
 
@@ -97,7 +98,8 @@ public class CreateNewAccount extends AppCompatActivity {
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
-        finish();
+        Intent intent = new Intent(CreateNewAccount.this, Login.class);
+        startActivity(intent);
     }
 
     public void onSignupFailed() {
@@ -109,16 +111,11 @@ public class CreateNewAccount extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String name = _nameText.getText().toString();
+
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
-            valid = false;
-        } else {
-            _nameText.setError(null);
-        }
+
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("enter a valid email address");

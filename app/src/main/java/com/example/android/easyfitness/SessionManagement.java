@@ -61,7 +61,7 @@ public class SessionManagement {
         editor.commit();
     }
 
-    public HashMap<String, String> getUserDetails(){
+    public HashMap<String, String> getUserFirebaseAuthId(){
         HashMap<String, String> user = new HashMap<String, String>();
         // user name
         user.put(KEY_NAME, pref.getString(KEY_NAME, null));
