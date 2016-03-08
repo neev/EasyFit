@@ -18,7 +18,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.android.easyfitness.sync.SunshineSyncAdapter;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,10 +31,13 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    TextView mLoggedInStatusTextView;
-    // Session Manager Class
-    SessionManagement session;
+    private static final String TAG = "MainActivity";
 
+    TextView mLoggedInStatusTextView;
+    Button workoutentrybtn;
+    // Session Manager Class
+    SessionManagement session;DrawerLayout drawer;NavigationView navigationView;
+    boolean loginFlag = true;String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,10 +45,11 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Intent intent = new Intent(MainActivity.this, Login.class);
-        startActivity(intent);
+        ///////////////
+        /*Intent intent = new Intent(MainActivity.this, Login.class);
+        startActivity(intent);*/
         mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
-
+        workoutentrybtn = (Button) findViewById(R.id.button);
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -67,15 +75,18 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -116,14 +127,22 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_login) {
-            // Handle the camera action
-            Intent intent = new Intent(MainActivity.this, Login.class);
-            startActivity(intent);
+            if(session.checkLogin())
+                item.setVisible(false);
+
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+//                Intent intent = new Intent(MainActivity.this, Login.class);
+//                startActivity(intent);
+            Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_LONG)
+                    .show();
+
         } else if (id == R.id.nav_myaccount) {
             Intent intent = new Intent(MainActivity.this, UserAccountInfo.class);
             startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_workoutEntry) {
+            Intent intent = new Intent(MainActivity.this, WorkoutEntry.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_manage) {
 
@@ -131,7 +150,17 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        }else if (id == R.id.nav_logout) {
+
+                session.logoutUser();
+
+                item.setVisible(false);
+                navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
+
+
+
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -147,8 +176,9 @@ public class MainActivity extends AppCompatActivity
         String name = user.get(SessionManagement.KEY_NAME);
 
         // email
-        String email = user.get(SessionManagement.KEY_EMAIL);
-
-        mLoggedInStatusTextView.setText(name + " " + email);
+        email = user.get(SessionManagement.KEY_EMAIL);
+        navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+        mLoggedInStatusTextView.setText("Welcome " + " " + email);
     }
 }

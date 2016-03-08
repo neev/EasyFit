@@ -27,7 +27,7 @@ import com.firebase.client.FirebaseError;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity  {
 
     private static final String TAG = "Login";
     private static final int REQUEST_SIGNUP = 0;
@@ -218,7 +218,9 @@ public class Login extends AppCompatActivity {
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
-        _loginButton.setEnabled(true);
+        //_loginButton.setEnabled(true);
+
+
     }
 
     public boolean validate() {
@@ -244,7 +246,7 @@ public class Login extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        super.onDestroy();logout();
         // if user logged in with Facebook, stop tracking their token
         if (mFacebookAccessTokenTracker != null) {
             mFacebookAccessTokenTracker.stopTracking();
@@ -258,6 +260,7 @@ public class Login extends AppCompatActivity {
         /* If a user is currently authenticated, display a logout menu */
         if (this.mAuthData != null) {
             getMenuInflater().inflate(R.menu.activity_main_drawer, menu);
+
             return true;
         } else {
             return false;
@@ -266,14 +269,15 @@ public class Login extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_logout) {
-            logout();
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
-    private void logout() {
+
+
+
+
+
+    public void logout() {
         if (this.mAuthData != null) {
             /* logout of Firebase */
             mFirebaseRef.unauth();
@@ -282,12 +286,11 @@ public class Login extends AppCompatActivity {
             if (this.mAuthData.getProvider().equals("facebook")) {
                 /* Logout from Facebook */
                 LoginManager.getInstance().logOut();
+                Toast.makeText(getApplicationContext(), "User logout successfull", Toast.LENGTH_LONG)
+                        .show();
             }
 
-            // Clear the session data
-            // This will clear all session data and
-            // redirect user to LoginActivity
-            session.logoutUser();
+
         }
             /* Update authenticated user and show login buttons */
             setAuthenticatedUser(null);
@@ -312,8 +315,9 @@ public class Login extends AppCompatActivity {
                 // For testing i am stroing name, email as follow
                 // Use user real data
 
-                Log.i(TAG,email);
+                //Log.i(TAG,email);
                 session.createLoginSession(name, email);
+
             }
         }
         this.mAuthData = authData;

@@ -42,9 +42,11 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
         // location setting, the city name, and the latitude and longitude
         final String SQL_CREATE_WORKOUT_TABLE = "CREATE TABLE " + WorkOutEntry.TABLE_NAME + " (" +
                 WorkOutEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION + " TEXT NOT NULL, " +
+                WorkOutEntry.COLUMN_WORKOUT_ID + " INTEGER NOT NULL," +
+                WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION + " TEXT NOT NULL );";
 
-                " );";
+
+
 
         final String SQL_CREATE_USERDETAIL_TABLE = "CREATE TABLE " + UserDetailEntry.TABLE_NAME +
                 " (" +
@@ -57,20 +59,20 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
 
                 // the ID of the location entry associated with this weather data
                 UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " INTEGER NOT NULL, " +
-                UserDetailEntry.COLUMN_USER_NAME + " TEXT NOT NULL, " +
-                UserDetailEntry.COLUMN_USER_EMAIL + " TEXT NOT NULL, " +
-                UserDetailEntry.COLUMN_USER_AGE + " INTEGER NOT NULL," +
+                UserDetailEntry.COLUMN_USER_NAME + " TEXT , " +
+                UserDetailEntry.COLUMN_USER_EMAIL + " TEXT , " +
+                UserDetailEntry.COLUMN_USER_AGE + " INTEGER ," +
 
-                UserDetailEntry.COLUMN_USER_WEIGHT + " INTEGER NOT NULL, " +
-                UserDetailEntry.COLUMN_USER_GOALWEIGHT + " INTEGER NOT NULL, " +
+                UserDetailEntry.COLUMN_USER_WEIGHT + " INTEGER , " +
+                UserDetailEntry.COLUMN_USER_GOALWEIGHT + " INTEGER , " +
 
-                UserDetailEntry.COLUMN_USER_CREATED_DATE + " INTEGER NOT NULL, " +
-                UserDetailEntry.COLUMN_USER_UPDATED_DATE + " INTEGER NOT NULL, " +
+                UserDetailEntry.COLUMN_USER_CREATED_DATE + " INTEGER , " +
+                UserDetailEntry.COLUMN_USER_UPDATED_DATE + " INTEGER , " +
 
-                UserDetailEntry.COLUMN_USER_WORKOUT_KEY + " INTEGER NOT NULL, " +
-                UserDetailEntry.COLUMN_WORKOUT_DESCRIPTION + " TEXT NOT NULL, " +
-                UserDetailEntry.COLUMN_USER_WORKOUT_DATE + " INTEGER NOT NULL, " +
-                UserDetailEntry.COLUMN_USER_WORKOUT_DURATION + " INTEGER NOT NULL, " +
+                UserDetailEntry.COLUMN_USER_WORKOUT_KEY + " INTEGER , " +
+                UserDetailEntry.COLUMN_WORKOUT_DESCRIPTION + " TEXT , " +
+                UserDetailEntry.COLUMN_USER_WORKOUT_DATE + " INTEGER , " +
+                UserDetailEntry.COLUMN_USER_WORKOUT_DURATION + " INTEGER , " +
 
 
                 // Set up the location column as a foreign key to location table.

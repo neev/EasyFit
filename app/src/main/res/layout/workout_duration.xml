@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
+        android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+        android:orientation="horizontal" android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/list_item_icon"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/list_icon"
+            android:layout_height="@dimen/list_icon"
+            android:layout_marginRight="@dimen/abc_list_item_padding_horizontal_material"
+            android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material"
+            android:src="@drawable/clockimage"
+            />
+        <edittext
+                  android:id="@+id/editText_time"
+                  android:layout_height="wrap_content"
+                  android:layout_width="wrap_content"
+                  android:layout_margin="10dp"
+                  android:hint = "30:00">
+                  <!--android:inputType="time"-->
+                    <requestfocus>
+                </requestfocus></edittext>
+             
+                
+        <Button android:layout_width="73dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/workout_duration_button"
+                android:text="@string/workout_duration"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+
+                android:textColor="#ffffff" android:textStyle="bold" android:background="#2634d1"
+                android:padding="10dp" android:layout_weight="0.27"/>
+
+
+
+
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/workout_logit"
+            android:id="@+id/workoutLogitbtn"
+            android:paddingLeft="120dp"
+            android:paddingRight="120dp"
+            android:theme="@style/pinkButton"
+            android:textColor="#ffffff"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:typeface="sans" android:textStyle="bold"/>
+    </FrameLayout>
+
+</LinearLayout>

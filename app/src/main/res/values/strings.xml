@@ -25,4 +25,16 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="change_image">Add Photo</string>
+    <string name="empty_workoutOptions_list">No workout options available</string>
+    <string name="workout_duration">Workout Duration</string>
+    <string name="workout_logit">Log It</string>
+
+    <!-- Key name for storing location status in SharedPreferences -->
+    <string name="pref_location_status_key" translatable="false">loc-status</string>
+
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type"  translatable="false">easyfitness.android.example.com</string>
+    <string name="content_authority"  translatable="false">com.example.android.easyfitness</string>
 </resources>

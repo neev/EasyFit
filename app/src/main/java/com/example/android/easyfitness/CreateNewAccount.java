@@ -104,8 +104,8 @@ public class CreateNewAccount extends AppCompatActivity {
 
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "new account failed", Toast.LENGTH_LONG).show();
-
         _signupButton.setEnabled(true);
+        signup();
     }
 
     public boolean validate() {

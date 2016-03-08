@@ -4,23 +4,22 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/action_logout"
-            android:title="@string/action_logout"
-            android:orderInCategory="100"
-            app:showAsAction="never" />
-
-        <item
             android:id="@+id/nav_login"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Login"/>
+            android:title="LogIn"/>
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="LogOut"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_myaccount"
             android:icon="@drawable/ic_menu_gallery"
             android:title="My Account"/>
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_workoutEntry"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow"/>
+            android:title="My Workout Entry"/>
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

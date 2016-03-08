@@ -77,7 +77,7 @@ public class SessionManagement {
      * If false it will redirect user to login page
      * Else won't do anything
      * */
-    public void checkLogin() {
+    public boolean checkLogin() {
         // Check login status
         if (!this.isLoggedIn()) {
             // user is not logged in redirect him to Login Activity
@@ -90,7 +90,9 @@ public class SessionManagement {
 
             // Staring Login Activity
             _context.startActivity(i);
+            return false;
         }
+        return true;
     }
 
         /**
@@ -101,7 +103,7 @@ public class SessionManagement {
             editor.clear();
             editor.commit();
 
-            // After logout redirect user to Loing Activity
+            /*// After logout redirect user to Loing Activity
             Intent i = new Intent(_context, Login.class);
             // Closing all the Activities
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -110,7 +112,8 @@ public class SessionManagement {
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             // Staring Login Activity
-            _context.startActivity(i);
+            _context.startActivity(i);*/
+            System.out.println("Successfully session logout ");
         }
 
     /**
