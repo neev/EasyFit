@@ -21,15 +21,7 @@
             android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material"
             android:src="@drawable/clockimage"
             />
-        <edittext
-                  android:id="@+id/editText_time"
-                  android:layout_height="wrap_content"
-                  android:layout_width="wrap_content"
-                  android:layout_margin="10dp"
-                  android:hint = "30:00">
-                  <!--android:inputType="time"-->
-                    <requestfocus>
-                </requestfocus></edittext>
+
              
                 
         <Button android:layout_width="73dp"

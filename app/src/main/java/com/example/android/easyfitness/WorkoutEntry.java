@@ -14,7 +14,8 @@ import android.widget.Toast;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
 
-public class WorkoutEntry extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class WorkoutEntry extends FragmentActivity implements LoaderManager
+        .LoaderCallbacks<Cursor>, SwitchButtonListener {
     public static final String LOG_TAG = WorkoutEntry.class.getSimpleName();
     public WorkoutListAdapter mAdapter;
     public static final int WORKOUT_LOADER = 0;
@@ -31,16 +32,16 @@ public class WorkoutEntry extends FragmentActivity implements LoaderManager.Load
         View emptyView = (View)findViewById(R.id.listview_forecast_empty);
         ListView workout_list = (ListView)findViewById(R.id.workout_list);
         mAdapter = new WorkoutListAdapter(this,null,0);
+        mAdapter.setCustomButtonListner(WorkoutEntry.this);
         workout_list.setEmptyView(emptyView);
         workout_list.setAdapter(mAdapter);
-        getSupportLoaderManager().initLoader(WORKOUT_LOADER,null,this);
-        //mAdapter.detail_match_id = MainActivity.selected_match_id;
+        getSupportLoaderManager().initLoader(WORKOUT_LOADER, null, this);
         workout_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ViewHolder selected = (ViewHolder) view.getTag();
-               /* mAdapter.detail_match_id = selected.match_id;
-                MainActivity.selected_match_id = (int) selected.match_id;*/
+               // ViewHolder selected = (ViewHolder) view.getTag();
+                Toast.makeText(WorkoutEntry.this, "List ITEM CLICKED"+ position, Toast.LENGTH_SHORT)
+                        .show();
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -53,8 +54,8 @@ public class WorkoutEntry extends FragmentActivity implements LoaderManager.Load
 
         int locationSetting = 1;
         Uri DescriptionForWorkoutIdUri = EasyFitnessContract.WorkOutEntry
-                .buildWorkoutDescriptionWithId(
-                        locationSetting);
+                .buildWorkoutDescriptionDisplay();
+
 
         return new CursorLoader(this,
                 DescriptionForWorkoutIdUri,
@@ -83,5 +84,17 @@ public class WorkoutEntry extends FragmentActivity implements LoaderManager.Load
     public void onLoaderReset(Loader<Cursor> cursorLoader){
     Toast.makeText(this, "onLoaderReset", Toast.LENGTH_SHORT).show();
         mAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onSwitchButtonClickListner(int position,String desc) {
+        Toast.makeText(WorkoutEntry.this, "Button click *** " + position+
+                        "**********"+desc+"************"+mAdapter
+                        .swichbtn_flag,
+                Toast.LENGTH_SHORT).show();
+
+        mAdapter.selected_desc = desc;
+        mAdapter.notifyDataSetChanged();
+
     }
 }

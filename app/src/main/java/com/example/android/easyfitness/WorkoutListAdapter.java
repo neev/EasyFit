@@ -7,9 +7,10 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
 
@@ -22,14 +23,19 @@ public class WorkoutListAdapter extends CursorAdapter
 {
 
     private String WORKOUTOPTIONS_HASHTAG = "#Workout_Options";
+    SwitchButtonListener _switchButtonListerner;
+    int switch_button_id = 0;
+   String selected_desc;
     boolean swichbtn_flag = false;
     CustomTimePickerDialog timePickerDialog;
-    EditText workout_dur_editText;
+    //EditText workout_dur_editText;
     public WorkoutListAdapter(Context context,Cursor cursor,int flags)
     {
         super(context,cursor,flags);
     }
-
+    public void setCustomButtonListner(SwitchButtonListener listener) {
+        this._switchButtonListerner = listener;
+    }
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
@@ -48,12 +54,26 @@ public class WorkoutListAdapter extends CursorAdapter
 
 
     @Override
-    public void bindView(View view, final Context context, Cursor cursor)
+    public void bindView(View view, final Context context, final Cursor cursor)
     {
-        String option1 =cursor.getString(cursor.getColumnIndex(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION));
+
+
         ViewHolder mHolder = (ViewHolder) view.getTag();
+
+        String option1 =cursor.getString(cursor.getColumnIndex(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION));
         mHolder.workoutoptionImageview.setImageResource(R.drawable.run);
         mHolder.workoutDescText.setText(option1);
+
+        LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = vi.inflate(R.layout.workout_duration, null);
+        ViewGroup container = (ViewGroup) view.findViewById(R.id.details_fragment_container);
+        //workout_dur_editText = (EditText) v.findViewById(R.id.editText_time);
+        Button workoutTimeDur = (Button) v.findViewById(R.id.workout_duration_button);
+        Button workoutLogit = (Button) v.findViewById(R.id.workoutLogitbtn);
+
+
+
         mHolder.workoutOptionSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +81,10 @@ public class WorkoutListAdapter extends CursorAdapter
                 boolean on = ((Switch) v).isChecked();
                 if (on) {
                     //Do something when switch is on/checked
+                    if(_switchButtonListerner !=null){
+                        _switchButtonListerner.onSwitchButtonClickListner(cursor.getPosition(),
+                                cursor.getString(1));
+                    }
                     swichbtn_flag = true;
                 } else {
                     //Do something when switch is off/unchecked
@@ -72,23 +96,11 @@ public class WorkoutListAdapter extends CursorAdapter
 
 
 
-        /*LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = vi.inflate(R.layout.workout_duration, null);
-        ViewGroup container = (ViewGroup) view.findViewById(R.id.details_fragment_container);
-        if(swichbtn_flag)
-        {
-            //Log.v(FetchScoreTask.LOG_TAG,"will insert extraView");
 
+        if(cursor.getString(1)==selected_desc)
+        {
             container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
                     , ViewGroup.LayoutParams.MATCH_PARENT));
-
-            workout_dur_editText = (EditText) v.findViewById(R.id.editText_time);
-
-            Button workoutTimeDur = (Button) v.findViewById(R.id.workout_duration_button);
-
-            Button workoutLogit = (Button) v.findViewById(R.id.workoutLogitbtn);
-
             workoutTimeDur.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,7 +122,7 @@ public class WorkoutListAdapter extends CursorAdapter
         {
             container.removeAllViews();
         }
-*/
+
     }
 
     public static class CustomTimePickerDialog extends TimePickerDialog {
@@ -147,8 +159,11 @@ public class WorkoutListAdapter extends CursorAdapter
     private CustomTimePickerDialog.OnTimeSetListener timeSetListener = new CustomTimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            workout_dur_editText.setText(String.format("%02d", hourOfDay) + ":" +String.format("%02d", minute));
+            //workout_dur_editText.setText(String.format("%02d", hourOfDay) + ":" +String.format
+                 //   ("%02d", minute));
         }
     };
+
+
 
 }

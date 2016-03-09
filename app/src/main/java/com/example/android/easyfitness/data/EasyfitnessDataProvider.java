@@ -64,7 +64,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
     //WORKOUT OPTIONS WITH WORKOUT_ID
     private static final String sWorkoutOptionSelection =
             EasyFitnessContract.WorkOutEntry.TABLE_NAME+ "."+
-            EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_ID + " = ?";
+                    EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_ID + " = ?";
 
     //USERDETAILS WITH USER AUTH ID
     private static final String sUserWithUserAuthIdSelection =

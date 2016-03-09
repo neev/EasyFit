@@ -139,6 +139,10 @@ public class EasyFitnessContract {
             return CONTENT_URI.buildUpon().appendPath(Integer.toString(locationSetting)).build();
 
         }
+        public static Uri buildWorkoutDescriptionDisplay() {
+            return CONTENT_URI.buildUpon().build();
+
+        }
 
         public static int getWorkoutIdFromUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(1));

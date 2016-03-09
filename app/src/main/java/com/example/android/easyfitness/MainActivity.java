@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        SunshineSyncAdapter.initializeSyncAdapter(this);
         ///////////////
         /*Intent intent = new Intent(MainActivity.this, Login.class);
         startActivity(intent);*/
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        SunshineSyncAdapter.initializeSyncAdapter(this);
+
     }
 
 
