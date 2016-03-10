@@ -33,7 +33,14 @@
                 android:textColor="#ffffff" android:textStyle="bold" android:background="#2634d1"
                 android:padding="10dp" android:layout_weight="0.27"/>
 
-
+        <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/workout_duration_textview"
+                  android:padding="10dp" android:layout_weight="0.27"
+                  android:visibility="invisible"
+                  android:textColor="@color/pink"
+                  android:textAppearance="?android:attr/textAppearanceMedium"
+                  android:typeface="sans" android:textStyle="bold"/>
 
 
     </LinearLayout>

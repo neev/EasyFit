@@ -47,6 +47,15 @@
             android:layout_width="wrap_content"
 
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loggedStatusText"
+            android:visibility="invisible"
+            android:textColor="@color/pink"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            />
 
 
     </LinearLayout>

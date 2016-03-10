@@ -27,7 +27,7 @@
     </string>
     <string name="change_image">Add Photo</string>
     <string name="empty_workoutOptions_list">No workout options available</string>
-    <string name="workout_duration">Workout Duration</string>
+    <string name="workout_duration">Add Workout Duration</string>
     <string name="workout_logit">Log It</string>
 
     <!-- Key name for storing location status in SharedPreferences -->

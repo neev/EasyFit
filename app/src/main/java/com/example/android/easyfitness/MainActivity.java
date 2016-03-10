@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         SunshineSyncAdapter.initializeSyncAdapter(this);
         ///////////////
-        /*Intent intent = new Intent(MainActivity.this, Login.class);
-        startActivity(intent);*/
+        //Intent intent = new Intent(MainActivity.this, Login.class);
+       // startActivity(intent);
         mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
         workoutentrybtn = (Button) findViewById(R.id.button);
 
@@ -138,12 +138,16 @@ public class MainActivity extends AppCompatActivity
                     .show();
 
         } else if (id == R.id.nav_myaccount) {
+            if(session.checkLogin()){
             Intent intent = new Intent(MainActivity.this, UserAccountInfo.class);
-            startActivity(intent);
+            startActivity(intent);}
 
         } else if (id == R.id.nav_workoutEntry) {
-            Intent intent = new Intent(MainActivity.this, WorkoutEntry.class);
-            startActivity(intent);
+           ///////////////////
+           // if(session.checkLogin()) {
+                Intent intent = new Intent(MainActivity.this, WorkoutEntry.class);
+                startActivity(intent);
+           // }
 
         } else if (id == R.id.nav_manage) {
 
@@ -158,7 +162,8 @@ public class MainActivity extends AppCompatActivity
                 item.setVisible(false);
                 navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
 
-
+            Toast.makeText(MainActivity.this, "Please LOG IN !", Toast.LENGTH_LONG)
+                    .show();
 
         }
 

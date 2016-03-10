@@ -13,7 +13,7 @@ public class ViewHolder
     public TextView workoutDescText;
     public Switch workoutOptionSwitch;
     public ImageView workoutoptionImageview;
-
+public TextView loggedStatusText;
 
     public ViewHolder(View view)
     {
@@ -21,6 +21,6 @@ public class ViewHolder
         workoutDescText = (TextView) view.findViewById(R.id.list_item_workout_textview);
         workoutOptionSwitch = (Switch)view.findViewById(R.id.workout_switch_btn);
         workoutoptionImageview = (ImageView) view.findViewById(R.id.list_item_icon);
-
+        loggedStatusText = (TextView) view.findViewById(R.id.loggedStatusText);
     }
 }

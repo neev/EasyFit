@@ -9,12 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by neeraja on 3/6/2016.
@@ -22,13 +23,19 @@ import java.util.Calendar;
 public class WorkoutListAdapter extends CursorAdapter
 {
 
+    ViewHolder mHolder;
+    ViewGroup container;
     private String WORKOUTOPTIONS_HASHTAG = "#Workout_Options";
     SwitchButtonListener _switchButtonListerner;
-    int switch_button_id = 0;
+
    String selected_desc;
     boolean swichbtn_flag = false;
     CustomTimePickerDialog timePickerDialog;
-    //EditText workout_dur_editText;
+    TextView workout_dur_editText;
+    Button workoutTimeDur;
+    String logged_workoutDuration;
+     String logged_workoutDecs ;
+    int selected_row;
     public WorkoutListAdapter(Context context,Cursor cursor,int flags)
     {
         super(context,cursor,flags);
@@ -43,37 +50,26 @@ public class WorkoutListAdapter extends CursorAdapter
         ViewHolder mHolder = new ViewHolder(mItem);
         mItem.setTag(mHolder);
 
-         timePickerDialog = new CustomTimePickerDialog(context,
-                timeSetListener,
-                Calendar.getInstance().get(Calendar.HOUR),
-                CustomTimePickerDialog.getRoundedMinute(Calendar.getInstance().get(Calendar.MINUTE) + CustomTimePickerDialog.TIME_PICKER_INTERVAL), true);
-        //Log.v(FetchScoreTask.LOG_TAG,"new View inflated");
+
         return mItem;
     }
 
 
 
     @Override
-    public void bindView(View view, final Context context, final Cursor cursor)
+    public void bindView(final View view, final Context context, final Cursor cursor)
     {
 
 
-        ViewHolder mHolder = (ViewHolder) view.getTag();
+         mHolder = (ViewHolder) view.getTag();
 
         String option1 =cursor.getString(cursor.getColumnIndex(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION));
         mHolder.workoutoptionImageview.setImageResource(R.drawable.run);
         mHolder.workoutDescText.setText(option1);
 
-        LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = vi.inflate(R.layout.workout_duration, null);
-        ViewGroup container = (ViewGroup) view.findViewById(R.id.details_fragment_container);
-        //workout_dur_editText = (EditText) v.findViewById(R.id.editText_time);
-        Button workoutTimeDur = (Button) v.findViewById(R.id.workout_duration_button);
-        Button workoutLogit = (Button) v.findViewById(R.id.workoutLogitbtn);
 
 
-
+        final int rowPosition = cursor.getPosition();
         mHolder.workoutOptionSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,50 +77,77 @@ public class WorkoutListAdapter extends CursorAdapter
                 boolean on = ((Switch) v).isChecked();
                 if (on) {
                     //Do something when switch is on/checked
-                    if(_switchButtonListerner !=null){
+                    if (_switchButtonListerner != null) {
+
+                        cursor.moveToPosition(rowPosition);
+                        logged_workoutDecs = cursor.getString(1);
+                        selected_row = cursor.getPosition();
                         _switchButtonListerner.onSwitchButtonClickListner(cursor.getPosition(),
-                                cursor.getString(1));
+                                logged_workoutDecs);
+
+                        swichbtn_flag = true;
+                        durationView(context,view,cursor);
                     }
-                    swichbtn_flag = true;
+
                 } else {
                     //Do something when switch is off/unchecked
                     swichbtn_flag = false;
+                    container.removeViewAt(0);
                 }
             }
         });
         mHolder.workoutoptionImageview.setImageResource(R.drawable.run);
 
 
-
-
-        if(cursor.getString(1)==selected_desc)
-        {
-            container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
-                    , ViewGroup.LayoutParams.MATCH_PARENT));
-            workoutTimeDur.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Add the time picker here
-
-                    timePickerDialog.setTitle("Set hours and minutes");
-                    timePickerDialog.show();
-                }
-            });
-            workoutLogit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "Logit Action", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        }
-        else
-        {
-            container.removeAllViews();
-        }
-
     }
 
+
+    public void durationView( final Context context,View view, final Cursor cursor){
+        container = (ViewGroup) view.findViewById(R.id.details_fragment_container);
+        LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = vi.inflate(R.layout.workout_duration, null);
+
+    final ViewHolder myviewHolder;
+        myviewHolder = (ViewHolder) view.getTag();
+        timePickerDialog = new CustomTimePickerDialog(context,
+                timeSetListener,
+                Calendar.getInstance().get(Calendar.HOUR),
+                CustomTimePickerDialog.getRoundedMinute(Calendar.getInstance().get(Calendar.MINUTE) + CustomTimePickerDialog.TIME_PICKER_INTERVAL), true);
+        //Log.v(FetchScoreTask.LOG_TAG,"new View inflated");
+        workout_dur_editText = (TextView) v.findViewById(R.id.workout_duration_textview);
+        workoutTimeDur = (Button) v.findViewById(R.id.workout_duration_button);
+        Button workoutLogit = (Button) v.findViewById(R.id.workoutLogitbtn);
+
+        container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
+                , ViewGroup.LayoutParams.MATCH_PARENT));
+        workoutTimeDur.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add the time picker here
+
+                timePickerDialog.setTitle("Set hours and minutes");
+                timePickerDialog.show();
+            }
+        });
+        workoutLogit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                cursor.moveToPosition(selected_row);
+               myviewHolder.loggedStatusText.setText("Logged for Today");
+                myviewHolder.loggedStatusText.setVisibility(View.VISIBLE);
+                myviewHolder.workoutOptionSwitch.setVisibility(View.GONE);
+                container.removeViewAt(0);
+                //container.setVisibility(View.GONE);
+                logit();
+
+            }
+        });
+
+
+
+    }
     public static class CustomTimePickerDialog extends TimePickerDialog {
 
         public static final int TIME_PICKER_INTERVAL=15;
@@ -156,14 +179,29 @@ public class WorkoutListAdapter extends CursorAdapter
         }
     }
 
-    private CustomTimePickerDialog.OnTimeSetListener timeSetListener = new CustomTimePickerDialog.OnTimeSetListener() {
+    CustomTimePickerDialog.OnTimeSetListener timeSetListener = new CustomTimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            //workout_dur_editText.setText(String.format("%02d", hourOfDay) + ":" +String.format
-                 //   ("%02d", minute));
+
+            logged_workoutDuration = String.format("%02d", hourOfDay) + ":" + String.format
+                    ("%02d", minute);
+            workout_dur_editText.setText(logged_workoutDuration);
+            workout_dur_editText.setVisibility(View.VISIBLE);
+            workoutTimeDur.setVisibility(View.GONE);
         }
     };
 
+    /// log it function
 
+    public void logit(){
+
+        Date current_date =  new Date(System.currentTimeMillis());
+
+        System.out.println("Logged time : " + logged_workoutDuration+
+                            "Logged description : " + logged_workoutDecs+
+                            "Logged date : " + current_date+
+        "selected Row :*** " + selected_row);
+
+    }
 
 }
