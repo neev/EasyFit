@@ -22,27 +22,31 @@
             android:src="@drawable/clockimage"
             />
 
-             
+             <FrameLayout
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:orientation="vertical" android:layout_marginTop="10dp"
+                           android:padding="5dp">
                 
-        <Button android:layout_width="73dp"
+        <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/workout_duration_button"
                 android:text="@string/workout_duration"
                 android:textAppearance="?android:attr/textAppearanceSmall"
 
-                android:textColor="#ffffff" android:textStyle="bold" android:background="#2634d1"
+                android:textColor="#ffffff" android:textStyle="bold" android:background="@color/blue"
                 android:padding="10dp" android:layout_weight="0.27"/>
 
         <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/workout_duration_textview"
-                  android:padding="10dp" android:layout_weight="0.27"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/workout_duration_textview"
+                  android:layout_weight="0.27"
                   android:visibility="invisible"
                   android:textColor="@color/pink"
                   android:textAppearance="?android:attr/textAppearanceMedium"
                   android:typeface="sans" android:textStyle="bold"/>
 
-
+    </FrameLayout>
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"

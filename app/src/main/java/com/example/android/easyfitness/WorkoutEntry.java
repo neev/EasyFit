@@ -1,5 +1,6 @@
 package com.example.android.easyfitness;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,12 +11,20 @@ import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
 
 public class WorkoutEntry extends FragmentActivity implements LoaderManager
         .LoaderCallbacks<Cursor>, SwitchButtonListener {
+
+
+
+    private TextView mDateDisplay;
+String pickedDate;
+
+
     public static final String LOG_TAG = WorkoutEntry.class.getSimpleName();
     public WorkoutListAdapter mAdapter;
     public static final int WORKOUT_LOADER = 0;
@@ -29,6 +38,15 @@ public class WorkoutEntry extends FragmentActivity implements LoaderManager
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_entry);
+
+        Intent intent = getIntent();
+
+
+        mDateDisplay = (TextView) findViewById(R.id.pickedDatetext);
+        pickedDate = intent.getExtras().getString("PICKED_DATE");
+        SessionManagement sessionDate = new SessionManagement(getApplicationContext()).createPickedDateSession
+                (pickedDate);
+        mDateDisplay.setText(pickedDate);
         View emptyView = (View)findViewById(R.id.listview_forecast_empty);
         ListView workout_list = (ListView)findViewById(R.id.workout_list);
         mAdapter = new WorkoutListAdapter(this,null,0);
@@ -39,8 +57,8 @@ public class WorkoutEntry extends FragmentActivity implements LoaderManager
         workout_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               // ViewHolder selected = (ViewHolder) view.getTag();
-                Toast.makeText(WorkoutEntry.this, "List ITEM CLICKED"+ position, Toast.LENGTH_SHORT)
+                // ViewHolder selected = (ViewHolder) view.getTag();
+                Toast.makeText(WorkoutEntry.this, "List ITEM CLICKED" + position, Toast.LENGTH_SHORT)
                         .show();
                 mAdapter.notifyDataSetChanged();
             }
@@ -82,7 +100,7 @@ public class WorkoutEntry extends FragmentActivity implements LoaderManager
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader){
-    Toast.makeText(this, "onLoaderReset", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "onLoaderReset", Toast.LENGTH_SHORT).show();
         mAdapter.swapCursor(null);
     }
 

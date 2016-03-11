@@ -1,5 +1,7 @@
 package com.example.android.easyfitness;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import com.example.android.easyfitness.sync.SunshineSyncAdapter;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
@@ -33,6 +37,11 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
+    private int mYear;
+    private int mMonth;
+    private int mDay;
+    static final int DATE_DIALOG_ID = 0;
+    String pickedDate;
     TextView mLoggedInStatusTextView;
     Button workoutentrybtn;
     // Session Manager Class
@@ -45,10 +54,14 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         SunshineSyncAdapter.initializeSyncAdapter(this);
-        ///////////////
-        //Intent intent = new Intent(MainActivity.this, Login.class);
-       // startActivity(intent);
+
+
+
+
+       Intent intent = new Intent(MainActivity.this, Login.class);
+        startActivity(intent);
         mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
         workoutentrybtn = (Button) findViewById(R.id.button);
 
@@ -74,7 +87,11 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-
+// get the current date
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,7 +104,40 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DATE_DIALOG_ID:
+                return new DatePickerDialog(this,
+                        mDateSetListener,
+                        mYear, mMonth, mDay);
+        }
+        return null;
+    }
 
+
+
+    // the callback received when the user "sets" the date in the dialog
+    private DatePickerDialog.OnDateSetListener mDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+                public void onDateSet(DatePicker view, int year,
+                                      int monthOfYear, int dayOfMonth) {
+                    mYear = year;
+                    mMonth = monthOfYear;
+                    mDay = dayOfMonth;
+                    pickedDate =
+                            String.valueOf(new StringBuilder()
+                                    // Month is 0 based so add 1
+                                    .append(Utilities.getMonthName(mMonth+1)).append("-")
+                                    .append(mDay).append("-")
+                                    .append(mYear).append(" "));
+
+                    System.out.println("Date from Date Picker Widget : " + pickedDate);
+                    Intent intent = new Intent(MainActivity.this, WorkoutEntry.class);
+                    intent.putExtra("PICKED_DATE", pickedDate);
+                    startActivity(intent);
+                }
+            };
 
     @Override
     public void onBackPressed() {
@@ -132,8 +182,8 @@ public class MainActivity extends AppCompatActivity
                 item.setVisible(false);
 
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
-//                Intent intent = new Intent(MainActivity.this, Login.class);
-//                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, Login.class);
+                startActivity(intent);
             Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_LONG)
                     .show();
 
@@ -143,13 +193,18 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);}
 
         } else if (id == R.id.nav_workoutEntry) {
-           ///////////////////
-           // if(session.checkLogin()) {
-                Intent intent = new Intent(MainActivity.this, WorkoutEntry.class);
-                startActivity(intent);
-           // }
 
-        } else if (id == R.id.nav_manage) {
+            if(session.checkLogin()) {
+
+                showDialog(DATE_DIALOG_ID);
+
+            }
+
+        } else if (id == R.id.nav_calendar) {
+           if(session.checkLogin()){
+                Intent intent = new Intent(MainActivity.this, CalenderView.class);
+                startActivity(intent);
+       }
 
         } else if (id == R.id.nav_share) {
 

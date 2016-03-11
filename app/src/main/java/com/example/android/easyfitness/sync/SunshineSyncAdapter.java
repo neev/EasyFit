@@ -70,6 +70,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         // Initialize Firebase with the application context
         Firebase.setAndroidContext(context);
+
+
     }
 
     @Override
@@ -126,57 +128,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         System.out.println("*****SYNC ADAPTER END*****");
 
 
-
-
         return;
     }
-    private void retriveDatafromfirebase() {
 
-        //ContentValues to be inserted
-
-        // Get a reference to our posts
-        Firebase ref = new Firebase(getContext().getResources().getString(R.string.firebase_url)
-                +"/workout");
-        // Attach an listener to read the data at our posts reference
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                System.out.println("There are " + snapshot.getChildrenCount() + " workout options");
-                for (DataSnapshot workoutSnapshot: snapshot.getChildren()) {
-                    //BlogPost post = postSnapshot.getValue(BlogPost.class);
-                     WorkoutOptions workoutObject = workoutSnapshot.getValue(WorkoutOptions.class);
-                    System.out.println(workoutObject.getId() + " - " + workoutObject
-                            .getWorkout());
-
-
-                    ContentValues workout_values = new ContentValues();
-                    workout_values.put(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_ID, workoutObject.getId());
-                    workout_values.put(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION, workoutObject.getWorkout());
-                    values.add(workout_values);
-                    System.out.println("values size : " + values.size());
-                }
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-
-        });
-// add to database
-        if ( values.size() > 0  ) {
-            System.out.println("*****inserting values*****");
-            ContentValues[] cvArray = new ContentValues[values.size()];
-            values.toArray(cvArray);
-           flag =  getContext().getContentResolver().bulkInsert(
-                    EasyFitnessContract.WorkOutEntry.CONTENT_URI, cvArray);
-
-        }
-        System.out.println("*****SYNC ADAPTER values*****");
-
-            Log.v(LOG_TAG, "WORKOUT OPTIONS Succesfully Inserted : " + String.valueOf
-                    (values.size())  + "******* "+flag);
-
-    }
 
 
     private void updateWidgets() {
@@ -185,6 +139,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
                 .setPackage(context.getPackageName());
         context.sendBroadcast(dataUpdatedIntent);
+
     }
 
 
@@ -220,6 +175,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(getSyncAccount(context),
                 context.getString(R.string.content_authority), bundle);
+
     }
 
     /**

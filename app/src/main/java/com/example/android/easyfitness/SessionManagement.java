@@ -37,6 +37,7 @@ public class SessionManagement {
 
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
+    public static final String KEY_PICKED_DATE = "picked_date";
 
     // Constructor
     public SessionManagement(Context context) {
@@ -61,6 +62,12 @@ public class SessionManagement {
         editor.commit();
     }
 
+    public SessionManagement createPickedDateSession(String date){
+        editor.putString(KEY_PICKED_DATE,date);
+        editor.commit();
+        return null;
+    }
+
     public HashMap<String, String> getUserFirebaseAuthId(){
         HashMap<String, String> user = new HashMap<String, String>();
         // user name
@@ -71,7 +78,19 @@ public class SessionManagement {
 
         // return user
         return user;
+    }public HashMap<String, String> getPickedDate(){
+        HashMap<String, String> pickedDate = new HashMap<String, String>();
+        // user name
+        pickedDate.put(KEY_PICKED_DATE, pref.getString(KEY_PICKED_DATE, null));
+
+
+        // return user
+        return pickedDate;
     }
+
+
+
+
     /**
      * Check login method wil check user login status
      * If false it will redirect user to login page
@@ -123,4 +142,8 @@ public class SessionManagement {
     public boolean isLoggedIn(){
         return pref.getBoolean(IS_LOGIN, false);
     }
+
+
+
+
 }

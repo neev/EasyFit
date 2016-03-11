@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
+import com.example.android.easyfitness.data.WorkoutRecord;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by neeraja on 3/6/2016.
@@ -23,18 +27,25 @@ import java.util.Date;
 public class WorkoutListAdapter extends CursorAdapter
 {
 
+    private static final String TAG = "RecordWorkout";
+    /* A reference to the Firebase */
+    private Firebase mFirebaseRef;
+    /* Listener for Firebase session changes */
+    private Firebase.AuthStateListener mAuthStateListener;
+    String authId;
     ViewHolder mHolder;
     ViewGroup container;
     private String WORKOUTOPTIONS_HASHTAG = "#Workout_Options";
     SwitchButtonListener _switchButtonListerner;
-
-   String selected_desc;
+int mMinutes;
+    String selected_desc;
+    String selected_date;
     boolean swichbtn_flag = false;
     CustomTimePickerDialog timePickerDialog;
     TextView workout_dur_editText;
     Button workoutTimeDur;
     String logged_workoutDuration;
-     String logged_workoutDecs ;
+    String logged_workoutDecs ;
     int selected_row;
     public WorkoutListAdapter(Context context,Cursor cursor,int flags)
     {
@@ -50,6 +61,8 @@ public class WorkoutListAdapter extends CursorAdapter
         ViewHolder mHolder = new ViewHolder(mItem);
         mItem.setTag(mHolder);
 
+        // Initialize Firebase with the application context
+        Firebase.setAndroidContext(context);
 
         return mItem;
     }
@@ -61,7 +74,7 @@ public class WorkoutListAdapter extends CursorAdapter
     {
 
 
-         mHolder = (ViewHolder) view.getTag();
+        mHolder = (ViewHolder) view.getTag();
 
         String option1 =cursor.getString(cursor.getColumnIndex(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION));
         mHolder.workoutoptionImageview.setImageResource(R.drawable.run);
@@ -108,8 +121,9 @@ public class WorkoutListAdapter extends CursorAdapter
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.workout_duration, null);
 
-    final ViewHolder myviewHolder;
+        final ViewHolder myviewHolder;
         myviewHolder = (ViewHolder) view.getTag();
+
         timePickerDialog = new CustomTimePickerDialog(context,
                 timeSetListener,
                 Calendar.getInstance().get(Calendar.HOUR),
@@ -135,12 +149,16 @@ public class WorkoutListAdapter extends CursorAdapter
             public void onClick(View v) {
 
                 cursor.moveToPosition(selected_row);
-               myviewHolder.loggedStatusText.setText("Logged for Today");
+                myviewHolder.loggedStatusText.setText("Logged Duration");
+                myviewHolder.loggedDurationTimeText.setText(logged_workoutDuration);
                 myviewHolder.loggedStatusText.setVisibility(View.VISIBLE);
+                myviewHolder.loggedDurationTimeText.setVisibility(View.VISIBLE);
                 myviewHolder.workoutOptionSwitch.setVisibility(View.GONE);
-                container.removeViewAt(0);
-                //container.setVisibility(View.GONE);
-                logit();
+
+
+                //container.removeViewAt(0);
+                container.setVisibility(View.GONE);
+                logit(context);
 
             }
         });
@@ -185,22 +203,61 @@ public class WorkoutListAdapter extends CursorAdapter
 
             logged_workoutDuration = String.format("%02d", hourOfDay) + ":" + String.format
                     ("%02d", minute);
+            mMinutes = (hourOfDay*60) + minute;
             workout_dur_editText.setText(logged_workoutDuration);
             workout_dur_editText.setVisibility(View.VISIBLE);
             workoutTimeDur.setVisibility(View.GONE);
+
         }
     };
 
     /// log it function
 
-    public void logit(){
+    public void logit(Context context){
 
-        Date current_date =  new Date(System.currentTimeMillis());
+       // Date current_date =  new Date(System.currentTimeMillis());
 
+        // Session Manager
+        SessionManagement session = new SessionManagement(context);
+        // get user data from session
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
+        // name
+        authId = user.get(SessionManagement.KEY_NAME);
+        HashMap<String, String> date = session.getPickedDate();
+        // name
+        selected_date = date.get(SessionManagement.KEY_PICKED_DATE);
+
+
+        /* Create the Firebase ref that is used for all authentication with Firebase */
+        mFirebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
         System.out.println("Logged time : " + logged_workoutDuration+
-                            "Logged description : " + logged_workoutDecs+
-                            "Logged date : " + current_date+
-        "selected Row :*** " + selected_row);
+                "Logged description : " + logged_workoutDecs+
+                "selected Row :*** " + selected_row + "/n IN MINUTES"+mMinutes+selected_date);
+
+        String[] parts = selected_date.split("-");
+        String _month = parts[0];
+        String _date = parts[1];
+        String _year = parts[2];
+
+
+        WorkoutRecord recordedWorkout = new WorkoutRecord(mMinutes,logged_workoutDecs);
+        Firebase recordWorkoutRef = mFirebaseRef.child("recordedWorkoutList").child(authId).child
+                (_year).child(_month).child(_date);
+
+        recordWorkoutRef.push().setValue(recordedWorkout, new Firebase.CompletionListener() {
+
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError != null) {
+                    System.out.println("WORKOUT could not be saved. " + firebaseError.getMessage());
+                    Log.i(TAG, firebaseError.getMessage());
+                } else {
+                    System.out.println("WORKOUT saved successfully.");
+                }
+            }
+        });
+
+
 
     }
 
