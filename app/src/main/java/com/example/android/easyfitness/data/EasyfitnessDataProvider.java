@@ -35,6 +35,9 @@ public class EasyfitnessDataProvider extends ContentProvider {
     static final int USER_WITH_WORKOUT_AND_DATE = 102;
     static final int WORKOUT = 300;
     static final int WORKOUT_WITHID = 301;
+    static final int WORKOUT_RECORD = 400;
+    static final int WORKOUT_RECORD_WITHID = 401;
+    static final int WORKOUT_RECORD_WITHIDANDDATE = 402;
 
     private static final SQLiteQueryBuilder sUserDeatilByWorkoutIdQueryBuilder;
     static{
@@ -44,12 +47,14 @@ public class EasyfitnessDataProvider extends ContentProvider {
         //weather INNER JOIN location ON weather.location_id = location._id
         sUserDeatilByWorkoutIdQueryBuilder.setTables(
                 EasyFitnessContract.UserDetailEntry.TABLE_NAME + " INNER JOIN " +
-                        EasyFitnessContract.WorkOutEntry.TABLE_NAME +
+                        EasyFitnessContract.WorkOutOptions.TABLE_NAME +
                         " ON " + EasyFitnessContract.UserDetailEntry.TABLE_NAME +
-                        "." + EasyFitnessContract.UserDetailEntry.COLUMN_USER_WORKOUT_KEY +
-                        " = " + EasyFitnessContract.WorkOutEntry.TABLE_NAME +
-                        "." + EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_ID);
+                        //"." + EasyFitnessContract.UserDetailEntry.COLUMN_USER_WORKOUT_KEY +
+                        " = " + EasyFitnessContract.WorkOutOptions.TABLE_NAME +
+                        "." + EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_ID);
     }
+
+
     private static final SQLiteQueryBuilder sWORKOUTOPTIONSByWorkoutIdQueryBuilder;
     static{
         sWORKOUTOPTIONSByWorkoutIdQueryBuilder = new SQLiteQueryBuilder();
@@ -58,19 +63,46 @@ public class EasyfitnessDataProvider extends ContentProvider {
         //weather INNER JOIN location ON weather.location_id = location._id
         sWORKOUTOPTIONSByWorkoutIdQueryBuilder.setTables(
 
-                EasyFitnessContract.WorkOutEntry.TABLE_NAME );
+                EasyFitnessContract.WorkOutOptions.TABLE_NAME );
     }
 
-    //WORKOUT OPTIONS WITH WORKOUT_ID
-    private static final String sWorkoutOptionSelection =
-            EasyFitnessContract.WorkOutEntry.TABLE_NAME+ "."+
-                    EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_ID + " = ?";
+    private static final SQLiteQueryBuilder sWorkoutRecordByAuthIdandDateQueryBuilder;
+    static{
+        sWorkoutRecordByAuthIdandDateQueryBuilder = new SQLiteQueryBuilder();
+
+        sWorkoutRecordByAuthIdandDateQueryBuilder.setTables(
+
+                EasyFitnessContract.UserWorkOutRecord.TABLE_NAME );
+    }
+
+
+
+    //WORKOUT Record WITH UserAuthId
+    private static final String sWorkoutRecordSelection =
+            EasyFitnessContract.UserWorkOutRecord.TABLE_NAME+ "."+
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ?";
 
     //USERDETAILS WITH USER AUTH ID
     private static final String sUserWithUserAuthIdSelection =
             EasyFitnessContract.UserDetailEntry.TABLE_NAME+
                     "." + EasyFitnessContract.UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? ";
+    //USERDETAILS WITH USER AUTH ID
+    private static final String sWorkoutRecordWithUserAuthIdSelection =
+            EasyFitnessContract.UserWorkOutRecord.TABLE_NAME+
+                    "." + EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? ";
+    //UserWorkOutRecord.UserAuthId = ? AND year,month,date
+    private static final String sWorkoutRecordWithUserAuthIdandDate =
+            EasyFitnessContract.UserWorkOutRecord.TABLE_NAME+
+                    "." + EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? AND " +
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_YEAR + " = ? AND " +
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_MONTH + "= ? AND " +
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DATE + " = ? ";
 
+    //UserWorkOutRecord.UserAuthId = ? AND day
+    private static final String sWorkoutRecordUserAuthIdWithDay =
+            EasyFitnessContract.UserWorkOutRecord.TABLE_NAME+
+                    "." + EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? AND " +
+                          EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DAY + " = ? ";
 
     private Cursor getUserNameByUserAuthIdSelection(Uri uri, String[] projection, String
             sortOrder) {
@@ -97,17 +129,26 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 sortOrder
         );
     }
-    private Cursor getWorkoutoptionDescByWorkoutIdSelection(Uri uri, String[] projection, String
-            sortOrder) {
-        int workoutId = EasyFitnessContract.WorkOutEntry.getWorkoutIdFromUri(uri);
-        //long createdDate = EasyFitnessContract.UserDetailEntry.getUserCreatedDateFromUri(uri);
+    private Cursor getWorkoutRecordByAuthIdandDate(Uri uri, String[] projection, String sortOrder) {
+
+        String userAuthId = EasyFitnessContract.UserWorkOutRecord.getUserAuthIdFromUri(uri);
+        int year = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordYearFromUri(uri);
+        int month = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordMonthFromUri(uri);
+        int date = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordDateFromUri(uri);
+
         String[] selectionArgs;
         String selection;
-        selection = sWorkoutOptionSelection;
-        selectionArgs = new String[]{Integer.toString(workoutId)};
+        if (year == 0 && month == 0 && date == 0) {
+            selection = sWorkoutRecordWithUserAuthIdSelection;
+            selectionArgs = new String[]{userAuthId};
+        } else {
+            selectionArgs = new String[]{userAuthId, Integer.toString(year), Integer.toString
+                    (month),Integer.toString(date)};
+            selection = sWorkoutRecordWithUserAuthIdandDate;
+        }
 
 
-        return sWORKOUTOPTIONSByWorkoutIdQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return sWorkoutRecordByAuthIdandDateQueryBuilder .query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -131,8 +172,13 @@ public class EasyfitnessDataProvider extends ContentProvider {
         matcher.addURI(authority, EasyFitnessContract.PATH_USERDETAIL, USER );
         matcher.addURI(authority, EasyFitnessContract.PATH_USERDETAIL + "/*", USER_WITH_WORKOUT );
         matcher.addURI(authority, EasyFitnessContract.PATH_USERDETAIL + "/*/#", USER_WITH_WORKOUT_AND_DATE );
+
         matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUT, WORKOUT );
-        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUT + "/*", WORKOUT_WITHID );
+        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUT + "/#", WORKOUT_WITHID );
+
+        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD, WORKOUT_RECORD );
+        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD + "/*", WORKOUT_RECORD_WITHID );
+        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD + "/*/#/#/#", WORKOUT_RECORD_WITHIDANDDATE );
 
         return matcher;
     }
@@ -165,9 +211,15 @@ public class EasyfitnessDataProvider extends ContentProvider {
             case USER :
                 return EasyFitnessContract.UserDetailEntry.CONTENT_TYPE;
             case WORKOUT :
-                return EasyFitnessContract.WorkOutEntry.CONTENT_TYPE;
+                return EasyFitnessContract.WorkOutOptions.CONTENT_TYPE;
             case WORKOUT_WITHID :
-                return EasyFitnessContract.WorkOutEntry.CONTENT_TYPE;
+                return EasyFitnessContract.WorkOutOptions.CONTENT_TYPE;
+            case WORKOUT_RECORD :
+                return EasyFitnessContract.UserWorkOutRecord.CONTENT_TYPE;
+            case WORKOUT_RECORD_WITHID :
+                return EasyFitnessContract.UserDetailEntry.CONTENT_TYPE;
+            case WORKOUT_RECORD_WITHIDANDDATE :
+                return EasyFitnessContract.UserDetailEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -207,7 +259,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
             // "weather"
             case WORKOUT : {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        EasyFitnessContract.WorkOutEntry.TABLE_NAME,
+                        EasyFitnessContract.WorkOutOptions.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -217,9 +269,33 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 );
                 break;
             }
-            // "location"
+            /*// "location"
             case WORKOUT_WITHID : {
                 retCursor =  getWorkoutoptionDescByWorkoutIdSelection(uri, projection, sortOrder);
+                break;
+            }*/
+            //Workout Record
+            case WORKOUT_RECORD_WITHIDANDDATE :
+            {
+                retCursor = getWorkoutRecordByAuthIdandDate(uri, projection, sortOrder);
+                break;
+            }
+            // "weather/*"
+            case WORKOUT_RECORD_WITHID : {
+                retCursor = getWorkoutRecordByAuthIdandDate(uri, projection, sortOrder);
+                break;
+            }
+            // "weather"
+            case WORKOUT_RECORD : {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EasyFitnessContract.UserWorkOutRecord.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
                 break;
             }
 
@@ -250,9 +326,18 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 break;
             }
             case WORKOUT: {
-                long _id = db.insert(EasyFitnessContract.WorkOutEntry.TABLE_NAME, null, values);
+                long _id = db.insert(EasyFitnessContract.WorkOutOptions.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = EasyFitnessContract.WorkOutEntry.buildWorkoutUri(_id);
+                    returnUri = EasyFitnessContract.WorkOutOptions.buildWorkoutUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case WORKOUT_RECORD: {
+                normalizeDate(values);
+                long _id = db.insert(EasyFitnessContract.UserWorkOutRecord.TABLE_NAME, null, values);
+                if ( _id > 0 )
+                    returnUri = EasyFitnessContract.UserWorkOutRecord.buildWorkoutUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -279,7 +364,11 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 break;
             case WORKOUT:
                 rowsDeleted = db.delete(
-                        EasyFitnessContract.WorkOutEntry.TABLE_NAME, selection, selectionArgs);
+                        EasyFitnessContract.WorkOutOptions.TABLE_NAME, selection, selectionArgs);
+                break;
+            case WORKOUT_RECORD:
+                rowsDeleted = db.delete(
+                        EasyFitnessContract.UserWorkOutRecord.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -314,7 +403,12 @@ public class EasyfitnessDataProvider extends ContentProvider {
                         selectionArgs);
                 break;
             case WORKOUT:
-                rowsUpdated = db.update(EasyFitnessContract.WorkOutEntry.TABLE_NAME, values, selection,
+                rowsUpdated = db.update(EasyFitnessContract.WorkOutOptions.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            case WORKOUT_RECORD:
+                normalizeDate(values);
+                rowsUpdated = db.update(EasyFitnessContract.UserWorkOutRecord.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
             default:
@@ -330,15 +424,35 @@ public class EasyfitnessDataProvider extends ContentProvider {
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
+        int returnUri;
         switch (match) {
+            case WORKOUT_RECORD: {
+                db.beginTransaction();
+                int returnCount = 0;
+                try {
+                    for (ContentValues value : values) {
+                        normalizeDate(value);
+                        long _id = db.insert(EasyFitnessContract.UserWorkOutRecord.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                }finally {
+                        db.endTransaction();
+                    }
 
-            case WORKOUT:
+                    returnUri = returnCount;
+                    break;
+
+            }
+            case WORKOUT: {
                 db.beginTransaction();
                 int returnwCount = 0;
                 try {
                     for (ContentValues value : values) {
                         //normalizeDate(value);
-                        long _id = db.insert(EasyFitnessContract.WorkOutEntry.TABLE_NAME, null,
+                        long _id = db.insert(EasyFitnessContract.WorkOutOptions.TABLE_NAME, null,
                                 value);
                         if (_id != -1) {
                             returnwCount++;
@@ -348,11 +462,16 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 } finally {
                     db.endTransaction();
                 }
-                getContext().getContentResolver().notifyChange(uri, null);
-                return returnwCount;
+
+                returnUri = returnwCount;
+                break;
+            }
             default:
-                return super.bulkInsert(uri, values);
+                returnUri =  super.bulkInsert(uri, values);
         }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
     }
 
     // You do not need to call this method. This is a method specifically to assist the testing

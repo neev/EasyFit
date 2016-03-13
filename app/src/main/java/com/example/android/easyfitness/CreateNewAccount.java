@@ -100,6 +100,7 @@ public class CreateNewAccount extends AppCompatActivity {
         setResult(RESULT_OK, null);
         Intent intent = new Intent(CreateNewAccount.this, Login.class);
         startActivity(intent);
+        finish();
     }
 
     public void onSignupFailed() {

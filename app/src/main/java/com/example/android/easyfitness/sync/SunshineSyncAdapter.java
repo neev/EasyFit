@@ -5,12 +5,15 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +22,7 @@ import android.util.Log;
 
 import com.example.android.easyfitness.R;
 import com.example.android.easyfitness.data.EasyFitnessContract;
+import com.example.android.easyfitness.data.UserDetails;
 import com.example.android.easyfitness.data.WorkoutOptions;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -44,8 +48,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
             EasyFitnessContract.UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID,
             EasyFitnessContract.UserDetailEntry.COLUMN_USER_NAME,
-            EasyFitnessContract.UserDetailEntry.COLUMN_WORKOUT_DESCRIPTION,
-            EasyFitnessContract.UserDetailEntry.COLUMN_USER_WORKOUT_DURATION
+            //EasyFitnessContract.UserDetailEntry.COLUMN_WORKOUT_DESCRIPTION,
+           // EasyFitnessContract.UserDetailEntry.COLUMN_USER_WORKOUT_DURATION
     };
 
     // these indices must match the projection
@@ -100,8 +104,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
                     ContentValues workout_values = new ContentValues();
-                    workout_values.put(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_ID, workoutObject.getId());
-                    workout_values.put(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION, workoutObject.getWorkout());
+                    workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_ID, workoutObject.getId());
+                    workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION, workoutObject.getWorkout());
                     values.add(workout_values);
                     System.out.println("values size : " + values.size());
                 }
@@ -110,7 +114,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     ContentValues[] cvArray = new ContentValues[values.size()];
                     values.toArray(cvArray);
                     flag = getContext().getContentResolver().bulkInsert(
-                            EasyFitnessContract.WorkOutEntry.CONTENT_URI, cvArray);
+                            EasyFitnessContract.WorkOutOptions.CONTENT_URI, cvArray);
                     Log.v(LOG_TAG, "WORKOUT OPTIONS Succesfully Inserted : " + String.valueOf
                             (values.size()) + "******* " + flag);
                 }
@@ -141,8 +145,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         context.sendBroadcast(dataUpdatedIntent);
 
     }
-
-
 
 
 

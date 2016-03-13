@@ -76,7 +76,7 @@ int mMinutes;
 
         mHolder = (ViewHolder) view.getTag();
 
-        String option1 =cursor.getString(cursor.getColumnIndex(EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION));
+        String option1 =cursor.getString(cursor.getColumnIndex(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION));
         mHolder.workoutoptionImageview.setImageResource(R.drawable.run);
         mHolder.workoutDescText.setText(option1);
 
@@ -235,10 +235,10 @@ int mMinutes;
                 "selected Row :*** " + selected_row + "/n IN MINUTES"+mMinutes+selected_date);
 
         String[] parts = selected_date.split("-");
-        String _month = parts[0];
-        String _date = parts[1];
-        String _year = parts[2];
-
+        String _month = parts[0].trim();
+        String _date = parts[1].trim();
+        String _year = parts[2].trim();
+        String _day = "Sunday";
 
         WorkoutRecord recordedWorkout = new WorkoutRecord(mMinutes,logged_workoutDecs);
         Firebase recordWorkoutRef = mFirebaseRef.child("recordedWorkoutList").child(authId).child
@@ -256,6 +256,15 @@ int mMinutes;
                 }
             }
         });
+
+        //storing user workout record in sqlite
+        int y = Integer.parseInt(_year);
+        int m = Utilities.getMonthinNumber(_month);
+        int d = Integer.parseInt(_date);
+
+        long workoutRecord_stored = Utilities.addUserRecordedWorkout(context,authId,
+                logged_workoutDecs,mMinutes,y,m,d,_day);
+        System.out.println("Successfully stored WORKOUT RECORD### : "+ workoutRecord_stored);
 
 
 

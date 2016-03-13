@@ -30,9 +30,8 @@ String pickedDate;
     public static final int WORKOUT_LOADER = 0;
 
     private static final String[] FORECAST_COLUMNS = {
-            EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_ID +" " + " as "+" "+EasyFitnessContract
-                    .WorkOutEntry._ID,
-            EasyFitnessContract.WorkOutEntry.COLUMN_WORKOUT_DESCRIPTION
+            EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_ID +" " + " as "+" "+ EasyFitnessContract.WorkOutOptions._ID,
+            EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION
     };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,7 @@ String pickedDate;
 
 
         int locationSetting = 1;
-        Uri DescriptionForWorkoutIdUri = EasyFitnessContract.WorkOutEntry
+        Uri DescriptionForWorkoutIdUri = EasyFitnessContract.WorkOutOptions
                 .buildWorkoutDescriptionDisplay();
 
 

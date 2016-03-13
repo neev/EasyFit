@@ -13,17 +13,13 @@
     tools:context="com.example.android.easyfitness.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/login_status"
-        android:text="Hello World!"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="workoutEntry Button"
-        android:id="@+id/button" android:layout_below="@+id/login_status"
-        android:layout_centerHorizontal="true" android:layout_marginTop="43dp"/>
 
+
+    <ImageView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/flower_imageview" android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" android:layout_marginTop="40dp"
+        android:src="@drawable/clockimage"/>
 </RelativeLayout>

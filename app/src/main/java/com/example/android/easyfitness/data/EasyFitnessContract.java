@@ -30,6 +30,7 @@ public class EasyFitnessContract {
 
     public static final String PATH_USERDETAIL = "userdetailpath";
     public static final String PATH_WORKOUT = "workoutpath";
+    public static final String PATH_WORKOUTRECORD = "workoutrecordpath";
 
 
     // To make it easy to query for the exact date, we normalize all dates that go into
@@ -55,13 +56,8 @@ public class EasyFitnessContract {
 
         // Table name
         public static final String TABLE_NAME = "userdetail";
-
-        // The location setting string is what will be sent to openweathermap
-        // as the location query.
+        public static final String _ID = "_id";
         public static final String COLUMN_USERDEATIL_AUTHENTIFICATION_ID = "userdeatil_authid";
-
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
         public static final String COLUMN_USER_NAME = "user_name";
         public static final String COLUMN_USER_AGE = "user_age";
         public static final String COLUMN_USER_WEIGHT = "user_weight";
@@ -69,10 +65,7 @@ public class EasyFitnessContract {
         public static final String COLUMN_USER_GOALWEIGHT = "user_goal_weight";
         public static final String COLUMN_USER_CREATED_DATE = "user_create_date";
         public static final String COLUMN_USER_UPDATED_DATE = "user_updated_date";
-        public static final String COLUMN_USER_WORKOUT_KEY = "workout_id";
-        public static final String COLUMN_WORKOUT_DESCRIPTION = "workout_desc";
-        public static final String COLUMN_USER_WORKOUT_DURATION = "user_workout_duration";
-        public static final String COLUMN_USER_WORKOUT_DATE = "user_workout_date";
+
 
         public static Uri buildUserDetailUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -111,7 +104,7 @@ public class EasyFitnessContract {
 
 
     /* Inner class that defines the table contents of the location table */
-    public static final class WorkOutEntry implements BaseColumns {
+    public static final class WorkOutOptions implements BaseColumns {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_WORKOUT).build();
@@ -149,5 +142,59 @@ public class EasyFitnessContract {
         }
     }
 
+    /* Inner class that defines the table contents of the location table */
+    public static final class UserWorkOutRecord implements BaseColumns {
 
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_WORKOUTRECORD).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WORKOUTRECORD;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WORKOUTRECORD;
+
+        // Table name
+        public static final String TABLE_NAME = "userworkoutrecord";
+
+        // The location setting string is what will be sent to openweathermap
+        // as the location query.
+        public static final String _ID = "_id";
+
+        public static final String COLUMN_USERDEATIL_AUTHENTIFICATION_ID = "userdeatil_authid";
+        public static final String COLUMN_WORKOUT_DESCRIPTION = "workout_desc";
+        public static final String COLUMN_WORKOUT_DURATION = "workout_duration";
+        public static final String COLUMN_WORKOUT_RECORDED_DATE_YEAR = "workout_recorded_year";
+        public static final String COLUMN_WORKOUT_RECORDED_DATE_MONTH = "workout_recorded_month";
+        public static final String COLUMN_WORKOUT_RECORDED_DATE_DATE = "workout_recorded_date";
+        public static final String COLUMN_WORKOUT_RECORDED_DATE_DAY = "workout_recorded_day";
+
+        public static Uri buildWorkoutUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+        public static Uri buildWorkoutRecordWithUserAuthIdandDate(String authId, int year,int
+                month,int date) {
+            return CONTENT_URI.buildUpon().appendPath(authId)
+                    .appendPath(Integer.toString(year))
+                    .appendPath(Integer.toString(month))
+                    .appendPath(Integer.toString(date))
+                            .build();
+        }
+
+        public static String getUserAuthIdFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+        public static int getworkoutRecordYearFromUri(Uri uri) {
+            return Integer.parseInt(uri.getPathSegments().get(2));
+        }
+        public static int getworkoutRecordMonthFromUri(Uri uri) {
+            return Integer.parseInt(uri.getPathSegments().get(3));
+        }
+        public static int getworkoutRecordDateFromUri(Uri uri) {
+            return Integer.parseInt(uri.getPathSegments().get(4));
+        }
+        public static String getworkoutRecordDayFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+    }
 }

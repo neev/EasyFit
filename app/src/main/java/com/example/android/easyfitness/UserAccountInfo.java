@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.android.easyfitness.data.UserDetails;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -131,28 +134,31 @@ public class UserAccountInfo extends AppCompatActivity {
                 }
             }
         });
+            //storing user info in sqlite
+        long userInfo_stored = Utilities.addUserAccountInfo(getBaseContext(),userObject,authId);
+        System.out.println("successfully STORED USER INFO : ***"+userInfo_stored);
 
+if(selectedImage != null) {
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    selectedImage.recycle();
+    byte[] byteArray = stream.toByteArray();
+    String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
+    userRef.child("Images").child(authId).push().setValue(imageFile, new Firebase
+            .CompletionListener() {
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        selectedImage.recycle();
-        byte[] byteArray = stream.toByteArray();
-        String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
-        userRef.child("Images").child(authId).push().setValue(imageFile,new Firebase
-                .CompletionListener() {
-
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError != null) {
-                    System.out.println("User Image could not be saved. " + firebaseError.getMessage
-                            ());
-                    Log.i(TAG, firebaseError.getMessage());
-                } else {
-                    System.out.println("User Image saved successfully.");
-                }
+        @Override
+        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+            if (firebaseError != null) {
+                System.out.println("User Image could not be saved. " + firebaseError.getMessage
+                        ());
+                Log.i(TAG, firebaseError.getMessage());
+            } else {
+                System.out.println("User Image saved successfully.");
             }
-        });
-
+        }
+    });
+}
 
         Toast.makeText(getBaseContext(), "Data saved successfully", Toast.LENGTH_LONG).show();
         finish();
@@ -169,9 +175,14 @@ public class UserAccountInfo extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // Log.d(TAG, String.valueOf(bitmap));
+                RoundedBitmapDrawable circularBitmapDrawable =
+                        RoundedBitmapDrawableFactory.create(getBaseContext().getResources(), bitmap);
+                circularBitmapDrawable.setCircular(true);
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                imageView.setImageBitmap(bitmap);
+                Glide.with(this).load(circularBitmapDrawable).centerCrop().into(imageView);
+
+                //imageView.setImageBitmap(bitmap);
                 selectedImage = bitmap;
             } catch (IOException e) {
                 e.printStackTrace();

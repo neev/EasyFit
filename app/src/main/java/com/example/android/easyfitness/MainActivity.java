@@ -3,9 +3,6 @@ package com.example.android.easyfitness;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,20 +12,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.android.easyfitness.sync.SunshineSyncAdapter;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -42,8 +35,9 @@ public class MainActivity extends AppCompatActivity
     private int mDay;
     static final int DATE_DIALOG_ID = 0;
     String pickedDate;
-    TextView mLoggedInStatusTextView;
-    Button workoutentrybtn;
+
+
+    ImageView mFlowerImage;
     // Session Manager Class
     SessionManagement session;DrawerLayout drawer;NavigationView navigationView;
     boolean loginFlag = true;String email;
@@ -62,10 +56,10 @@ public class MainActivity extends AppCompatActivity
 
        Intent intent = new Intent(MainActivity.this, Login.class);
         startActivity(intent);
-        mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
-        workoutentrybtn = (Button) findViewById(R.id.button);
 
-        try {
+        mFlowerImage = (ImageView) findViewById(R.id.flower_imageview);
+
+       /* try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "com.example.android.easyfitness", PackageManager.GET_SIGNATURES); //Your
             //    package name here
@@ -76,7 +70,12 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (PackageManager.NameNotFoundException e) {
         } catch (NoSuchAlgorithmException e) {
-        }
+        }*/
+
+        Glide.with(this)
+                .load(R.drawable.f8)
+                .into(mFlowerImage);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,6 +239,6 @@ public class MainActivity extends AppCompatActivity
         email = user.get(SessionManagement.KEY_EMAIL);
         navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
-        mLoggedInStatusTextView.setText("Welcome " + " " + email);
+
     }
 }
