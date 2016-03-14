@@ -15,7 +15,7 @@
         <item
             android:id="@+id/nav_myaccount"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="My Account"/>
+            android:title="Profile"/>
         <item
             android:id="@+id/nav_workoutEntry"
             android:icon="@drawable/ic_menu_slideshow"
@@ -24,6 +24,10 @@
             android:id="@+id/nav_calendar"
             android:icon="@drawable/ic_menu_manage"
             android:title="Calender View"/>
+        <item
+            android:id="@+id/nav_workout_history"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Workout History"/>
     </group>
 
     <item android:title="Communicate">

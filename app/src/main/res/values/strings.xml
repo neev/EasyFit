@@ -42,4 +42,8 @@
     <string name="sync_account_type" translatable="false">easyfitness.android.example.com</string>
     <string name="content_authority" translatable="false">com.example.android.easyfitness</string>
     <string name="DateText">Mar 10, 2016</string>
+    <string name="title_activity_workout_history">WorkoutHistory</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="empty_forecast_list">No Workout Records to display</string>
+    <string name="test_text">Test</string>
 </resources>

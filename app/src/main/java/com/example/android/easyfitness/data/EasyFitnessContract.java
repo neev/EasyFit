@@ -128,10 +128,7 @@ public class EasyFitnessContract {
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildWorkoutDescriptionWithId(int locationSetting) {
-            return CONTENT_URI.buildUpon().appendPath(Integer.toString(locationSetting)).build();
 
-        }
         public static Uri buildWorkoutDescriptionDisplay() {
             return CONTENT_URI.buildUpon().build();
 
@@ -159,7 +156,6 @@ public class EasyFitnessContract {
         // The location setting string is what will be sent to openweathermap
         // as the location query.
         public static final String _ID = "_id";
-
         public static final String COLUMN_USERDEATIL_AUTHENTIFICATION_ID = "userdeatil_authid";
         public static final String COLUMN_WORKOUT_DESCRIPTION = "workout_desc";
         public static final String COLUMN_WORKOUT_DURATION = "workout_duration";
@@ -179,6 +175,10 @@ public class EasyFitnessContract {
                     .appendPath(Integer.toString(month))
                     .appendPath(Integer.toString(date))
                             .build();
+        }
+        public static Uri buildWorkoutRecordWithAuthId(String authId) {
+            return CONTENT_URI.buildUpon().appendPath(authId).build();
+
         }
 
         public static String getUserAuthIdFromUri(Uri uri) {

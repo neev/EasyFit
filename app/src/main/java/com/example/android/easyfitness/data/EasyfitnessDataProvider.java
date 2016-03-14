@@ -138,14 +138,11 @@ public class EasyfitnessDataProvider extends ContentProvider {
 
         String[] selectionArgs;
         String selection;
-        if (year == 0 && month == 0 && date == 0) {
-            selection = sWorkoutRecordWithUserAuthIdSelection;
-            selectionArgs = new String[]{userAuthId};
-        } else {
+
             selectionArgs = new String[]{userAuthId, Integer.toString(year), Integer.toString
                     (month),Integer.toString(date)};
             selection = sWorkoutRecordWithUserAuthIdandDate;
-        }
+
 
 
         return sWorkoutRecordByAuthIdandDateQueryBuilder .query(mOpenHelper.getReadableDatabase(),
@@ -157,7 +154,27 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 sortOrder
         );
     }
+    private Cursor getWorkoutRecordByAuthId(Uri uri, String[] projection, String sortOrder) {
 
+        String userAuthId = EasyFitnessContract.UserWorkOutRecord.getUserAuthIdFromUri(uri);
+
+        String[] selectionArgs;
+        String selection;
+
+        selectionArgs = new String[]{userAuthId};
+        selection = sWorkoutRecordWithUserAuthIdSelection;
+
+
+
+        return sWorkoutRecordByAuthIdandDateQueryBuilder .query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
         // expressions instead?  Because you're not crazy, that's why.
@@ -282,7 +299,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
             }
             // "weather/*"
             case WORKOUT_RECORD_WITHID : {
-                retCursor = getWorkoutRecordByAuthIdandDate(uri, projection, sortOrder);
+                retCursor = getWorkoutRecordByAuthId(uri, projection, sortOrder);
                 break;
             }
             // "weather"
@@ -398,7 +415,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
 
         switch (match) {
             case USER:
-                normalizeDate(values);
+
                 rowsUpdated = db.update(EasyFitnessContract.UserDetailEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
@@ -407,7 +424,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
                         selectionArgs);
                 break;
             case WORKOUT_RECORD:
-                normalizeDate(values);
+
                 rowsUpdated = db.update(EasyFitnessContract.UserWorkOutRecord.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;

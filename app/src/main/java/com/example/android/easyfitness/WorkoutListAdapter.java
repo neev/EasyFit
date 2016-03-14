@@ -37,7 +37,7 @@ public class WorkoutListAdapter extends CursorAdapter
     ViewGroup container;
     private String WORKOUTOPTIONS_HASHTAG = "#Workout_Options";
     SwitchButtonListener _switchButtonListerner;
-int mMinutes;
+    int mMinutes;
     String selected_desc;
     String selected_date;
     boolean swichbtn_flag = false;
@@ -230,15 +230,20 @@ int mMinutes;
 
         /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
-        System.out.println("Logged time : " + logged_workoutDuration+
-                "Logged description : " + logged_workoutDecs+
-                "selected Row :*** " + selected_row + "/n IN MINUTES"+mMinutes+selected_date);
+        System.out.println("Logged time : " + logged_workoutDuration +
+                "Logged description : " + logged_workoutDecs +
+                "selected Row :*** " + selected_row + "/n IN MINUTES" + mMinutes + selected_date);
 
+
+
+        Calendar c = Calendar.getInstance();
         String[] parts = selected_date.split("-");
         String _month = parts[0].trim();
         String _date = parts[1].trim();
         String _year = parts[2].trim();
-        String _day = "Sunday";
+
+
+
 
         WorkoutRecord recordedWorkout = new WorkoutRecord(mMinutes,logged_workoutDecs);
         Firebase recordWorkoutRef = mFirebaseRef.child("recordedWorkoutList").child(authId).child
@@ -262,9 +267,14 @@ int mMinutes;
         int m = Utilities.getMonthinNumber(_month);
         int d = Integer.parseInt(_date);
 
+        c.set(y,m,d);
+        int day_of_week = c.get(Calendar.DAY_OF_WEEK);
+        String _day = Utilities.getWeekName(day_of_week);
+
         long workoutRecord_stored = Utilities.addUserRecordedWorkout(context,authId,
                 logged_workoutDecs,mMinutes,y,m,d,_day);
-        System.out.println("Successfully stored WORKOUT RECORD### : "+ workoutRecord_stored);
+        System.out.println("Successfully stored WORKOUT RECORD### : "+ workoutRecord_stored +
+                "DAY OF WEEK : ##"+ _day);
 
 
 

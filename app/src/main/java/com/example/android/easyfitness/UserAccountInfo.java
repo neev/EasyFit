@@ -5,8 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -17,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.android.easyfitness.data.UserDetails;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -160,7 +157,9 @@ if(selectedImage != null) {
     });
 }
 
-        Toast.makeText(getBaseContext(), "Data saved successfully", Toast.LENGTH_LONG).show();
+        long userinfo_stored =  Utilities.addUserAccountInfo(getBaseContext(),userObject,authId);
+        Toast.makeText(getBaseContext(), "Data saved successfully  : " + userinfo_stored, Toast.LENGTH_LONG)
+                .show();
         finish();
 
     }
@@ -174,15 +173,15 @@ if(selectedImage != null) {
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                // Log.d(TAG, String.valueOf(bitmap));
+               /* // Log.d(TAG, String.valueOf(bitmap));
                 RoundedBitmapDrawable circularBitmapDrawable =
                         RoundedBitmapDrawableFactory.create(getBaseContext().getResources(), bitmap);
-                circularBitmapDrawable.setCircular(true);
+                circularBitmapDrawable.setCircular(true);*/
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                Glide.with(this).load(circularBitmapDrawable).centerCrop().into(imageView);
+                //Glide.with(this).load(circularBitmapDrawable).centerCrop().into(imageView);
 
-                //imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
                 selectedImage = bitmap;
             } catch (IOException e) {
                 e.printStackTrace();

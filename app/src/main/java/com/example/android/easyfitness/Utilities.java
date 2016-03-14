@@ -35,6 +35,37 @@ public class Utilities {
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
     }
+    static public String getWeekName (int week_day_num){
+        String week_day;
+        switch (week_day_num) {
+            case 4: week_day = "Sunday";break;
+            case 5: week_day = "Monday";break;
+            case 6: week_day = "Tuesday";break;
+            case 7: week_day = "wednesday";break;
+            case 1: week_day = "Thursday";break;
+            case 2: week_day = "Friday";break;
+            case 3: week_day = "Saturday";break;
+
+            default: week_day ="Sunday";
+        }
+        return week_day;
+    }
+
+    static public int getWeekName (String week_day_name){
+        int flowerImage;
+        switch (week_day_name) {
+            case "Sunday": flowerImage = R.drawable.f1;break;
+            case "Monday": flowerImage = R.drawable.f2;break;
+            case "Tuesday": flowerImage = R.drawable.f3;break;
+            case "Wednesday": flowerImage = R.drawable.f4;break;
+            case "Thursday": flowerImage = R.drawable.f5;break;
+            case "Friday": flowerImage = R.drawable.f6;break;
+            case "Saturday": flowerImage = R.drawable.f7;break;
+
+            default: flowerImage =R.drawable.f8;
+        }
+        return flowerImage;
+    }
 
 
    /* to get the month name*/
@@ -157,29 +188,29 @@ public class Utilities {
     }
 
     static public long addUserRecordedWorkout(Context c, String userauthId, String workout_desc, int
-            workout_duration,
-                                int year,int month,int date,String day) {
+            workout_duration,int year,int month,int date,String day) {
         long locationId;
-
-        // First, check if the location with this city name exists in the db
+        /*// First, check if the location with this city name exists in the db
         Cursor userRecoredeworkoutCursor = c.getContentResolver().query(
                 EasyFitnessContract.UserWorkOutRecord.CONTENT_URI,
                 new String[]{EasyFitnessContract.UserWorkOutRecord._ID},
                 null,
                 null,
-                null);
+                null);*/
 
-        if (userRecoredeworkoutCursor.moveToFirst()) {
+        /*if (userRecoredeworkoutCursor.moveToFirst()) {
             int userRecoredeworkoutIdIndex = userRecoredeworkoutCursor.getColumnIndex(EasyFitnessContract
                     .UserWorkOutRecord._ID);
             locationId = userRecoredeworkoutCursor.getLong(userRecoredeworkoutIdIndex);
-        } else {
+        }*/
+        //else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
             // First create a ContentValues object to hold the data you want to insert.
             ContentValues userRecoredeworkoutValues = new ContentValues();
 
             // Then add the data, along with the corresponding name of the data type,
             // so the content provider knows what kind of value is being inserted.
+
             userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord
                     .COLUMN_USERDEATIL_AUTHENTIFICATION_ID, userauthId);
             userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_DESCRIPTION,
@@ -195,6 +226,7 @@ public class Utilities {
             userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord
                     .COLUMN_WORKOUT_RECORDED_DATE_DAY, day);
 
+
             // Finally, insert location data into the database.
             Uri insertedUri = c.getContentResolver().insert(
                     EasyFitnessContract.UserWorkOutRecord.CONTENT_URI,
@@ -203,13 +235,11 @@ public class Utilities {
 
             // The resulting URI contains the ID for the row.  Extract the locationId from the Uri.
             locationId = ContentUris.parseId(insertedUri);
-        }
+       // }
 
-        userRecoredeworkoutCursor.close();
+       // userRecoredeworkoutCursor.close();
         // Wait, that worked?  Yes!
         return locationId;
     }
-
-
 
 }

@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity
 
     private int mYear;
     private int mMonth;
-    private int mDay;
+    private int mDate;
+
+
     static final int DATE_DIALOG_ID = 0;
     String pickedDate;
 
@@ -54,8 +56,8 @@ public class MainActivity extends AppCompatActivity
 
 
 
-       Intent intent = new Intent(MainActivity.this, Login.class);
-        startActivity(intent);
+       //Intent intent = new Intent(MainActivity.this, Login.class);
+       // startActivity(intent);
 
         mFlowerImage = (ImageView) findViewById(R.id.flower_imageview);
 
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity
 
         Glide.with(this)
                 .load(R.drawable.f8)
+                .fitCenter()
                 .into(mFlowerImage);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -90,7 +93,7 @@ public class MainActivity extends AppCompatActivity
         final Calendar c = Calendar.getInstance();
         mYear = c.get(Calendar.YEAR);
         mMonth = c.get(Calendar.MONTH);
-        mDay = c.get(Calendar.DAY_OF_MONTH);
+        mDate = c.get(Calendar.DAY_OF_MONTH);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity
             case DATE_DIALOG_ID:
                 return new DatePickerDialog(this,
                         mDateSetListener,
-                        mYear, mMonth, mDay);
+                        mYear, mMonth, mDate);
         }
         return null;
     }
@@ -123,12 +126,13 @@ public class MainActivity extends AppCompatActivity
                                       int monthOfYear, int dayOfMonth) {
                     mYear = year;
                     mMonth = monthOfYear;
-                    mDay = dayOfMonth;
+                    mDate = dayOfMonth;
+
                     pickedDate =
                             String.valueOf(new StringBuilder()
                                     // Month is 0 based so add 1
                                     .append(Utilities.getMonthName(mMonth+1)).append("-")
-                                    .append(mDay).append("-")
+                                    .append(mDate).append("-")
                                     .append(mYear).append(" "));
 
                     System.out.println("Date from Date Picker Widget : " + pickedDate);
@@ -187,9 +191,10 @@ public class MainActivity extends AppCompatActivity
                     .show();
 
         } else if (id == R.id.nav_myaccount) {
-            if(session.checkLogin()){
+            //if(session.checkLogin()){
             Intent intent = new Intent(MainActivity.this, UserAccountInfo.class);
-            startActivity(intent);}
+            startActivity(intent);
+            //}
 
         } else if (id == R.id.nav_workoutEntry) {
 
@@ -200,14 +205,17 @@ public class MainActivity extends AppCompatActivity
             }
 
         } else if (id == R.id.nav_calendar) {
-           if(session.checkLogin()){
+          // if(session.checkLogin()){
                 Intent intent = new Intent(MainActivity.this, CalenderView.class);
                 startActivity(intent);
-       }
+      // }
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_workout_history) {
+
+            Intent intent = new Intent(MainActivity.this, WorkoutHistory.class);
+            startActivity(intent);
 
         }else if (id == R.id.nav_logout) {
 
@@ -239,6 +247,13 @@ public class MainActivity extends AppCompatActivity
         email = user.get(SessionManagement.KEY_EMAIL);
         navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+
+    }
+
+    public void flowerImageDisplay() {
+
+        Calendar flowerdate = Calendar.getInstance();
+
 
     }
 }

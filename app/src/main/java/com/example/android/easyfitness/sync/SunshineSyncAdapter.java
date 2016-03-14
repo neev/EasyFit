@@ -5,15 +5,12 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,7 +19,6 @@ import android.util.Log;
 
 import com.example.android.easyfitness.R;
 import com.example.android.easyfitness.data.EasyFitnessContract;
-import com.example.android.easyfitness.data.UserDetails;
 import com.example.android.easyfitness.data.WorkoutOptions;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -91,6 +87,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
         Firebase ref = new Firebase(context.getResources().getString(R.string.firebase_url)
                 +"/workout");
+        //To read workout options from firebase
         // Attach an listener to read the data at our posts reference
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -129,6 +126,25 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         });
 // add to database
 
+       /* /// To read workot record with authid
+        // Session Manager
+        SessionManagement session = new SessionManagement(context);
+        // get user data from session
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
+        // name
+        String authId = user.get(SessionManagement.KEY_NAME);
+
+
+        if(authId!=null) {
+            int date[];
+            Firebase ref_record = new Firebase(context.getResources().getString(R.string
+                    .firebase_url)
+                    +"/recordedWorkoutList/"+authId);
+            Query queryRef = ref.orderByChild("workoutDesc");
+
+
+
+        }*/
         System.out.println("*****SYNC ADAPTER END*****");
 
 
