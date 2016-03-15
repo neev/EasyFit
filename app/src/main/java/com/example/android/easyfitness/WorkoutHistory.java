@@ -12,7 +12,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +27,7 @@ import com.example.android.easyfitness.sync.SunshineSyncAdapter;
 
 import java.util.HashMap;
 
-public class WorkoutHistory extends AppCompatActivity {
+public class WorkoutHistory extends BaseActivity  {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide

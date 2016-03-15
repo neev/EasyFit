@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -26,7 +25,7 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class UserAccountInfo extends AppCompatActivity {
+public class UserAccountInfo extends BaseActivity  {
     private static final String TAG = "UserAccountInfo";
     private static final int REQUEST_SIGNUP = 0;
     @Bind(R.id.user_name)

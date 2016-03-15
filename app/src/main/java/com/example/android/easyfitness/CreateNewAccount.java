@@ -3,7 +3,6 @@ package com.example.android.easyfitness;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +18,7 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class CreateNewAccount extends AppCompatActivity {
+public class CreateNewAccount extends BaseActivity  {
 
     private static final String TAG = "CreateNewAccount";
 

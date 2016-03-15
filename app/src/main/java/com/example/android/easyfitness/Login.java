@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,7 +26,7 @@ import com.firebase.client.FirebaseError;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class Login extends AppCompatActivity  {
+public class Login extends BaseActivity   {
 
     private static final String TAG = "Login";
     private static final int REQUEST_SIGNUP = 0;

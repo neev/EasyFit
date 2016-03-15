@@ -1,11 +1,10 @@
 package com.example.android.easyfitness;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
-public class CalenderView extends AppCompatActivity {
+public class CalenderView extends BaseActivity  {
 
     CalendarView calendar;
 
