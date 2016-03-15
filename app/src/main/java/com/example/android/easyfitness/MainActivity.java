@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
     private int mYear;
     private int mMonth;
     private int mDate;
-
+    boolean mToday_workout_completed = false;
 
     static final int DATE_DIALOG_ID = 0;
     String pickedDate;
@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity
 
     ImageView mFlowerImage;
     // Session Manager Class
-    SessionManagement session;DrawerLayout drawer;NavigationView navigationView;
+    SessionManagement session;
+    DrawerLayout drawer;NavigationView navigationView;
     boolean loginFlag = true;String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +57,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
-       //Intent intent = new Intent(MainActivity.this, Login.class);
-       // startActivity(intent);
+
+       Intent intent = new Intent(MainActivity.this, Login.class);
+       startActivity(intent);
 
         mFlowerImage = (ImageView) findViewById(R.id.flower_imageview);
 
@@ -74,8 +76,10 @@ public class MainActivity extends AppCompatActivity
         } catch (NoSuchAlgorithmException e) {
         }*/
 
+
+
         Glide.with(this)
-                .load(R.drawable.f8)
+                .load(R.drawable.f0)
                 .fitCenter()
                 .into(mFlowerImage);
 
@@ -191,10 +195,10 @@ public class MainActivity extends AppCompatActivity
                     .show();
 
         } else if (id == R.id.nav_myaccount) {
-            //if(session.checkLogin()){
+            if(session.checkLogin()){
             Intent intent = new Intent(MainActivity.this, UserAccountInfo.class);
             startActivity(intent);
-            //}
+            }
 
         } else if (id == R.id.nav_workoutEntry) {
 
@@ -205,17 +209,18 @@ public class MainActivity extends AppCompatActivity
             }
 
         } else if (id == R.id.nav_calendar) {
-          // if(session.checkLogin()){
+          if(session.checkLogin()){
                 Intent intent = new Intent(MainActivity.this, CalenderView.class);
                 startActivity(intent);
-      // }
+            }
 
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_workout_history) {
-
-            Intent intent = new Intent(MainActivity.this, WorkoutHistory.class);
-            startActivity(intent);
+            if(session.checkLogin()) {
+                Intent intent = new Intent(MainActivity.this, WorkoutHistory.class);
+                startActivity(intent);
+            }
 
         }else if (id == R.id.nav_logout) {
 
@@ -240,20 +245,27 @@ public class MainActivity extends AppCompatActivity
         session = new SessionManagement(getApplicationContext());
         // get user data from session
         HashMap<String, String> user = session.getUserFirebaseAuthId();
+        HashMap<String, Integer> flag = session.getFlag_Session();
         // name
-        String name = user.get(SessionManagement.KEY_NAME);
-
+        String userAuthId = user.get(SessionManagement.KEY_NAME);
+        int flower_flag = flag.get(SessionManagement.FLAG);
         // email
         email = user.get(SessionManagement.KEY_EMAIL);
         navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
 
+        //Flower Image Display check
+
+
+
+
+            Glide.with(this)
+                    .load(Utilities.today_flowerimage(flower_flag))
+                    .fitCenter()
+                    .into(mFlowerImage);
+
+
     }
 
-    public void flowerImageDisplay() {
 
-        Calendar flowerdate = Calendar.getInstance();
-
-
-    }
 }

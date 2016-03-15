@@ -227,7 +227,9 @@ public class WorkoutListAdapter extends CursorAdapter
         // name
         selected_date = date.get(SessionManagement.KEY_PICKED_DATE);
 
-
+        HashMap<String, Integer> flag = session.getFlag_Session();
+        // name
+        int _flag = flag.get(SessionManagement.FLAG);
         /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
         System.out.println("Logged time : " + logged_workoutDuration +
@@ -271,10 +273,20 @@ public class WorkoutListAdapter extends CursorAdapter
         int day_of_week = c.get(Calendar.DAY_OF_WEEK);
         String _day = Utilities.getWeekName(day_of_week);
 
+        if(_flag < 8){
+            _flag++;}
+        else if(_flag == 8){
+        _flag=0;}
+        /*else if(_flag == 0){
+            _flag++;
+        }*/
+
+        session.createFlagSession(_flag,_flag);
+
         long workoutRecord_stored = Utilities.addUserRecordedWorkout(context,authId,
-                logged_workoutDecs,mMinutes,y,m,d,_day);
+                logged_workoutDecs,mMinutes,y,m,d,_day,_flag);
         System.out.println("Successfully stored WORKOUT RECORD### : "+ workoutRecord_stored +
-                "DAY OF WEEK : ##"+ _day);
+                "DAY OF WEEK : ##"+ _day + "FLAG -----" + _flag);
 
 
 

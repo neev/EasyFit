@@ -130,7 +130,8 @@ public class Login extends AppCompatActivity  {
         mFirebaseRef = new Firebase(getResources().getString(R.string.firebase_url));
 
         /* Setup the progress dialog that is displayed later when authenticating with Firebase */
-        mAuthProgressDialog = new ProgressDialog(this);
+        mAuthProgressDialog = new ProgressDialog(Login.this,
+                R.style.AppTheme_Dark_Dialog);
         mAuthProgressDialog.setTitle("Loading");
         mAuthProgressDialog.setMessage("Authenticating with Firebase...");
         mAuthProgressDialog.setCancelable(false);
@@ -162,11 +163,11 @@ public class Login extends AppCompatActivity  {
 
         _loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(Login.this,
+        /*final ProgressDialog progressDialog = new ProgressDialog(Login.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        progressDialog.show();*/
 
 
 
@@ -175,7 +176,7 @@ public class Login extends AppCompatActivity  {
        //with firebase
         loginWithPassword();
 
-        new android.os.Handler().postDelayed(
+       /* new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         // On complete call either onLoginSuccess or onLoginFailed
@@ -184,7 +185,7 @@ public class Login extends AppCompatActivity  {
                         // onLoginFailed();
                         progressDialog.dismiss();
                     }
-                }, 3000);
+                }, 3000);*/
     }
 
 
@@ -200,7 +201,9 @@ public class Login extends AppCompatActivity  {
 
                 // TODO: Implement successful signup logic here
                 // By default we just finish the Activity and log them in automatically
-               this.finish();
+                finish();
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -212,14 +215,14 @@ public class Login extends AppCompatActivity  {
     }
 
     public void onLoginSuccess() {
-        _loginButton.setEnabled(true);
+        _loginButton.setEnabled(false);
         finish();
     }
 
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
-        //_loginButton.setEnabled(true);
+        _loginButton.setEnabled(true);
 
 
     }
@@ -326,13 +329,14 @@ public class Login extends AppCompatActivity  {
         supportInvalidateOptionsMenu();
     }
     private void showErrorDialog(String message) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(Login.this,
+                R.style.AppTheme_Dark_Dialog)
                 .setTitle("Error")
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-        login();
+        onLoginFailed();
     }
 
     private class AuthResultHandler implements Firebase.AuthResultHandler {
@@ -348,12 +352,14 @@ public class Login extends AppCompatActivity  {
             mAuthProgressDialog.hide();
             Log.i(TAG, provider + " auth successful");
             setAuthenticatedUser(authData);
+            onLoginSuccess();
         }
 
         @Override
         public void onAuthenticationError(FirebaseError firebaseError) {
             mAuthProgressDialog.hide();
             showErrorDialog(firebaseError.toString());
+            onLoginFailed();
         }
     }
     /* ************************************
@@ -364,11 +370,12 @@ public class Login extends AppCompatActivity  {
         if (token != null) {
             mAuthProgressDialog.show();
             mFirebaseRef.authWithOAuthToken("facebook", token.getToken(), new AuthResultHandler("facebook"));
+            onLoginSuccess();
         } else {
             // Logged out of Facebook and currently authenticated with Firebase using Facebook, so do a logout
             if (this.mAuthData != null && this.mAuthData.getProvider().equals("facebook")) {
                 mFirebaseRef.unauth();
-                setAuthenticatedUser(null);
+                setAuthenticatedUser(null);logout();
             }
         }
     }

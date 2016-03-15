@@ -68,8 +68,6 @@ String pickedDate;
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
     {
 
-
-        int locationSetting = 1;
         Uri DescriptionForWorkoutIdUri = EasyFitnessContract.WorkOutOptions
                 .buildWorkoutDescriptionDisplay();
 
@@ -109,7 +107,6 @@ String pickedDate;
                         "**********"+desc+"************"+mAdapter
                         .swichbtn_flag,
                 Toast.LENGTH_SHORT).show();
-
         mAdapter.selected_desc = desc;
         mAdapter.notifyDataSetChanged();
 

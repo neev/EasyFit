@@ -69,11 +69,14 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
 
                 UserDetailEntry.COLUMN_USER_CREATED_DATE + " DATE , " +
                 UserDetailEntry.COLUMN_USER_UPDATED_DATE + " DATE , " +
+                UserDetailEntry.KEY_NAME + " TEXT, " +
+                UserDetailEntry.KEY_IMAGE + " TEXT );";
 
-                // To assure the application have just one weather entry per day
+
+                /*// To assure the application have just one weather entry per day
                 // per location, it's created a UNIQUE constraint with REPLACE strategy
                 " UNIQUE (" + UserDetailEntry.COLUMN_USER_CREATED_DATE + ", " +
-                UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + ") ON CONFLICT REPLACE);";
+                UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + ") ON CONFLICT REPLACE);";*/
 
 
         final String SQL_CREATE_USERWORKOUT_RECORD_TABLE = "CREATE TABLE " + UserWorkOutRecord.TABLE_NAME +
@@ -92,7 +95,11 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
                 UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_YEAR + " INTEGER ," +
                 UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_MONTH + " INTEGER , " +
                 UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DATE + " INTEGER , " +
-                UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DAY + " TEXT  );";
+                UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DAY + " TEXT, " +
+                UserWorkOutRecord.COLUMN_FLAG + " INTEGER, " +
+                UserWorkOutRecord.COLUMN_WEEKLY_FLAG + " INTEGER " +
+
+                " );";
 
                 /*// Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + ") REFERENCES " +

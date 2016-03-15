@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
+import com.example.android.easyfitness.sync.SunshineSyncAdapter;
 
 import java.util.HashMap;
 
@@ -50,6 +51,9 @@ public class WorkoutHistory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_history);
+
+        SunshineSyncAdapter.syncImmediately(this);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -65,7 +65,8 @@ public class EasyFitnessContract {
         public static final String COLUMN_USER_GOALWEIGHT = "user_goal_weight";
         public static final String COLUMN_USER_CREATED_DATE = "user_create_date";
         public static final String COLUMN_USER_UPDATED_DATE = "user_updated_date";
-
+        public static final String KEY_NAME = "image_name";
+        public static final String KEY_IMAGE = "image_data";
 
         public static Uri buildUserDetailUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -163,6 +164,8 @@ public class EasyFitnessContract {
         public static final String COLUMN_WORKOUT_RECORDED_DATE_MONTH = "workout_recorded_month";
         public static final String COLUMN_WORKOUT_RECORDED_DATE_DATE = "workout_recorded_date";
         public static final String COLUMN_WORKOUT_RECORDED_DATE_DAY = "workout_recorded_day";
+        public static final String COLUMN_FLAG = "flag";
+        public static final String COLUMN_WEEKLY_FLAG = "weekly_flag";
 
         public static Uri buildWorkoutUri(long id)
         {

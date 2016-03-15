@@ -4,6 +4,9 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -12,7 +15,9 @@ import android.text.format.Time;
 import com.example.android.easyfitness.data.EasyFitnessContract;
 import com.example.android.easyfitness.data.UserDetails;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by neeraja on 3/11/2016.
@@ -51,16 +56,19 @@ public class Utilities {
         return week_day;
     }
 
-    static public int getWeekName (String week_day_name){
+    static public int today_flowerimage (int flag){
         int flowerImage;
-        switch (week_day_name) {
-            case "Sunday": flowerImage = R.drawable.f1;break;
-            case "Monday": flowerImage = R.drawable.f2;break;
-            case "Tuesday": flowerImage = R.drawable.f3;break;
-            case "Wednesday": flowerImage = R.drawable.f4;break;
-            case "Thursday": flowerImage = R.drawable.f5;break;
-            case "Friday": flowerImage = R.drawable.f6;break;
-            case "Saturday": flowerImage = R.drawable.f7;break;
+        switch (flag) {
+            case 0: flowerImage = R.drawable.f0;break;
+            case 1: flowerImage = R.drawable.f1;break;
+            case 2: flowerImage = R.drawable.f2;break;
+            case 3: flowerImage = R.drawable.f3;break;
+            case 4: flowerImage = R.drawable.f4;break;
+            case 5: flowerImage = R.drawable.f5;break;
+            case 6: flowerImage = R.drawable.f6;break;
+            case 7: flowerImage = R.drawable.f7;break;
+            case 8: flowerImage = R.drawable.f8;break;
+
 
             default: flowerImage =R.drawable.f8;
         }
@@ -187,8 +195,37 @@ public class Utilities {
         return userDeatilEnteredId;
     }
 
+    // update user info in the local db with profile image
+
+    static public int updateUserAccountInfowithProfileImage(Context c,String userAuthId,String
+                                                            imageName, String image)throws
+            SQLiteException {
+
+            // Now that the content provider is set up, inserting rows of data is pretty simple.
+            // First create a ContentValues object to hold the data you want to insert.
+            ContentValues userAccountInfoValues = new ContentValues();
+
+            // Then add the data, along with the corresponding name of the data type,
+            // so the content provider knows what kind of value is being inserted.
+            userAccountInfoValues.put(EasyFitnessContract.UserDetailEntry.KEY_NAME,
+                    imageName);
+            userAccountInfoValues.put(EasyFitnessContract.UserDetailEntry.KEY_IMAGE,
+                    image);
+
+        int updateImageUri = c.getContentResolver().update(
+                EasyFitnessContract.UserDetailEntry.CONTENT_URI,
+                userAccountInfoValues,
+                EasyFitnessContract.UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ?",
+                new String[]{userAuthId});
+        System.out.println("PROFILE IMAGE SUCCESSFULL UPDATED IN local DB");
+        // Wait, that worked?  Yes!
+        return updateImageUri;
+    }
+
+
+
     static public long addUserRecordedWorkout(Context c, String userauthId, String workout_desc, int
-            workout_duration,int year,int month,int date,String day) {
+            workout_duration,int year,int month,int date,String day,int flag) {
         long locationId;
         /*// First, check if the location with this city name exists in the db
         Cursor userRecoredeworkoutCursor = c.getContentResolver().query(
@@ -206,6 +243,10 @@ public class Utilities {
         //else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
             // First create a ContentValues object to hold the data you want to insert.
+
+
+
+
             ContentValues userRecoredeworkoutValues = new ContentValues();
 
             // Then add the data, along with the corresponding name of the data type,
@@ -225,6 +266,8 @@ public class Utilities {
                     .COLUMN_WORKOUT_RECORDED_DATE_DATE, date);
             userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord
                     .COLUMN_WORKOUT_RECORDED_DATE_DAY, day);
+            userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord
+                .COLUMN_WORKOUT_RECORDED_DATE_DAY, day);
 
 
             // Finally, insert location data into the database.
@@ -241,5 +284,49 @@ public class Utilities {
         // Wait, that worked?  Yes!
         return locationId;
     }
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
+    public static String mDay_string(int mDay){
+        String _day_string = "";
+
+
+        switch (mDay) {
+            case 1 : _day_string = "Sunday"; break;
+            case 2 : _day_string = "Monday"; break;
+            case 3 : _day_string = "Tuesday"; break;
+            case 4 : _day_string = "Wednesday"; break;
+            case 5 : _day_string = "Thursday"; break;
+            case 6 : _day_string = "Friday"; break;
+            case 7 : _day_string = "Saturday"; break;
+            default: _day_string = "Saturday"; break;
+
+        }
+        return _day_string;
+    }
+
+    public static int[] mCurrentDate_int(){
+        int mYear;
+        int mMonth;
+        int mDate;
+        int mDay;
+        final Calendar current_date = Calendar.getInstance();
+        mYear = current_date.get(Calendar.YEAR);
+        mMonth = current_date.get(Calendar.MONTH);
+        mDate = current_date.get(Calendar.DAY_OF_MONTH);
+        mDay = current_date.get(Calendar.DAY_OF_WEEK);
+        int[] currentDate = {mYear,mMonth,mDate,mDay};
+        return currentDate;
+    }
+
+
 
 }

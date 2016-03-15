@@ -57,6 +57,8 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
         System.out.println("HISTORY VALUES: "+cursor.getString(COL_DESC)+cursor.getString
                 (COL_DURATION));
 
+
+
     }
 
 

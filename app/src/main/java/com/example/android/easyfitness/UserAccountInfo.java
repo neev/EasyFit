@@ -118,6 +118,7 @@ public class UserAccountInfo extends AppCompatActivity {
         int nweight = Integer.parseInt(weight);
 
         UserDetails userObject = new UserDetails(name,email,nage,nweight);
+
         Firebase userRef = mFirebaseRef.child("users").child(authId);
         userRef.push().setValue(userObject, new Firebase.CompletionListener() {
 
@@ -155,10 +156,13 @@ if(selectedImage != null) {
             }
         }
     });
+
+    int updatedProfileImage = Utilities.updateUserAccountInfowithProfileImage(getBaseContext(),
+            authId,"Profile Image",imageFile);
+
 }
 
-        long userinfo_stored =  Utilities.addUserAccountInfo(getBaseContext(),userObject,authId);
-        Toast.makeText(getBaseContext(), "Data saved successfully  : " + userinfo_stored, Toast.LENGTH_LONG)
+        Toast.makeText(getBaseContext(), "Data saved successfully  : " + userInfo_stored, Toast.LENGTH_LONG)
                 .show();
         finish();
 

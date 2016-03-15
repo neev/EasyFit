@@ -38,6 +38,8 @@ public class SessionManagement {
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PICKED_DATE = "picked_date";
+    public static final String FLAG = "flag";
+    public static final String WEEKLY_FLAG = "weekly_flag";
 
     // Constructor
     public SessionManagement(Context context) {
@@ -58,12 +60,21 @@ public class SessionManagement {
         // Storing email in pref
         editor.putString(KEY_EMAIL, email);
 
+
         // commit changes
         editor.commit();
     }
 
     public SessionManagement createPickedDateSession(String date){
-        editor.putString(KEY_PICKED_DATE,date);
+        editor.putString(KEY_PICKED_DATE, date);
+        editor.commit();
+        return null;
+    }
+
+    public SessionManagement createFlagSession(int flag,int weekly_flag){
+        editor.putInt(FLAG, flag);
+        editor.putInt(WEEKLY_FLAG, weekly_flag);
+
         editor.commit();
         return null;
     }
@@ -78,7 +89,8 @@ public class SessionManagement {
 
         // return user
         return user;
-    }public HashMap<String, String> getPickedDate(){
+    }
+    public HashMap<String, String> getPickedDate(){
         HashMap<String, String> pickedDate = new HashMap<String, String>();
         // user name
         pickedDate.put(KEY_PICKED_DATE, pref.getString(KEY_PICKED_DATE, null));
@@ -86,6 +98,16 @@ public class SessionManagement {
 
         // return user
         return pickedDate;
+    }
+    public HashMap<String, Integer> getFlag_Session(){
+        HashMap<String, Integer> flower_flag = new HashMap<>();
+        // user name
+        flower_flag.put(FLAG, pref.getInt(FLAG,0));
+        flower_flag.put(FLAG, pref.getInt(WEEKLY_FLAG,0));
+
+
+        // return user
+        return flower_flag;
     }
 
 

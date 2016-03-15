@@ -9,6 +9,10 @@ public class UserDetails {
     private String email;
     private int age;
     private int weight;
+    private String imageName;
+    private Byte[] image;
+
+
 
     public String getFullName() {
         return fullName;
@@ -41,7 +45,21 @@ public class UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+    public String getImageName() {
+        return imageName;
+    }
 
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public Byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(Byte[] image) {
+        this.image = image;
+    }
     public UserDetails() {}
     public UserDetails(String fullName, String email,int age, int weight) {
         this.fullName = fullName;
@@ -50,6 +68,14 @@ public class UserDetails {
         this .weight = weight;
     }
 
+    public UserDetails(String fullName, String email, int age, int weight, String imageName, Byte[] image) {
+        this.fullName = fullName;
+        this.email = email;
+        this.age = age;
+        this.weight = weight;
+        this.imageName = imageName;
+        this.image = image;
+    }
 }
 /*Firebase alanRef = ref.child("users").child("alanisawesome");
 User alan = new User("Alan Turing", 1912);
