@@ -59,12 +59,12 @@ public class EasyFitnessContract {
         public static final String _ID = "_id";
         public static final String COLUMN_USERDEATIL_AUTHENTIFICATION_ID = "userdeatil_authid";
         public static final String COLUMN_USER_NAME = "user_name";
-        public static final String COLUMN_USER_AGE = "user_age";
         public static final String COLUMN_USER_WEIGHT = "user_weight";
         public static final String COLUMN_USER_EMAIL = "user_email";
         public static final String COLUMN_USER_GOALWEIGHT = "user_goal_weight";
-        public static final String COLUMN_USER_CREATED_DATE = "user_create_date";
+        public static final String COLUMN_USER_CREATED = "user_create_date";
         public static final String COLUMN_USER_UPDATED_DATE = "user_updated_date";
+        public static final String COLUMN_USER_AGE = "enter_age";
         public static final String KEY_NAME = "image_name";
         public static final String KEY_IMAGE = "image_data";
 
@@ -75,12 +75,12 @@ public class EasyFitnessContract {
                     String userSetting, long startDate) {
                 long normalizedDate = normalizeDate(startDate);
                 return CONTENT_URI.buildUpon().appendPath(userSetting)
-                        .appendQueryParameter(COLUMN_USER_CREATED_DATE, Long.toString(normalizedDate)).build();
+                        .appendQueryParameter(COLUMN_USER_CREATED, Long.toString(normalizedDate)).build();
             }
 
-            public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
+            public static Uri buildUserDetailswithAuthId(String locationSetting) {
                 return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                        .appendPath(Long.toString(normalizeDate(date))).build();
+                       .build();
             }
 
 

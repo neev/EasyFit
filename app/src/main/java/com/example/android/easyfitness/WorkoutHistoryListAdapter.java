@@ -1,6 +1,7 @@
 package com.example.android.easyfitness;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
@@ -36,8 +37,8 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        ViewHolderWorkoutHistory mHolder = (ViewHolderWorkoutHistory) view.getTag();
+    public void bindView(View view, final Context context, Cursor cursor) {
+        final ViewHolderWorkoutHistory mHolder = (ViewHolderWorkoutHistory) view.getTag();
 
 
         mHolder.recorded_workout_desc.setText(cursor.getString(COL_DESC));
@@ -54,11 +55,25 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
                 .append(_year).append(" "));
 
         mHolder.recorded_date.setText(_displayDate);
-        System.out.println("HISTORY VALUES: "+cursor.getString(COL_DESC)+cursor.getString
+        System.out.println("HISTORY VALUES: " + cursor.getString(COL_DESC) + cursor.getString
                 (COL_DURATION));
 
+       /* mHolder.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //add Share Action
+                context.startActivity(createShareForecastIntent(mHolder.recorded_date.getText()+ " "
+                        + mHolder.recorded_workout_desc.getText() + " " +mHolder.recorded_workout_duration.getText() + " "));
+            }
+        });*/
 
-
+    }
+    public Intent createShareForecastIntent(String ShareText) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, ShareText + FOOTBALL_SCORES_HASHTAG);
+        return shareIntent;
     }
 
 

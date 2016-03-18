@@ -62,13 +62,11 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
                 UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " INTEGER NOT NULL, " +
                 UserDetailEntry.COLUMN_USER_NAME + " TEXT , " +
                 UserDetailEntry.COLUMN_USER_EMAIL + " TEXT , " +
-                UserDetailEntry.COLUMN_USER_AGE + " INTEGER ," +
-
                 UserDetailEntry.COLUMN_USER_WEIGHT + " INTEGER , " +
                 UserDetailEntry.COLUMN_USER_GOALWEIGHT + " INTEGER , " +
-
-                UserDetailEntry.COLUMN_USER_CREATED_DATE + " DATE , " +
-                UserDetailEntry.COLUMN_USER_UPDATED_DATE + " DATE , " +
+                UserDetailEntry.COLUMN_USER_CREATED + " TEXT , " +
+                UserDetailEntry.COLUMN_USER_UPDATED_DATE + " TEXT , " +
+                UserDetailEntry.COLUMN_USER_AGE + " INTEGER," +
                 UserDetailEntry.KEY_NAME + " TEXT, " +
                 UserDetailEntry.KEY_IMAGE + " TEXT );";
 

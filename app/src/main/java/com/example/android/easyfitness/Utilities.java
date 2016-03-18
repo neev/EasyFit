@@ -3,7 +3,7 @@ package com.example.android.easyfitness;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -148,18 +148,15 @@ public class Utilities {
     static public long addUserAccountInfo(Context c,UserDetails userObject,String userAuthId) {
         long userDeatilEnteredId;
 
-        // First, check if the location with this city name exists in the db
+        /*// First, check if the location with this city name exists in the db
         Cursor userAccountInfoCursor = c.getContentResolver().query(
                 EasyFitnessContract.UserDetailEntry.CONTENT_URI,
                 new String[]{EasyFitnessContract.UserDetailEntry._ID},
                 EasyFitnessContract.UserDetailEntry.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ?",
                 new String[]{userAuthId},
                 null);
+*/
 
-        if (userAccountInfoCursor.moveToFirst()) {
-            int userAccountInfoIdIndex = userAccountInfoCursor.getColumnIndex(EasyFitnessContract.UserDetailEntry._ID);
-            userDeatilEnteredId = userAccountInfoCursor.getLong(userAccountInfoIdIndex);
-        } else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
             // First create a ContentValues object to hold the data you want to insert.
             ContentValues userAccountInfoValues = new ContentValues();
@@ -177,7 +174,7 @@ public class Utilities {
             userAccountInfoValues.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_WEIGHT,
                     userObject.getWeight());
             userAccountInfoValues.put(EasyFitnessContract.UserDetailEntry
-                    .COLUMN_USER_CREATED_DATE, System.currentTimeMillis());
+                    .COLUMN_USER_CREATED, System.currentTimeMillis());
 
             // Finally, insert location data into the database.
             Uri insertedUri = c.getContentResolver().insert(
@@ -187,10 +184,10 @@ public class Utilities {
 
             // The resulting URI contains the ID for the row.  Extract the locationId from the Uri.
             userDeatilEnteredId = ContentUris.parseId(insertedUri);
-        }
 
-        userAccountInfoCursor.close();
-        System.out.println("USER DEATILS SUCCESSFULL ENTERED IN local DB");
+
+        //userAccountInfoCursor.close();
+        System.out.println("USER DEATILS SUCCESSFULL ENTERED IN local DB" + userObject.getAge());
         // Wait, that worked?  Yes!
         return userDeatilEnteredId;
     }
@@ -326,6 +323,18 @@ public class Utilities {
         int[] currentDate = {mYear,mMonth,mDate,mDay};
         return currentDate;
     }
+
+
+    public Intent createShareForecastIntent(String ShareText) {
+
+         String EASY_FIT_HASHTAG = "#EASY FIT";
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, ShareText +  EASY_FIT_HASHTAG);
+        return shareIntent;
+    }
+
 
 
 

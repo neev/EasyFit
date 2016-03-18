@@ -1,6 +1,5 @@
 package com.example.android.easyfitness;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -93,7 +92,7 @@ public class Login extends BaseActivity   {
          ***************************************/
         /* Load the Facebook login button and set up the tracker to monitor access token changes */
         mFacebookCallbackManager = CallbackManager.Factory.create();
-        mFacebookLoginButton = (LoginButton) findViewById(R.id.facebooklogin_button);
+      // mFacebookLoginButton = (LoginButton) findViewById(R.id.facebooklogin_button);
         mFacebookAccessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
@@ -160,13 +159,13 @@ public class Login extends BaseActivity   {
             return;
         }
 
-        _loginButton.setEnabled(false);
+        _loginButton.setEnabled(true);
 
-        /*final ProgressDialog progressDialog = new ProgressDialog(Login.this,
+         final ProgressDialog progressDialog = new ProgressDialog(this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
-        progressDialog.show();*/
+        progressDialog.show();
 
 
 
@@ -175,18 +174,35 @@ public class Login extends BaseActivity   {
        //with firebase
         loginWithPassword();
 
-       /* new android.os.Handler().postDelayed(
+        new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
+                        try {
+                            if ((progressDialog != null) && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                            }
+                        } catch (final IllegalArgumentException e) {
+                            // Handle or log or ignore
+                        } catch (final Exception e) {
+                            // Handle or log or ignore
+                        } finally {
+                           // progressDialog = null;
+                        }
+                        // onLoginFailed();
+
                         // On complete call either onLoginSuccess or onLoginFailed
                         onLoginSuccess();
 
-                        // onLoginFailed();
-                        progressDialog.dismiss();
+
                     }
-                }, 3000);*/
+                }, 3000);
     }
 
+
+    @Override
+    protected boolean useToolbar() {
+        return false;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -214,8 +230,10 @@ public class Login extends BaseActivity   {
     }
 
     public void onLoginSuccess() {
-        _loginButton.setEnabled(false);
+        _loginButton.setEnabled(true);
         finish();
+        Intent intent = new Intent(Login.this, MainActivity.class);
+        startActivity(intent);
     }
 
     public void onLoginFailed() {
@@ -250,6 +268,7 @@ public class Login extends BaseActivity   {
     @Override
     protected void onDestroy() {
         super.onDestroy();logout();
+
         // if user logged in with Facebook, stop tracking their token
         if (mFacebookAccessTokenTracker != null) {
             mFacebookAccessTokenTracker.stopTracking();
@@ -328,13 +347,13 @@ public class Login extends BaseActivity   {
         supportInvalidateOptionsMenu();
     }
     private void showErrorDialog(String message) {
-        new AlertDialog.Builder(Login.this,
+     /*   new AlertDialog.Builder(Login.this,
                 R.style.AppTheme_Dark_Dialog)
                 .setTitle("Error")
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+                .show();*/
         onLoginFailed();
     }
 

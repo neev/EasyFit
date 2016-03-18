@@ -22,5 +22,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/flower_imageview" android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" android:layout_marginTop="30dp"
-        android:src="@drawable/clockimage"/>
+        android:src="@drawable/f0"/>
 </RelativeLayout>

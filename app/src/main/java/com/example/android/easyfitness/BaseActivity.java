@@ -3,6 +3,8 @@ package com.example.android.easyfitness;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,9 +19,10 @@ import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.example.android.easyfitness.data.EasyfitnessDbHelper;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 
 public class BaseActivity extends AppCompatActivity implements
@@ -44,7 +47,7 @@ public class BaseActivity extends AppCompatActivity implements
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+
 
     /*@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +84,12 @@ public class BaseActivity extends AppCompatActivity implements
          */
         super.setContentView(fullLayout);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
 
         if (useToolbar()) {
             setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } else {
             toolbar.setVisibility(View.GONE);
         }
@@ -111,6 +115,8 @@ session=new SessionManagement(this);
                     R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
             fullLayout.setDrawerListener(drawerToggle);
+
+
             drawerToggle.syncState();
         } else if (useToolbar() && getSupportActionBar() != null) {
             // Use home/back button instead
@@ -167,8 +173,31 @@ session=new SessionManagement(this);
 
             case R.id.nav_myaccount: {
                 if (session.checkLogin()) {
-                    Intent intent = new Intent(this, UserAccountInfo.class);
-                    startActivity(intent);
+// Session Manager
+                    SessionManagement session = new SessionManagement(getApplicationContext());
+                    // get user data from session
+                    HashMap<String, String> user = session.getUserFirebaseAuthId();
+                    // name
+                    String  authId = user.get(SessionManagement.KEY_NAME);
+                    SQLiteDatabase db=(new EasyfitnessDbHelper(this)).getReadableDatabase();
+                    Cursor cursor=db.rawQuery("SELECT user_name,user_email,user_weight,user_goal_weight," +
+                                    "image_data" +
+                                    " FROM userdetail WHERE userdeatil_authid" +
+                                    " = ?",
+                            new String[]{"" + authId});
+                    int i = 0;
+                    cursor.moveToFirst();
+                   if(cursor.getCount()>0){
+                       Intent intent = new Intent(this, Profile.class);
+                       startActivity(intent);
+                   }
+                    else {
+                       Intent intent = new Intent(this, UserAccountInfo.class);
+                       startActivity(intent);
+                   }
+                    db.close();
+
+
                 }
 
             }
@@ -216,13 +245,13 @@ session=new SessionManagement(this);
             }
             return true;
 
-            case R.id.nav_share:
+            /*case R.id.nav_share:
                 startActivity(new Intent(this, MainActivity.class));
                 return true;
 
             case R.id.nav_send:
                 startActivity(new Intent(this, MainActivity.class));
-                return true;
+                return true;*/
         }
 
         return super.onOptionsItemSelected(item);

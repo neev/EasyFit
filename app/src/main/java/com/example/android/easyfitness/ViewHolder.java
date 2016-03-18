@@ -1,5 +1,6 @@
 package com.example.android.easyfitness;
 
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Switch;

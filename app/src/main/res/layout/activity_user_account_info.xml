@@ -12,38 +12,42 @@
 <RelativeLayout android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
                     android:id="@+id/imagePicker"
                     android:layout_width="fill_parent"
                     android:layout_height="120dp"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
                      >
 
         <ImageView
-            android:id="@+id/imageView"
-            android:scaleType="centerInside"
+            android:id="@+id/imageView_profile"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+
             android:maxHeight="400dp"
             android:src="@drawable/profilepic"
-            android:layout_margin="20dp" android:layout_alignParentLeft="true"/>
+            android:layout_margin="10dp"
+            android:layout_alignParentStart="true"/>
 
         <Button
             android:id="@+id/btn_pick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/imageView"
             android:text="@string/change_image"
-
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:theme="@style/pinkButton"
-            android:layout_gravity="center_horizontal" android:textColor="#ffffff"
+            android:layout_gravity="center_vertical" android:textColor="#ffffff"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:typeface="sans" android:textStyle="bold" android:layout_marginRight="20dp"/>
+            android:typeface="sans" android:textStyle="bold" />
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_toRightOf="@id/imageView_profile"-->
 
-    </RelativeLayout>
+
+
+    </LinearLayout>
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"

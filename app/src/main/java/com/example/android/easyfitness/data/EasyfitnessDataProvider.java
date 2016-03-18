@@ -334,7 +334,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
 
         switch (match) {
             case USER: {
-                normalizeDate(values);
+               // normalizeDate(values);
                 long _id = db.insert(EasyFitnessContract.UserDetailEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
                     returnUri = EasyFitnessContract.UserDetailEntry.buildUserDetailUri(_id);
@@ -351,7 +351,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 break;
             }
             case WORKOUT_RECORD: {
-                normalizeDate(values);
+               // normalizeDate(values);
                 long _id = db.insert(EasyFitnessContract.UserWorkOutRecord.TABLE_NAME, null, values);
                 if ( _id > 0 )
                     returnUri = EasyFitnessContract.UserWorkOutRecord.buildWorkoutUri(_id);
@@ -397,14 +397,14 @@ public class EasyfitnessDataProvider extends ContentProvider {
         return rowsDeleted;
     }
 
-    private void normalizeDate(ContentValues values) {
+    /*private void normalizeDate(ContentValues values) {
         // normalize the date value
         if (values.containsKey(EasyFitnessContract.UserDetailEntry.COLUMN_USER_CREATED_DATE)) {
             long dateValue = values.getAsLong(EasyFitnessContract.UserDetailEntry.COLUMN_USER_CREATED_DATE);
             values.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_CREATED_DATE, EasyFitnessContract.normalizeDate
                     (dateValue));
         }
-    }
+    }*/
 
     @Override
     public int update(
@@ -448,7 +448,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values) {
-                        normalizeDate(value);
+                       // normalizeDate(value);
                         long _id = db.insert(EasyFitnessContract.UserWorkOutRecord.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
