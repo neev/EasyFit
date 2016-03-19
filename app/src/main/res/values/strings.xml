@@ -47,4 +47,8 @@
     <string name="empty_forecast_list">No Workout Records to display</string>
     <string name="test_text">Test</string>
     <string name="title_activity_base">BaseActivity</string>
+
+    <string name="customize">Customize</string>
+    <string name="show_dialog">Show Dialog</string>
+    <string name="undo">Undo</string>
 </resources>
