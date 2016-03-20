@@ -28,7 +28,7 @@ import java.util.HashMap;
 public class BaseActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    private NavigationView navigationView;
+    public NavigationView navigationView;
     private DrawerLayout fullLayout;
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
@@ -87,6 +87,8 @@ public class BaseActivity extends AppCompatActivity implements
         toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
 
+
+
         if (useToolbar()) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -109,7 +111,8 @@ public class BaseActivity extends AppCompatActivity implements
 
     protected void setUpNavView() {
         navigationView.setNavigationItemSelectedListener(this);
-session=new SessionManagement(this);
+        session=new SessionManagement(this);
+
         if (useDrawerToggle()) { // use the hamburger menu
             drawerToggle = new ActionBarDrawerToggle(this, fullLayout, toolbar,
                     R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -159,14 +162,15 @@ session=new SessionManagement(this);
                 return true;
 
             case R.id.nav_login: {
-                if (session.checkLogin())
-                    item.setVisible(false);
+                if (!session.checkLogin()) {
 
-                navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
-                Intent intent = new Intent(this, Login.class);
-                startActivity(intent);
-                Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_LONG)
-                        .show();
+                    navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+                    Intent intent = new Intent(this, Login.class);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Open login page", Toast.LENGTH_LONG)
+                            .show();
+                }
 
             }
             return true;
@@ -233,25 +237,20 @@ session=new SessionManagement(this);
             return true;
 
             case R.id.nav_logout: {
+                if (session.checkLogin()) {
 
-                session.logoutUser();
+                    session.logoutUser();
+                    navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
 
-                item.setVisible(false);
-                navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
-
-                Toast.makeText(this, "Please LOG IN !", Toast.LENGTH_LONG)
-                        .show();
+                    Toast.makeText(this, "Please LOG IN !", Toast.LENGTH_LONG)
+                            .show();
+                }
 
             }
             return true;
 
-            /*case R.id.nav_share:
-                startActivity(new Intent(this, MainActivity.class));
-                return true;
 
-            case R.id.nav_send:
-                startActivity(new Intent(this, MainActivity.class));
-                return true;*/
         }
 
         return super.onOptionsItemSelected(item);
@@ -312,8 +311,15 @@ session=new SessionManagement(this);
 
     protected void onResume() {
         super.onResume();
-       /* navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
-        navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);*/
+
+
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+            Toast.makeText(getApplicationContext(), "check to show log in or log out", Toast
+                    .LENGTH_LONG)
+                    .show();
+
+
     }
 }
 

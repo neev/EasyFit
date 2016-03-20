@@ -292,6 +292,10 @@ public class Login extends BaseActivity   {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
+
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -356,6 +360,8 @@ public class Login extends BaseActivity   {
                 .show();*/
         onLoginFailed();
     }
+
+
 
     private class AuthResultHandler implements Firebase.AuthResultHandler {
 

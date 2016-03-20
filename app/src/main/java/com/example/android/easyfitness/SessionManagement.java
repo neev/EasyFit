@@ -144,6 +144,16 @@ public class SessionManagement {
             editor.clear();
             editor.commit();
 
+           /* try {
+                Login.class.newInstance().logout();
+            } catch (InstantiationException e) {
+                System.out.println("Logout error in session " + e.getMessage());
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                System.out.println("Logout error in session " + e.getMessage());
+            }
+*/
             /*// After logout redirect user to Loing Activity
             Intent i = new Intent(_context, Login.class);
             // Closing all the Activities
