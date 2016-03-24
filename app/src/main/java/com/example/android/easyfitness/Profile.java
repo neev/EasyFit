@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
 import com.example.android.easyfitness.data.EasyfitnessDbHelper;
+import com.example.android.easyfitness.data.UserDetails;
 
 import java.util.HashMap;
 
@@ -23,7 +24,7 @@ public class Profile extends BaseActivity   {
     private ImageView mProfileImage;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
-
+public UserDetails parcel_userObject;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,7 @@ public class Profile extends BaseActivity   {
         text_name.setText(name);
         text_email.setText(email);
         text_age.setText(String.valueOf(age));
-        text_weight.setText(String.valueOf(weight)+ " lbs");
+        text_weight.setText(String.valueOf(weight) + " lbs");
 
        /* DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -109,6 +110,8 @@ public class Profile extends BaseActivity   {
 
 System.out.println("+++++++++++" + name+email+weight+goal_weight+"***"+selectedImage+ "////"+
         created_date);
+        parcel_userObject = new UserDetails(name,email,age,weight);
+        System.out.println("Profile Page" +parcel_userObject.getFullName()+email+age+weight);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +120,7 @@ System.out.println("+++++++++++" + name+email+weight+goal_weight+"***"+selectedI
                 Snackbar.make(view, "Edit the Profile info", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Intent intent = new Intent(Profile.this, UserAccountInfo.class);
+                intent.putExtra("USER_PARCEL_OBJECT", parcel_userObject);
                 startActivity(intent);
 
             }

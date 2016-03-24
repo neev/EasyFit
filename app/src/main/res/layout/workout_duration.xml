@@ -33,7 +33,7 @@
                 android:id="@+id/workout_duration_button"
                 android:text="@string/workout_duration"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-
+                android:visibility="invisible"
                 android:textColor="#ffffff" android:textStyle="bold" android:background="@color/blue"
                 android:padding="10dp" android:layout_weight="0.27"/>
 
@@ -48,7 +48,7 @@
 
     </FrameLayout>
     </LinearLayout>
-    <FrameLayout
+    <!--<FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp">
@@ -65,6 +65,6 @@
             android:textColor="#ffffff"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:typeface="sans" android:textStyle="bold"/>
-    </FrameLayout>
+    </FrameLayout>-->
 
 </LinearLayout>

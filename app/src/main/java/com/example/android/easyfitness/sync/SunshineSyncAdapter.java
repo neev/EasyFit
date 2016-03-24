@@ -93,19 +93,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 System.out.println("There are " + snapshot.getChildrenCount() + " workout options");
-                for (DataSnapshot workoutSnapshot : snapshot.getChildren()) {
-                    //BlogPost post = postSnapshot.getValue(BlogPost.class);
-                    WorkoutOptions workoutObject = workoutSnapshot.getValue(WorkoutOptions.class);
-                    System.out.println(workoutObject.getId() + " - " + workoutObject
-                            .getWorkout());
+
+                    for (DataSnapshot workoutSnapshot : snapshot.getChildren()) {
+                        //BlogPost post = postSnapshot.getValue(BlogPost.class);
+                        WorkoutOptions workoutObject = workoutSnapshot.getValue(WorkoutOptions.class);
+                        System.out.println(workoutObject.getId() + " - " + workoutObject
+                                .getWorkout());
 
 
-                    ContentValues workout_values = new ContentValues();
-                    workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_ID, workoutObject.getId());
-                    workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION, workoutObject.getWorkout());
-                    values.add(workout_values);
-                    System.out.println("values size : " + values.size());
-                }
+                        ContentValues workout_values = new ContentValues();
+                        workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_ID, workoutObject.getId());
+                        workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION, workoutObject.getWorkout());
+                        values.add(workout_values);
+                        System.out.println("values size : " + values.size());
+                    }
+
                 if (flag == 1) {
                     System.out.println("*****inserting values*****");
                     ContentValues[] cvArray = new ContentValues[values.size()];
@@ -124,6 +126,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
         });
+
 // add to database
 
        /* /// To read workot record with authid

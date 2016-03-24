@@ -112,8 +112,8 @@ public class CreateNewAccount extends BaseActivity  {
         boolean valid = true;
 
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+         email = _emailText.getText().toString();
+         password = _passwordText.getText().toString();
 
 
 
@@ -140,16 +140,38 @@ public class CreateNewAccount extends BaseActivity  {
             @Override
             public void onSuccess(Map<String, Object> result) {
                 System.out.println("Successfully created user account with uid: " + result.get("uid"));
-                Toast.makeText(getBaseContext()," new account created",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), " new account created", Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onError(FirebaseError firebaseError) {
                 // there was an error
-                Toast.makeText(getBaseContext(),"new account not created",Toast.LENGTH_SHORT)
+                Toast.makeText(getBaseContext(), "new account not created", Toast.LENGTH_SHORT)
                         .show();
             }
         });
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+
+        outState.putString("USER_EMAIL", email);
+        outState.putString("USER_PASSWORD", password);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+
+
+        email = savedInstanceState.getString("USER_EMAIL");
+        password = savedInstanceState.getString("USER_PASSWORD");
+
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
 }

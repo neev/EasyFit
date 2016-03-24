@@ -44,7 +44,8 @@ public class UserAccountInfo extends BaseActivity  {
     EditText _age;
     @Bind(R.id.btn_save)
     Button _saveButton;
-    Button pickImage;
+    Button pickImageButton;
+    Boolean isPickImageButtonClicked = false;
     //Image picker
     private final int PICK_IMAGE_REQUEST = 1;
     private ImageView imageView;
@@ -54,8 +55,11 @@ public class UserAccountInfo extends BaseActivity  {
     /* Listener for Firebase session changes */
     private Firebase.AuthStateListener mAuthStateListener;
     String authId;
-    String email;
-
+    String email ="";
+    String name ="";
+    String age="";
+    String weight ="";
+    Intent photoPickerIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,19 +67,20 @@ public class UserAccountInfo extends BaseActivity  {
         ButterKnife.bind(this);
         // Initialize Firebase with the application context
         Firebase.setAndroidContext(this);
+        if (savedInstanceState == null) {
+            pickImageButton = (Button) findViewById(R.id.btn_pick);
+            pickImageButton.setOnClickListener(new View.OnClickListener() {
 
-         pickImage = (Button) findViewById(R.id.btn_pick);
-        pickImage.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"),PICK_IMAGE_REQUEST);
-            }
-        });
-
+                @Override
+                public void onClick(View view) {
+                    isPickImageButtonClicked = true;
+                     photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), PICK_IMAGE_REQUEST);
+                }
+            });
+        }
 
 
 
@@ -87,11 +92,22 @@ public class UserAccountInfo extends BaseActivity  {
         // name
          authId = user.get(SessionManagement.KEY_NAME);
 
-        // email
-         email = user.get(SessionManagement.KEY_EMAIL);
+            // email
+           // email = user.get(SessionManagement.KEY_EMAIL);
 
+        Intent intent = getIntent();
+        if(intent.getParcelableExtra("USER_PARCEL_OBJECT")!=null) {
+            UserDetails user_object = intent.getParcelableExtra("USER_PARCEL_OBJECT");
+            name = user_object.getFullName();
+            email = user_object.getEmail();
+            int age_int = user_object.getAge();
+            int weight_int = user_object.getWeight();
+            age = String.valueOf(age_int);
+            weight = String.valueOf(weight_int);
+        }
 
-        _emailText.setText(email);
+        System.out.println("Intent EXTRA" + name+email+age+weight);
+
 
         /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseRef = new Firebase(getResources().getString(R.string.firebase_url));
@@ -167,10 +183,10 @@ public class UserAccountInfo extends BaseActivity  {
     }
     public void createUserdeatils_Firebase(){
 
-        String name = _name.getText().toString();
-        String email= _emailText.getText().toString();
-        String age = _age.getText().toString();
-        String weight= _weight.getText().toString();
+         name = _name.getText().toString();
+         email= _emailText.getText().toString();
+         age = _age.getText().toString();
+         weight= _weight.getText().toString();
         int nage= Integer.parseInt(age);
         int nweight = Integer.parseInt(weight);
 
@@ -235,10 +251,10 @@ if(selectedImage != null) {
         boolean valid = true;
 
 
-        String name = _name.getText().toString();
-        String email= _emailText.getText().toString();
-        String age = _age.getText().toString();
-        String weight= _weight.getText().toString();
+         name = _name.getText().toString();
+         email= _emailText.getText().toString();
+         age = _age.getText().toString();
+         weight= _weight.getText().toString();
 
 
 
@@ -296,7 +312,8 @@ if(selectedImage != null) {
             Uri uri = data.getData();
 
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                Bitmap bitmap_profile_pic = MediaStore.Images.Media.getBitmap(getContentResolver(),
+                        uri);
                /* // Log.d(TAG, String.valueOf(bitmap));
                 RoundedBitmapDrawable circularBitmapDrawable =
                         RoundedBitmapDrawableFactory.create(getBaseContext().getResources(), bitmap);
@@ -321,9 +338,10 @@ if(selectedImage != null) {
                                 int color = palette.getDarkVibrantColor(swatch.getTitleTextColor());
                             }
                         });*/
-                imageView.setImageBitmap(bitmap);
-                pickImage.setText("change photo");
-                selectedImage = bitmap;
+                selectedImage = bitmap_profile_pic;
+                imageView.setImageBitmap(selectedImage);
+                pickImageButton.setText("change photo");
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -335,5 +353,69 @@ if(selectedImage != null) {
 
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(selectedImage !=null){
+            ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
+                if(imageView !=null){
+                    imageView.setImageBitmap(selectedImage);
+                }
+        }
+        if(isPickImageButtonClicked == true){
+            pickImageButton = (Button) findViewById(R.id.btn_pick);
+            pickImageButton.setText(" Change Photo");
+            pickImageButton.setOnClickListener(new View.OnClickListener() {
 
+                @Override
+                public void onClick(View view) {
+                    isPickImageButtonClicked = true;
+                    photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), PICK_IMAGE_REQUEST);
+                }
+            });
+        }
+// Get the extra text from the Intent
+        System.out.println("Intent EXTRA" + name+email+age+weight);
+
+        _name.setText(name);
+        _emailText.setText(email);
+        _age.setText(age);
+        _weight.setText(weight);
+
+    }
+
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+
+        outState.putString("USER_EMAIL", email);
+        outState.putString("USER_NAME", name);
+        outState.putString("USER_AGE", age);
+        outState.putString("USER_WEIGHT", weight);
+        outState.putBoolean("USER_PROFILE_PIC_CHECKED", isPickImageButtonClicked);
+        if(selectedImage != null){
+            outState.putByteArray("USER_PROFILE_PICTURE",Utilities.getBytes(selectedImage));
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+
+
+        email = savedInstanceState.getString("USER_EMAIL");
+        name = savedInstanceState.getString("USER_NAME");
+        age = savedInstanceState.getString("USER_AGE");
+        weight = savedInstanceState.getString("USER_WEIGHT");
+        isPickImageButtonClicked = savedInstanceState.getBoolean("USER_PROFILE_PIC_CHECKED");
+        selectedImage = Utilities.getImage(savedInstanceState.getByteArray("USER_PROFILE_PICTURE"));
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }

@@ -183,21 +183,27 @@ public class EasyFitnessContract {
             return CONTENT_URI.buildUpon().appendPath(authId).build();
 
         }
+        public static Uri buildWorkoutRecordWithUserAuthIdandMonth(String authId, int
+                month) {
+            return CONTENT_URI.buildUpon().appendPath(authId)
+                    .appendPath(Integer.toString(month))
+                    .build();
+        }
 
         public static String getUserAuthIdFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
         public static int getworkoutRecordYearFromUri(Uri uri) {
-            return Integer.parseInt(uri.getPathSegments().get(2));
-        }
-        public static int getworkoutRecordMonthFromUri(Uri uri) {
-            return Integer.parseInt(uri.getPathSegments().get(3));
-        }
-        public static int getworkoutRecordDateFromUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(4));
         }
-        public static String getworkoutRecordDayFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
+        public static int getworkoutRecordMonthFromUri(Uri uri) {
+            return Integer.parseInt(uri.getPathSegments().get(2));
         }
+        public static int getworkoutRecordDateFromUri(Uri uri) {
+            return Integer.parseInt(uri.getPathSegments().get(3));
+        }
+        /*public static String getworkoutRecordDayFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }*/
     }
 }

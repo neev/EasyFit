@@ -411,5 +411,24 @@ public class Login extends BaseActivity   {
         mAuthProgressDialog.show();
         mFirebaseRef.authWithPassword(email, password, new AuthResultHandler("password"));
     }
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
 
+        outState.putString("USER_EMAIL", email);
+        outState.putString("USER_PASSWORD", password);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+
+
+        email = savedInstanceState.getString("USER_EMAIL");
+        password = savedInstanceState.getString("USER_PASSWORD");
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }

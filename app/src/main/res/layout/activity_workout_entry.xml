@@ -39,6 +39,8 @@
         android:id = "@+id/workout_list"
         android:divider="@android:color/transparent"
         android:dividerHeight="15sp"
+        android:choiceMode="singleChoice"
+        android:descendantFocusability="beforeDescendants"
         android:layout_gravity="center_horizontal|top"/>
 
     <!-- empty list -->

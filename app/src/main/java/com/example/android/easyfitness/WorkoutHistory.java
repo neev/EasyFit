@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.android.easyfitness.data.EasyFitnessContract;
 import com.example.android.easyfitness.sync.SunshineSyncAdapter;
 
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class WorkoutHistory extends AppCompatActivity {
@@ -106,7 +107,7 @@ public class WorkoutHistory extends AppCompatActivity {
     public static class PlaceholderFragment extends Fragment implements LoaderManager
             .LoaderCallbacks<Cursor>{
         public static final int SCORES_LOADER = 0;
-        private String[] fragmentdate = new String[1];
+        public int _placeholderNumber = 0;
         public WorkoutHistoryListAdapter mAdapter;
         /**
          * The fragment argument representing the section number for this
@@ -123,8 +124,8 @@ public class WorkoutHistory extends AppCompatActivity {
          */
 
         private static final String[] WORKOUT_RECORD_COLUMNS = {
-               EasyFitnessContract.UserWorkOutRecord._ID +" " + " as "+" "+
-               EasyFitnessContract.UserWorkOutRecord._ID,
+                EasyFitnessContract.UserWorkOutRecord._ID +" " + " as "+" "+
+                        EasyFitnessContract.UserWorkOutRecord._ID,
                 EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_DURATION ,
                 EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_DESCRIPTION,
                 EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_YEAR,
@@ -132,10 +133,7 @@ public class WorkoutHistory extends AppCompatActivity {
                 EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DATE,
                 EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DAY
         };
-        public void setFragmentDate(int date)
-        {
-            fragmentdate[0] = String.valueOf(PlaceholderFragment.newInstance(1));
-        }
+
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -151,7 +149,7 @@ public class WorkoutHistory extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_workout_history, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
+            _placeholderNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             View emptyView = rootView.findViewById(R.id.listview_forecast_empty);
 
             ListView score_list = (ListView) rootView.findViewById(R.id.scores_list);
@@ -176,9 +174,26 @@ public class WorkoutHistory extends AppCompatActivity {
             HashMap<String, String> user = session.getUserFirebaseAuthId();
             // name
             String authId = user.get(SessionManagement.KEY_NAME);
+            CursorLoader curLoader = null;
 
-            return new CursorLoader(getActivity(), EasyFitnessContract.UserWorkOutRecord.buildWorkoutRecordWithAuthId(authId),
-                    WORKOUT_RECORD_COLUMNS,null,null,null);
+           switch(_placeholderNumber) {
+               case 1:
+               curLoader = new CursorLoader(getActivity(), EasyFitnessContract.UserWorkOutRecord
+                       .buildWorkoutRecordWithAuthId(authId),
+                       WORKOUT_RECORD_COLUMNS, null, null, "workout_recorded_year desc, " +
+                       "workout_recorded_month desc, workout_recorded_date desc");
+                break;
+
+               case 2:
+
+                   curLoader = new CursorLoader(getActivity(),EasyFitnessContract
+                           .UserWorkOutRecord.buildWorkoutRecordWithUserAuthIdandMonth(authId,
+                                   Calendar.MONTH+1),WORKOUT_RECORD_COLUMNS, null, null, "workout_recorded_year desc, " +
+                           "workout_recorded_month desc, workout_recorded_date desc");
+
+
+           }
+            return curLoader;
         }
 
         @Override
@@ -234,7 +249,7 @@ public class WorkoutHistory extends AppCompatActivity {
                 case 0:
                     return "ALL";
                 case 1:
-                    return "Month";
+                    return "This Month";
                 case 2:
                     return "Year";
             }

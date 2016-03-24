@@ -45,6 +45,10 @@
             android:id="@+id/workout_switch_btn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:checked="false"
+            android:focusable="false"
+            android:clickable="false"
+
 
             />
         <LinearLayout android:layout_width="wrap_content"
@@ -60,7 +64,8 @@
             android:textColor="@color/pink"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_marginBottom="5dp"/>
-            <TextView
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/loggedDurationTimeText"

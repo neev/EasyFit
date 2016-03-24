@@ -7,7 +7,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.android.easyfitness.sync.SunshineSyncAdapter;
@@ -31,16 +30,16 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SunshineSyncAdapter.initializeSyncAdapter(this);
+
         // Session class instance
         session = new SessionManagement(getApplicationContext());
-    if(!session.checkLogin()) {
-    Intent intent = new Intent(MainActivity.this, Login.class);
-    startActivity(intent);
-}
+        if(!session.checkLogin()) {
+        Intent intent = new Intent(MainActivity.this, Login.class);
+        startActivity(intent);
+        }
         mFlowerImage = (ImageView) findViewById(R.id.flower_imageview);
 
-       // mFlowerImage.setImageResource(Utilities.today_flowerimage(flower_flag));
+
 
        /* try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -61,17 +60,10 @@ public class MainActivity extends BaseActivity
                 .load(R.drawable.f0)
                 .fitCenter()
                 .into(mFlowerImage);
-       /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
 
 
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
 
@@ -143,6 +135,23 @@ public class MainActivity extends BaseActivity
                     .into(mFlowerImage);
 
     }
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
 
+    outState.putInt("Flower_FLAG_SAVEInstanceState", flower_flag);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+
+
+        flower_flag = savedInstanceState.getInt("Flower_FLAG_SAVEInstanceState");
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
 }

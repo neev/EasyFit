@@ -8,7 +8,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,8 +17,8 @@ import com.example.android.easyfitness.data.EasyFitnessContract;
 public class WorkoutEntry extends BaseActivity  implements LoaderManager
         .LoaderCallbacks<Cursor>, SwitchButtonListener {
 
-
-
+    int switch_btn_position;
+    Boolean switch_btn_checked = false;
     private TextView mDateDisplay;
 String pickedDate;
 
@@ -45,22 +44,17 @@ String pickedDate;
         SessionManagement sessionDate = new SessionManagement(getApplicationContext()).createPickedDateSession
                 (pickedDate);
         mDateDisplay.setText(pickedDate);
-        View emptyView = (View)findViewById(R.id.listview_forecast_empty);
+        View emptyView = findViewById(R.id.listview_forecast_empty);
         ListView workout_list = (ListView)findViewById(R.id.workout_list);
         mAdapter = new WorkoutListAdapter(this,null,0);
         mAdapter.setCustomButtonListner(WorkoutEntry.this);
         workout_list.setEmptyView(emptyView);
         workout_list.setAdapter(mAdapter);
         getSupportLoaderManager().initLoader(WORKOUT_LOADER, null, this);
-        workout_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // ViewHolder selected = (ViewHolder) view.getTag();
-                Toast.makeText(WorkoutEntry.this, "List ITEM CLICKED" + position, Toast.LENGTH_SHORT)
-                        .show();
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+
+
+
+
     }
 
     @Override
@@ -85,7 +79,7 @@ String pickedDate;
         Toast.makeText(this, "onLoadFinished", Toast.LENGTH_SHORT).show();
         int i = 0;
         cursor.moveToFirst();
-        while (!cursor.isAfterLast())
+        for(int j=0;j<5;j++)
         {
             i++;
             cursor.moveToNext();
@@ -102,6 +96,8 @@ String pickedDate;
 
     @Override
     public void onSwitchButtonClickListner(int position,String desc) {
+        switch_btn_position = position;
+        switch_btn_checked = true;
         Toast.makeText(WorkoutEntry.this, "Button click *** " + position+
                         "**********"+desc+"************"+mAdapter
                         .swichbtn_flag,
@@ -110,4 +106,38 @@ String pickedDate;
         mAdapter.notifyDataSetChanged();
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(switch_btn_checked){
+            mAdapter.screenorientaion_selected_row = switch_btn_position;
+            mAdapter.switch_checked = switch_btn_checked;
+            mAdapter.notifyDataSetChanged();
+        }
+
+
+
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+
+        outState.putInt("SWITCHBTN_POSITION", switch_btn_position);
+        outState.putBoolean("SWITCHBTN_CHECKED", switch_btn_checked);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+
+        switch_btn_position = savedInstanceState.getInt("SWITCHBTN_POSITION");
+        switch_btn_checked = savedInstanceState.getBoolean("SWITCHBTN_CHECKED");
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+
+
 }
