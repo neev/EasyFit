@@ -166,6 +166,8 @@ public class EasyFitnessContract {
         public static final String COLUMN_WORKOUT_RECORDED_DATE_DAY = "workout_recorded_day";
         public static final String COLUMN_FLAG = "flag";
         public static final String COLUMN_WEEKLY_FLAG = "weekly_flag";
+        public static final String COLUMN_PUSH_ID = "push_id";
+        public static final String COLUMN_FULL_DATE = "full_date";
 
         public static Uri buildWorkoutUri(long id)
         {
@@ -184,26 +186,39 @@ public class EasyFitnessContract {
 
         }
         public static Uri buildWorkoutRecordWithUserAuthIdandMonth(String authId, int
-                month) {
+                year,int month) {
             return CONTENT_URI.buildUpon().appendPath(authId)
+                    .appendPath(Integer.toString(year))
                     .appendPath(Integer.toString(month))
+                    .build();
+        }
+       public static Uri buildWorkoutRecordWithUserAuthIdandThisWeek(String authId,String
+                startdate, String enddate) {
+            return CONTENT_URI.buildUpon().appendPath(authId)
+                    .appendPath(startdate)
+                    .appendPath(enddate)
                     .build();
         }
 
         public static String getUserAuthIdFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
+
         public static int getworkoutRecordYearFromUri(Uri uri) {
-            return Integer.parseInt(uri.getPathSegments().get(4));
-        }
-        public static int getworkoutRecordMonthFromUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(2));
         }
-        public static int getworkoutRecordDateFromUri(Uri uri) {
+
+        public static int getworkoutRecordMonthFromUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(3));
         }
-        /*public static String getworkoutRecordDayFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
-        }*/
+
+        public static String getworkoutRecordStartDateFromUri(Uri uri) {
+            return uri.getPathSegments().get(2);
+        }
+
+        public static String getworkoutRecordEndDateFromUri(Uri uri) {
+            return uri.getPathSegments().get(3);
+        }
+
     }
 }

@@ -1,7 +1,6 @@
 package com.example.android.easyfitness;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,10 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.module.GlideModule;
 import com.example.android.easyfitness.data.UserDetails;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -38,6 +33,8 @@ public class UserAccountInfo extends BaseActivity  {
     EditText _name;
     @Bind(R.id.user_weight)
     EditText _weight;
+    @Bind(R.id.user_goal_weight)
+    EditText _goalWeight;
     @Bind(R.id.user_email)
     EditText _emailText;
     @Bind(R.id.user_age)
@@ -59,7 +56,9 @@ public class UserAccountInfo extends BaseActivity  {
     String name ="";
     String age="";
     String weight ="";
+    String goalWeight ="";
     Intent photoPickerIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +73,7 @@ public class UserAccountInfo extends BaseActivity  {
                 @Override
                 public void onClick(View view) {
                     isPickImageButtonClicked = true;
-                     photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent = new Intent(Intent.ACTION_PICK);
                     photoPickerIntent.setType("image/*");
                     photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), PICK_IMAGE_REQUEST);
@@ -86,14 +85,14 @@ public class UserAccountInfo extends BaseActivity  {
 
 
         // Session Manager
-       SessionManagement session = new SessionManagement(getApplicationContext());
+        SessionManagement session = new SessionManagement(getApplicationContext());
         // get user data from session
         HashMap<String, String> user = session.getUserFirebaseAuthId();
         // name
-         authId = user.get(SessionManagement.KEY_NAME);
+        authId = user.get(SessionManagement.KEY_NAME);
 
-            // email
-           // email = user.get(SessionManagement.KEY_EMAIL);
+        // email
+        email = user.get(SessionManagement.KEY_EMAIL);
 
         Intent intent = getIntent();
         if(intent.getParcelableExtra("USER_PARCEL_OBJECT")!=null) {
@@ -102,8 +101,11 @@ public class UserAccountInfo extends BaseActivity  {
             email = user_object.getEmail();
             int age_int = user_object.getAge();
             int weight_int = user_object.getWeight();
+            int goalWeight_int = user_object.getGoalWeight();
             age = String.valueOf(age_int);
             weight = String.valueOf(weight_int);
+            goalWeight = String.valueOf(goalWeight_int);
+
         }
 
         System.out.println("Intent EXTRA" + name+email+age+weight);
@@ -169,11 +171,12 @@ public class UserAccountInfo extends BaseActivity  {
         _saveButton.setEnabled(true);
         setResult(RESULT_OK, null);
         Intent intent = new Intent(UserAccountInfo.this, Profile.class);
+
         startActivity(intent);
         finish();
     }
     public void onFailed() {
-        Toast.makeText(getBaseContext(), "new account failed", Toast.LENGTH_LONG).show();
+       /* Toast.makeText(getBaseContext(), "new account failed", Toast.LENGTH_LONG).show();*/
         _saveButton.setEnabled(true);
 
     }
@@ -183,17 +186,19 @@ public class UserAccountInfo extends BaseActivity  {
     }
     public void createUserdeatils_Firebase(){
 
-         name = _name.getText().toString();
-         email= _emailText.getText().toString();
-         age = _age.getText().toString();
-         weight= _weight.getText().toString();
+        name = _name.getText().toString();
+        email= _emailText.getText().toString();
+        age = _age.getText().toString();
+        weight= _weight.getText().toString();
+        goalWeight=_goalWeight.getText().toString();
         int nage= Integer.parseInt(age);
         int nweight = Integer.parseInt(weight);
+        int ngoalWeight = Integer.parseInt(goalWeight);
 
 
 
 
-        UserDetails userObject = new UserDetails(name,email,nage,nweight);
+        UserDetails userObject = new UserDetails(name,email,nage,nweight,ngoalWeight);
 
         Firebase userRef = mFirebaseRef.child("users").child(authId);
         userRef.setValue(userObject, new Firebase.CompletionListener() {
@@ -208,35 +213,35 @@ public class UserAccountInfo extends BaseActivity  {
                 }
             }
         });
-            //storing user info in sqlite
-        long userInfo_stored = Utilities.addUserAccountInfo(getBaseContext(),userObject,authId);
+        //storing user info in sqlite
+        long userInfo_stored = Utilities.addUserAccountInfo(getBaseContext(), userObject, authId);
         System.out.println("successfully STORED USER INFO : ***" + userInfo_stored);
 
-if(selectedImage != null) {
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-    selectedImage.recycle();
-    byte[] byteArray = stream.toByteArray();
-    String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
-    userRef.child("Images").child(authId).setValue(imageFile, new Firebase
-            .CompletionListener() {
+        if(selectedImage != null) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            selectedImage.recycle();
+            byte[] byteArray = stream.toByteArray();
+            String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            userRef.child("Images").child(authId).setValue(imageFile, new Firebase
+                    .CompletionListener() {
 
-        @Override
-        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-            if (firebaseError != null) {
-                System.out.println("User Image could not be saved. " + firebaseError.getMessage
-                        ());
-                Log.i(TAG, firebaseError.getMessage());
-            } else {
-                System.out.println("User Image saved successfully.");
-            }
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if (firebaseError != null) {
+                        System.out.println("User Image could not be saved. " + firebaseError.getMessage
+                                ());
+                        Log.i(TAG, firebaseError.getMessage());
+                    } else {
+                        System.out.println("User Image saved successfully.");
+                    }
+                }
+            });
+
+            int updatedProfileImage = Utilities.updateUserAccountInfowithProfileImage(getBaseContext(),
+                    authId,"Profile Image",imageFile);
+
         }
-    });
-
-    int updatedProfileImage = Utilities.updateUserAccountInfowithProfileImage(getBaseContext(),
-            authId,"Profile Image",imageFile);
-
-}
 
         Toast.makeText(getBaseContext(), "Image Data saved successfully  : " + userInfo_stored,
                 Toast.LENGTH_LONG)
@@ -247,14 +252,15 @@ if(selectedImage != null) {
     }
 
 
+
     public boolean validate() {
         boolean valid = true;
 
 
-         name = _name.getText().toString();
-         email= _emailText.getText().toString();
-         age = _age.getText().toString();
-         weight= _weight.getText().toString();
+        name = _name.getText().toString();
+        email= _emailText.getText().toString();
+        age = _age.getText().toString();
+        weight= _weight.getText().toString();
 
 
 
@@ -290,19 +296,7 @@ if(selectedImage != null) {
         return valid;
     }
 
-    public class GlideConfiguration implements GlideModule {
 
-        @Override
-        public void applyOptions(Context context, GlideBuilder builder) {
-            // Apply options to the builder here.
-            builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
-        }
-
-        @Override
-        public void registerComponents(Context context, Glide glide) {
-            // register ModelLoaders here.
-        }
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -322,7 +316,6 @@ if(selectedImage != null) {
                 ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
 
                /* Glide.with(this).load(bitmap).centerCrop().into(imageView);
-
                 Glide.with(this)
                         .load("yourUrl")
                         .asBitmap()
@@ -358,9 +351,9 @@ if(selectedImage != null) {
         super.onResume();
         if(selectedImage !=null){
             ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
-                if(imageView !=null){
-                    imageView.setImageBitmap(selectedImage);
-                }
+            if(imageView !=null){
+                imageView.setImageBitmap(selectedImage);
+            }
         }
         if(isPickImageButtonClicked == true){
             pickImageButton = (Button) findViewById(R.id.btn_pick);
@@ -378,12 +371,13 @@ if(selectedImage != null) {
             });
         }
 // Get the extra text from the Intent
-        System.out.println("Intent EXTRA" + name+email+age+weight);
+        System.out.println("Intent EXTRA" + name+email+age+weight+goalWeight);
 
         _name.setText(name);
         _emailText.setText(email);
         _age.setText(age);
         _weight.setText(weight);
+        _goalWeight.setText(goalWeight);
 
     }
 
@@ -397,10 +391,11 @@ if(selectedImage != null) {
         outState.putString("USER_NAME", name);
         outState.putString("USER_AGE", age);
         outState.putString("USER_WEIGHT", weight);
+        outState.putString("USER_GOALWEIGHT", goalWeight);
         outState.putBoolean("USER_PROFILE_PIC_CHECKED", isPickImageButtonClicked);
         if(selectedImage != null){
             outState.putByteArray("USER_PROFILE_PICTURE",Utilities.getBytes(selectedImage));
-        }
+       }
 
         super.onSaveInstanceState(outState);
     }
@@ -414,8 +409,11 @@ if(selectedImage != null) {
         name = savedInstanceState.getString("USER_NAME");
         age = savedInstanceState.getString("USER_AGE");
         weight = savedInstanceState.getString("USER_WEIGHT");
+        goalWeight = savedInstanceState.getString("USER_GOALWEIGHT");
         isPickImageButtonClicked = savedInstanceState.getBoolean("USER_PROFILE_PIC_CHECKED");
-        selectedImage = Utilities.getImage(savedInstanceState.getByteArray("USER_PROFILE_PICTURE"));
+        if(selectedImage != null) {
+            selectedImage = Utilities.getImage(savedInstanceState.getByteArray("USER_PROFILE_PICTURE"));
+        }
         super.onRestoreInstanceState(savedInstanceState);
     }
 }

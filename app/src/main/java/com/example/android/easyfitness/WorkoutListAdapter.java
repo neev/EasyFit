@@ -325,9 +325,9 @@ public class WorkoutListAdapter extends CursorAdapter
 
 
         Calendar c = Calendar.getInstance();
-        String[] parts = selected_date.split("-");
-        String _month = parts[0].trim();
-        String _date = parts[1].trim();
+        String[] parts = selected_date.split(" ");
+        String _month = parts[1].trim();
+        String _date = parts[0].trim();
         String _year = parts[2].trim();
 
 
@@ -336,8 +336,8 @@ public class WorkoutListAdapter extends CursorAdapter
         WorkoutRecord recordedWorkout = new WorkoutRecord(mMinutes,logged_workoutDecs);
         Firebase recordWorkoutRef = mFirebaseRef.child("recordedWorkoutList").child(authId).child
                 (_year).child(_month).child(_date);
-
-        recordWorkoutRef.push().setValue(recordedWorkout, new Firebase.CompletionListener() {
+        Firebase recordedWorkout_pushId = recordWorkoutRef.push();
+        recordedWorkout_pushId.setValue(recordedWorkout, new Firebase.CompletionListener() {
 
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -349,6 +349,8 @@ public class WorkoutListAdapter extends CursorAdapter
                 }
             }
         });
+
+        String pushId = recordedWorkout_pushId.getKey();
 
         //storing user workout record in sqlite
         int y = Integer.parseInt(_year);
@@ -368,11 +370,11 @@ public class WorkoutListAdapter extends CursorAdapter
         }*/
 
         session.createFlagSession(_flag,_flag);
-
-        long workoutRecord_stored = Utilities.addUserRecordedWorkout(context,authId,
-                logged_workoutDecs,mMinutes,y,m,d,_day,_flag);
+        // ADDING THE RECORDS TO THE TABLE IN LOCAL DB
+       /* long workoutRecord_stored = Utilities.addUserRecordedWorkout(context,authId,
+                logged_workoutDecs,mMinutes,y,m,d,_day,pushId);
         System.out.println("Successfully stored WORKOUT RECORD### : "+ workoutRecord_stored +
-                "DAY OF WEEK : ##"+ _day + "FLAG -----" + _flag);
+                "DAY OF WEEK : ##"+ _day + "FLAG -----" + _flag);*/
 
 
 

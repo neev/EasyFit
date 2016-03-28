@@ -1,6 +1,8 @@
 package com.example.android.easyfitness;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -9,8 +11,10 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.android.easyfitness.sync.SunshineSyncAdapter;
+import com.example.android.easyfitness.data.EasyfitnessDbHelper;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class MainActivity extends BaseActivity
@@ -24,7 +28,16 @@ public class MainActivity extends BaseActivity
     // Session Manager Class
     SessionManagement session;
     DrawerLayout drawer;NavigationView navigationView;
-    boolean loginFlag = true;String email;
+    boolean loginFlag = true;
+    String email;
+    //To check the internet conection
+
+    boolean isOnline;
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +50,28 @@ public class MainActivity extends BaseActivity
         Intent intent = new Intent(MainActivity.this, Login.class);
         startActivity(intent);
         }
+
+      /*  // Session Manager
+        SessionManagement session = new SessionManagement(getApplicationContext());
+        // get user data from session
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
+        // name
+        final String authId = user.get(SessionManagement.KEY_NAME);
+
+        System.out.println("CALLING ASYNC TASK");
+
+        FetchRecordsFromFirebase mFetchRecordsfromFirebase = new
+                FetchRecordsFromFirebase(getBaseContext());
+        mFetchRecordsfromFirebase.execute(authId);
+
+        System.out.println("RETURNED FROM ASYNC TASK");*/
+
+
+
+
+
+
+
         mFlowerImage = (ImageView) findViewById(R.id.flower_imageview);
 
 
@@ -54,16 +89,19 @@ public class MainActivity extends BaseActivity
         } catch (NoSuchAlgorithmException e) {
         }*/
 
+        flower_flag = NumberofRECORDSthisWEEK();
 
 
+        //Flower Image Display check
+//mFlowerImage.setImageResource(Utilities.today_flowerimage(flower_flag));
         Glide.with(MainActivity.this)
-                .load(R.drawable.f0)
+                .load(Utilities.today_flowerimage(flower_flag))
                 .fitCenter()
                 .into(mFlowerImage);
 
 
+        //EasyFitSyncAdapter.initializeSyncAdapter(this);
 
-        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
 
@@ -117,15 +155,46 @@ public class MainActivity extends BaseActivity
 
     protected void onResume(){
         super.onResume();
-
-        // get user data from session
         HashMap<String, String> user = session.getUserFirebaseAuthId();
-        HashMap<String, Integer> flag = session.getFlag_Session();
+
+     /*   isOnline = Utilities.checkConnectivity(getBaseContext());
+        // get user data from session
+
+
         // name
         String userAuthId = user.get(SessionManagement.KEY_NAME);
-       flower_flag = flag.get(SessionManagement.FLAG);
-        // email
-        email = user.get(SessionManagement.KEY_EMAIL);
+
+
+        if (isOnline) {
+
+            FetchRecordsFromFirebase mFetchRecordsfromFirebase = new FetchRecordsFromFirebase(this);
+            mFetchRecordsfromFirebase.execute(userAuthId);
+
+        }else {
+
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(this,R.style
+                    .AppTheme_Dark_Dialog).create();
+
+            alertDialog.setTitle("Network Not Connected...");
+            alertDialog.setMessage("Please connect to a network and try again");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                    finish();
+                }
+            });
+            alertDialog.setIcon(R.drawable.images_navicon);
+
+            alertDialog.show();
+        }*/
+
+
+
+
+        flower_flag = NumberofRECORDSthisWEEK();
+
 
         //Flower Image Display check
 //mFlowerImage.setImageResource(Utilities.today_flowerimage(flower_flag));
@@ -153,5 +222,90 @@ public class MainActivity extends BaseActivity
 
         super.onRestoreInstanceState(savedInstanceState);
     }
+
+    public int NumberofRECORDSthisWEEK(){
+        Cursor cursor;
+        SQLiteDatabase db;
+
+        // Session Manager
+        SessionManagement session = new SessionManagement(getApplicationContext());
+        // get user data from session
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
+        // name
+        final String authId = user.get(SessionManagement.KEY_NAME);
+
+
+
+
+        FetchRecordsFromFirebase mFetchRecordsfromFirebase = new
+                FetchRecordsFromFirebase(getBaseContext());
+        mFetchRecordsfromFirebase.execute(authId);
+
+
+        //Get the start date of the current week
+
+        int mYear;
+        int mMonth;
+        int mDate;
+        int mDay;
+        final Calendar currentDate = Calendar.getInstance();
+        mYear = currentDate.get(Calendar.YEAR);
+        mMonth = currentDate.get(Calendar.MONTH);
+        mDate = currentDate.get(Calendar.DATE);
+        mDay = currentDate.get(Calendar.DAY_OF_WEEK);
+
+        int days_back = 0;
+        // current day of the week
+        System.out.println("DAY OF THE WEEK: "+ mDay);
+
+        //TO GET THE DATES OF THIS WEEK
+        switch (mDay) {
+            case 1:
+                days_back = mDate;
+                break;
+            case 2:
+                days_back = mDate - 1;
+                break;
+            case 3:
+                days_back = mDate - 2;
+                break;
+            case 4:
+                days_back = mDate - 3;
+                break;
+            case 5:
+                days_back = mDate - 4;
+                break;
+            case 6:
+                days_back = mDate - 5;
+                break;
+            case 7:
+                days_back = mDate - 6;
+                break;
+
+
+
+        }
+
+        int numberOfWorkouts = 0;
+
+        if(authId != null) {
+
+            Date startDate = new Date((mYear - 1900), (mMonth), days_back);
+
+            db = (new EasyfitnessDbHelper(this)).getReadableDatabase();
+            cursor = db.rawQuery("SELECT * FROM UserWorkOutRecord WHERE " +
+                            "userdeatil_authid" +
+                            " = ?  AND full_date  BETWEEN date(?)  AND date(? ,'+7 days')",
+                    new String[]{authId, String.valueOf(startDate), String.valueOf(startDate)});
+            //int i = 0;
+
+            numberOfWorkouts = cursor.getCount();
+
+            db.close();
+        }
+        return numberOfWorkouts;
+    }
+
+
 
 }

@@ -10,7 +10,6 @@ import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
 
@@ -50,6 +49,14 @@ String pickedDate;
         mAdapter.setCustomButtonListner(WorkoutEntry.this);
         workout_list.setEmptyView(emptyView);
         workout_list.setAdapter(mAdapter);
+        /*workout_list.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    }
+                } );*/
+
         getSupportLoaderManager().initLoader(WORKOUT_LOADER, null, this);
 
 
@@ -76,12 +83,12 @@ String pickedDate;
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
     {
-        Toast.makeText(this, "onLoadFinished", Toast.LENGTH_SHORT).show();
-        int i = 0;
+       /* Toast.makeText(this, "onLoadFinished", Toast.LENGTH_SHORT).show();*/
+
         cursor.moveToFirst();
-        for(int j=0;j<5;j++)
+        for(int j=0;j<cursor.getCount();j++)
         {
-            i++;
+
             cursor.moveToNext();
         }
         //Log.v(FetchScoreTask.LOG_TAG,"Loader query: " + String.valueOf(i));
@@ -90,7 +97,7 @@ String pickedDate;
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader){
-        Toast.makeText(this, "onLoaderReset", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "onLoaderReset", Toast.LENGTH_SHORT).show();
         mAdapter.swapCursor(null);
     }
 
@@ -98,10 +105,10 @@ String pickedDate;
     public void onSwitchButtonClickListner(int position,String desc) {
         switch_btn_position = position;
         switch_btn_checked = true;
-        Toast.makeText(WorkoutEntry.this, "Button click *** " + position+
+       /* Toast.makeText(WorkoutEntry.this, "Button click *** " + position+
                         "**********"+desc+"************"+mAdapter
                         .swichbtn_flag,
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT).show();*/
         mAdapter.selected_desc = desc;
         mAdapter.notifyDataSetChanged();
 

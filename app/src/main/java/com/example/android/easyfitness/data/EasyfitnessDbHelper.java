@@ -44,7 +44,9 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_WORKOUT_TABLE = "CREATE TABLE " + WorkOutOptions.TABLE_NAME + " (" +
                 WorkOutOptions._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 WorkOutOptions.COLUMN_WORKOUT_ID + " INTEGER NOT NULL," +
-                WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION + " TEXT NOT NULL );";
+                WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION + " TEXT NOT NULL," +
+                 " UNIQUE ("+WorkOutOptions.COLUMN_WORKOUT_ID+") ON CONFLICT IGNORE" +
+                 " );";
 
 
 
@@ -79,11 +81,7 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_USERWORKOUT_RECORD_TABLE = "CREATE TABLE " + UserWorkOutRecord.TABLE_NAME +
                 " (" +
-                // Why AutoIncrement here, and not above?
-                // Unique keys will be auto-generated in either case.  But for weather
-                // forecasting, it's reasonable to assume the user will want information
-                // for a certain date and all dates *following*, so the forecast data
-                // should be sorted accordingly.
+
                 UserWorkOutRecord._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 // the ID of the location entry associated with this weather data
@@ -95,14 +93,13 @@ public class EasyfitnessDbHelper extends SQLiteOpenHelper {
                 UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DATE + " INTEGER , " +
                 UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DAY + " TEXT, " +
                 UserWorkOutRecord.COLUMN_FLAG + " INTEGER, " +
-                UserWorkOutRecord.COLUMN_WEEKLY_FLAG + " INTEGER " +
-
+                UserWorkOutRecord.COLUMN_WEEKLY_FLAG + " INTEGER, " +
+                UserWorkOutRecord.COLUMN_PUSH_ID + " TEXT, " +
+                UserWorkOutRecord.COLUMN_FULL_DATE + " TEXT, " +
+                " UNIQUE ("+UserWorkOutRecord.COLUMN_PUSH_ID+") ON CONFLICT IGNORE" +
                 " );";
 
-                /*// Set up the location column as a foreign key to location table.
-                " FOREIGN KEY (" + UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + ") REFERENCES " +
-                UserDetailEntry.TABLE_NAME + " (" +UserDetailEntry
-                .COLUMN_USERDEATIL_AUTHENTIFICATION_ID + "); ";*/
+
 
         sqLiteDatabase.execSQL(SQL_CREATE_WORKOUT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USERDETAIL_TABLE);

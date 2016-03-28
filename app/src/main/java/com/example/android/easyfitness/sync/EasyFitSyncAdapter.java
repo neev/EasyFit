@@ -1,0 +1,420 @@
+package com.example.android.easyfitness.sync;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SyncRequest;
+import android.content.SyncResult;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
+import android.util.Log;
+
+import com.example.android.easyfitness.R;
+import com.example.android.easyfitness.SessionManagement;
+import com.example.android.easyfitness.Utilities;
+import com.example.android.easyfitness.data.EasyFitnessContract;
+import com.example.android.easyfitness.data.UserDetails;
+import com.example.android.easyfitness.data.WorkoutOptions;
+import com.example.android.easyfitness.data.WorkoutRecord;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.sql.Date;
+import java.util.HashMap;
+import java.util.Vector;
+
+
+/**
+ * Created by neeraja on 10/22/2015.
+ */
+public class EasyFitSyncAdapter extends AbstractThreadedSyncAdapter {
+    public final String Log_tag = EasyFitSyncAdapter.class.getSimpleName();
+
+    public static final String ACTION_DATA_UPDATED = "com.example.android.easyfitness.ACTION_DATA_UPDATED";
+
+    public static final int SYNC_INTERVAL = 60 * 180;
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID,  LOCATION_STATUS_UNKNOWN, LOCATION_STATUS_INVALID})
+    public @interface LocationStatus {}
+    public static final int LOCATION_STATUS_OK = 0;
+    public static final int LOCATION_STATUS_SERVER_DOWN = 1;
+    public static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    public static final int LOCATION_STATUS_UNKNOWN = 3;
+    public static final int LOCATION_STATUS_INVALID = 4;
+    // for user auth Id
+    String authId;
+    //for DB inserts
+    Vector<ContentValues> workoutOptions_values = new Vector <ContentValues>();
+    Vector<ContentValues> workoutRecords_values = new Vector <ContentValues>();
+    Vector<ContentValues> userProfile_contentValues = new Vector <ContentValues>();
+
+    Context mContext;
+
+    public EasyFitSyncAdapter(Context context, boolean autoInitialize) {
+        super(context, autoInitialize);
+        // Initialize Firebase with the application context
+        Firebase.setAndroidContext(context);
+
+    }
+
+    @Override
+    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        Log.d(Log_tag, "onPerformSync Called.");
+        Log.v(Log_tag, "Starting sync");
+        mContext = getContext();
+        SessionManagement session = new SessionManagement(mContext);
+        // get user data from session
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
+        // name
+        authId = user.get(SessionManagement.KEY_NAME);
+
+
+        if(authId!=null) {
+
+            //To get the USER PROFILE DETAILS FROM Firebase server
+
+            final Firebase ref_userProfile = new Firebase(mContext.getResources().getString(R.string
+                    .firebase_url)
+                    +"/users/"+authId);
+            //To read workout options from firebase
+            // Attach an listener to read the data at our posts reference
+            ref_userProfile.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+
+                    for (DataSnapshot userProfileSnapshot : snapshot.getChildren()) {
+
+                        UserDetails userProfileObject = userProfileSnapshot.getValue(UserDetails.class);
+
+                        System.out.println(userProfileObject.toString());
+
+
+                        ContentValues userProfile_values = new ContentValues();
+                        userProfile_values.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_NAME,
+                                userProfileObject.getFullName());
+                        userProfile_values.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_EMAIL,
+                                userProfileObject.getEmail());
+                        userProfile_values.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_AGE,
+                                userProfileObject.getAge());
+                        userProfile_values.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_WEIGHT,
+                                userProfileObject.getWeight());
+                        userProfile_values.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_GOALWEIGHT,
+                                userProfileObject.getGoalWeight());
+                        userProfile_contentValues.add(userProfile_values);
+                        System.out.println("values size : " + workoutOptions_values.size());
+                    }
+
+
+                    System.out.println("*****inserting values*****");
+                    ContentValues[] cvArrayUserProfile = new ContentValues[userProfile_contentValues
+                            .size()];
+                    workoutOptions_values.toArray(cvArrayUserProfile);
+                    int inserted_into_DB = mContext.getContentResolver().bulkInsert(
+                            EasyFitnessContract.UserDetailEntry.CONTENT_URI, cvArrayUserProfile);
+                    Log.v(Log_tag, "WORKOUT OPTIONS Succesfully Inserted : " + String.valueOf
+                            (userProfile_contentValues.size()) + "******* " + inserted_into_DB);
+
+
+                    System.out.println("***** Out of for loop*****");
+                }
+
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read failed: " + firebaseError.getMessage());
+                }
+
+            });
+
+
+
+
+            //***************************************
+            final Firebase ref = new Firebase(mContext.getResources().getString(R.string
+                    .firebase_url)
+                    +"/workout");
+            //To read workout options from firebase
+            // Attach an listener to read the data at our posts reference
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    System.out.println("There are " + snapshot.getChildrenCount() + " workout options");
+
+                    for (DataSnapshot workoutSnapshot : snapshot.getChildren()) {
+                        //BlogPost post = postSnapshot.getValue(BlogPost.class);
+                        WorkoutOptions workoutObject = workoutSnapshot.getValue(WorkoutOptions.class);
+                        System.out.println(workoutObject.getId() + " - " + workoutObject
+                                .getWorkout());
+
+
+                        ContentValues workout_values = new ContentValues();
+                        workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_ID, workoutObject.getId());
+                        workout_values.put(EasyFitnessContract.WorkOutOptions.COLUMN_WORKOUT_DESCRIPTION, workoutObject.getWorkout());
+                        workoutOptions_values.add(workout_values);
+                        System.out.println("values size : " + workoutOptions_values.size());
+                    }
+
+
+                    System.out.println("*****inserting values*****");
+                    ContentValues[] cvArray = new ContentValues[workoutOptions_values.size()];
+                    workoutOptions_values.toArray(cvArray);
+                    int inserted_into_DB = mContext.getContentResolver().bulkInsert(
+                            EasyFitnessContract.WorkOutOptions.CONTENT_URI, cvArray);
+                    Log.v(Log_tag, "WORKOUT OPTIONS Succesfully Inserted : " + String.valueOf
+                            (workoutOptions_values.size()) + "******* " + inserted_into_DB);
+
+
+                    System.out.println("***** Out of for loop*****");
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read failed: " + firebaseError.getMessage());
+                }
+
+            });
+
+//*************************************************************
+            final Firebase ref_workout_records = new Firebase(mContext.getResources().getString(R.string
+                    .firebase_url)
+                    +"/recordedWorkoutList/"+authId);
+
+            ref_workout_records.addListenerForSingleValueEvent
+                    (new
+
+                             ValueEventListener() {
+
+                                 @Override
+                                 public void onDataChange (DataSnapshot workout_records){
+
+                                     ref_workout_records.addListenerForSingleValueEvent(new ValueEventListener() {
+                                         @Override
+                                         public void onDataChange(DataSnapshot querySnapshot) {
+                                             for (DataSnapshot mWorkoutRecordsYear : querySnapshot.getChildren()) {
+                                                 //BlogPost post = postSnapshot.getValue(BlogPost.class);
+                                                 for (DataSnapshot mWorkoutRecordsMonth : mWorkoutRecordsYear
+                                                         .getChildren()) {
+                                                     for (DataSnapshot mWorkoutRecordsDate : mWorkoutRecordsMonth
+                                                             .getChildren()) {
+                                                         for (DataSnapshot mWorkoutRecordsDetail :
+                                                                 mWorkoutRecordsDate
+                                                                         .getChildren()) {
+
+                                                             WorkoutRecord workoutRecord = mWorkoutRecordsDetail
+                                                                     .getValue(WorkoutRecord.class);
+                                                             String year = mWorkoutRecordsYear.getKey().toString();
+                                                             String month = mWorkoutRecordsMonth.getKey()
+                                                                     .toString();
+                                                             String date = mWorkoutRecordsDate.getKey().toString();
+
+                                                             String pushID = mWorkoutRecordsDetail
+                                                                     .getKey();
+
+                                                             System.out.println(year + "-" + month + "-" + date);
+                                                             System.out.println(workoutRecord.getWorkoutDesc() + " - " +
+                                                                     workoutRecord
+                                                                             .getWorkoutDuration());
+                                                             java.sql.Date full_date = new Date
+                                                                     ((Integer.parseInt(year)-
+                                                                             1900),
+                                                                             (Utilities
+                                                                             .getMonthinNumber
+                                                                                     (month)-1),
+                                                                             Integer.parseInt
+                                                                                     (date));
+
+                                                             ContentValues record_values = new
+                                                                     ContentValues();
+                                                             record_values.put
+                                                                     (EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID,
+                                                                             authId);
+                                                             record_values.put(EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_DESCRIPTION,
+                                                                     workoutRecord.getWorkoutDesc());
+                                                             record_values.put(EasyFitnessContract.UserWorkOutRecord
+                                                                     .COLUMN_WORKOUT_DURATION, workoutRecord.getWorkoutDuration());
+                                                             record_values.put(EasyFitnessContract.UserWorkOutRecord
+                                                                             .COLUMN_WORKOUT_RECORDED_DATE_YEAR,
+                                                                     year);
+                                                             record_values.put(EasyFitnessContract.UserWorkOutRecord
+                                                                             .COLUMN_WORKOUT_RECORDED_DATE_MONTH,
+                                                                     Utilities.getMonthinNumber
+                                                                             (month));
+                                                             record_values.put(EasyFitnessContract.UserWorkOutRecord
+                                                                             .COLUMN_WORKOUT_RECORDED_DATE_DATE,
+                                                                     date);
+                                                             record_values.put(EasyFitnessContract.UserWorkOutRecord
+                                                                             .COLUMN_PUSH_ID,
+                                                                     pushID);
+                                                             record_values.put(EasyFitnessContract.UserWorkOutRecord
+                                                                             .COLUMN_FULL_DATE,
+                                                                     String.valueOf(full_date));
+
+                                                             workoutRecords_values.add(record_values);
+                                                             System.out.println("values size : " + workoutRecords_values.size());
+                                                         }
+                                                     }
+                                                 }
+
+
+                                                 System.out.println("*****inserting values*****");
+                                                 ContentValues[] cvArrayWR = new
+                                                         ContentValues[workoutRecords_values.size()];
+                                                 workoutRecords_values.toArray(cvArrayWR);
+                                                 int records_inserted_intoDB = mContext
+                                                         .getContentResolver().bulkInsert(
+                                                                 EasyFitnessContract.UserWorkOutRecord.CONTENT_URI, cvArrayWR);
+                                                 Log.v(Log_tag, "WORKOUT RECORDS Succesfully " +
+                                                         "Inserted : " + String.valueOf
+                                                         (workoutRecords_values.size()) + "******* " + records_inserted_intoDB);
+
+
+                                             }
+                                         }
+
+                                         public void onCancelled(FirebaseError error) {
+                                         }
+                                     });
+                                 }
+
+                                 @Override
+                                 public void onCancelled (FirebaseError error){
+                                 }
+                             });
+        }
+        System.out.println("*****ASYNC TASK ENDED*****");
+
+
+
+
+        return;
+    }
+
+
+
+
+    private void updateWidgets() {
+        Context context = getContext();
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
+    }
+
+    /**
+     * Helper method to have the sync adapter sync immediately
+     * @param context The context used to access the account service
+     */
+    public static void syncImmediately(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        ContentResolver.requestSync(getSyncAccount(context),
+                context.getString(R.string.content_authority), bundle);
+    }
+
+    /**
+     * Helper method to schedule the sync adapter periodic execution
+     */
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+        Account account = getSyncAccount(context);
+        String authority = context.getString(R.string.content_authority);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // we can enable inexact timers in our periodic sync
+            SyncRequest request = new SyncRequest.Builder().
+                    syncPeriodic(syncInterval, flexTime).
+                    setSyncAdapter(account, authority).
+                    setExtras(new Bundle()).build();
+            ContentResolver.requestSync(request);
+        } else {
+            ContentResolver.addPeriodicSync(account,
+                    authority, new Bundle(), syncInterval);
+        }
+    }
+
+    /**
+     * Helper method to get the fake account to be used with SyncAdapter, or make a new one
+     * if the fake account doesn't exist yet.  If we make a new account, we call the
+     * onAccountCreated method so we can initialize things.
+     *
+     * @param context The context used to access the account service
+     * @return a fake account.
+     */
+    public static Account getSyncAccount(Context context) {
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+
+        // Create the account type and default account
+        Account newAccount = new Account(
+                context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
+
+        // If the password doesn't exist, the account doesn't exist
+        if ( null == accountManager.getPassword(newAccount) ) {
+
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+            if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
+                return null;
+            }
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+            onAccountCreated(newAccount, context);
+        }
+        return newAccount;
+    }
+
+    private static void onAccountCreated(Account newAccount, Context context) {
+        /*
+         * Since we've created an account
+         */
+        EasyFitSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+
+        /*
+         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
+         */
+        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
+
+        /*
+         * Finally, let's do a sync to get things started
+         */
+        syncImmediately(context);
+    }
+
+    public static void initializeSyncAdapter(Context context) {
+        getSyncAccount(context);
+    }
+
+    /**
+     * Sets the location status into shared preference.  This function should not be called from
+     * the UI thread because it uses commit to write to the shared preferences.
+     * @param c Context to get the PreferenceManager from.
+     * @param locationStatus The IntDef value to set
+     */
+    static private void setLocationStatus(Context c, @LocationStatus int locationStatus){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(c.getString(R.string.pref_location_status_key), locationStatus);
+        spe.commit();
+    }
+
+}

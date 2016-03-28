@@ -6,11 +6,11 @@
             android:id="@+id/group1">
         <item
             android:id="@+id/nav_home"
-            android:icon="@android:drawable/sym_def_app_icon"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="Home"/>
         <item
             android:id="@+id/nav_login"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="LogIn"/>
         <item
             android:id="@+id/nav_logout"
@@ -27,11 +27,11 @@
             android:title="Record Workout"/>
         <item
             android:id="@+id/nav_calendar"
-            android:icon="@android:drawable/ic_menu_my_calendar"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="Calender View"/>
         <item
             android:id="@+id/nav_workout_history"
-            android:icon="@android:drawable/ic_menu_recent_history"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="Workout History"/>
     </group>
 

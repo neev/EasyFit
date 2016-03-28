@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.easyfitness.data.EasyFitnessContract;
 import com.example.android.easyfitness.data.EasyfitnessDbHelper;
@@ -44,23 +43,6 @@ public class CalenderView extends BaseActivity {
         }
 
 
-        /*// Min date is last 7 days
-        cal.add(Calendar.DATE, -7);
-        Date blueDate = cal.getTime();
-
-        // Max date is next 7 days
-        cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, 7);
-        Date greenDate = cal.getTime();
-
-        if (caldroidFragment != null) {
-            ColorDrawable blue = new ColorDrawable(getResources().getColor(R.color.blue));
-            ColorDrawable green = new ColorDrawable(Color.GREEN);
-            caldroidFragment.setBackgroundDrawableForDate(blue, blueDate);
-            caldroidFragment.setBackgroundDrawableForDate(green, greenDate);
-            caldroidFragment.setTextColorForDate(R.color.white, blueDate);
-            caldroidFragment.setTextColorForDate(R.color.white, greenDate);
-        }*/
     }
 
     @Override
@@ -120,7 +102,7 @@ public class CalenderView extends BaseActivity {
                             "workout_recorded_date" +
                             " FROM UserWorkOutRecord WHERE userdeatil_authid" +
                             " = ?",
-                    new String[]{"" + authId});
+                    new String[]{authId});
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -169,23 +151,22 @@ System.out.println("cursor:"+workout_recorded_date + workout_desc);
             @Override
             public void onChangeMonth(int month, int year) {
                 String text = "month: " + month + " year: " + year;
-                Toast.makeText(getApplicationContext(), text,
-                        Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onLongClickDate(Date date, View view) {
-                Toast.makeText(getApplicationContext(),
+               /* Toast.makeText(getApplicationContext(),
                         "Long click " + formatter.format(date),
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
             }
 
             @Override
             public void onCaldroidViewCreated() {
                 if (caldroidFragment.getLeftArrowButton() != null) {
-                    Toast.makeText(getApplicationContext(),
+                    /*Toast.makeText(getApplicationContext(),
                             "Caldroid view is created", Toast.LENGTH_SHORT)
-                            .show();
+                            .show();*/
                 }
             }
 
@@ -282,6 +263,15 @@ System.out.println("cursor:"+workout_recorded_date + workout_desc);
         }
 
 
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (caldroidFragment != null) {
+            caldroidFragment.restoreStatesFromKey(savedInstanceState, "CALDROID_SAVED_STATE");
+        }
     }
 
 }

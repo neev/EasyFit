@@ -1,17 +1,21 @@
 package com.example.android.easyfitness.data;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by neeraja on 3/5/2016.
- */
 public class UserDetails implements Parcelable {
 
     private String fullName;
     private String email;
     private int age;
     private int weight;
+    private int goalWeight;
+
+
+
+
+
     private String imageName;
     private byte[] image;
 
@@ -54,6 +58,13 @@ public class UserDetails implements Parcelable {
         return imageName;
     }
 
+    public int getGoalWeight() {
+        return goalWeight;
+    }
+
+    public void setGoalWeight(int goalWeight) {
+        this.goalWeight = goalWeight;
+    }
     public void setImageName(String imageName) {
         this.imageName = imageName;
     }
@@ -66,19 +77,22 @@ public class UserDetails implements Parcelable {
         this.image = image;
     }
     public UserDetails() {}
-    public UserDetails(String fullName, String email,int age, int weight) {
+    public UserDetails(String fullName, String email,int age, int weight, int goalWeight) {
         this.fullName = fullName;
         this.email = email;
         this.age = age;
-        this .weight = weight;
+        this.weight = weight;
+        this.goalWeight = goalWeight;
     }
 
-    public UserDetails(String fullName, String email, int age, int weight, String imageName, byte[]
+    public UserDetails(String fullName, String email, int age, int weight, int goalWeight, String
+            imageName, byte[]
             image) {
         this.fullName = fullName;
         this.email = email;
         this.age = age;
         this.weight = weight;
+        this.goalWeight = goalWeight;
         this.imageName = imageName;
         this.image = image;
     }
@@ -97,9 +111,10 @@ public class UserDetails implements Parcelable {
         dest.writeString(email);
         dest.writeInt(age);
         dest.writeInt(weight);
+        dest.writeInt(goalWeight);
         dest.writeString(imageName);
-       // dest.writeInt(image.length);
-       // dest.writeByteArray(image);
+        // dest.writeInt(image.length);
+        // dest.writeByteArray(image);
     }
 
     private void readFromParcel(Parcel in) {
@@ -107,9 +122,10 @@ public class UserDetails implements Parcelable {
         email=in.readString();
         age=in.readInt();
         weight=in.readInt();
+        goalWeight=in.readInt();
         //imageName=in.readString();
         //image = new byte[in.readInt()];
-      // in.readByteArray(image);
+        // in.readByteArray(image);
     }
     public UserDetails(Parcel in){
         readFromParcel(in);
@@ -128,7 +144,3 @@ public class UserDetails implements Parcelable {
     };
 
 }
-/*Firebase alanRef = ref.child("users").child("alanisawesome");
-User alan = new User("Alan Turing", 1912);
-alanRef.setValue(alan);*/
-

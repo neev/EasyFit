@@ -39,7 +39,7 @@ public class BaseActivity extends AppCompatActivity implements
     private int mYear;
     private int mMonth;
     private int mDate;
-    boolean mToday_workout_completed = false;
+
 
     static final int DATE_DIALOG_ID = 0;
     String pickedDate;
@@ -99,12 +99,7 @@ public class BaseActivity extends AppCompatActivity implements
         setUpNavView();
     }
 
-    /**
-     * Helper method that can be used by child classes to
-     * specify that they don't want a {@link Toolbar}
-     *
-     * @return true
-     */
+
     protected boolean useToolbar() {
         return true;
     }
@@ -129,12 +124,7 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Helper method to allow child classes to opt-out of having the
-     * hamburger menu.
-     *
-     * @return
-     */
+
     protected boolean useDrawerToggle() {
         return true;
     }
@@ -150,12 +140,10 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+
         switch (id) {
             case R.id.nav_home:
                 startActivity(new Intent(this, MainActivity.class));
@@ -168,8 +156,7 @@ public class BaseActivity extends AppCompatActivity implements
                     navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
                     Intent intent = new Intent(this, Login.class);
                     startActivity(intent);
-                    Toast.makeText(getApplicationContext(), "Open login page", Toast.LENGTH_LONG)
-                            .show();
+
                 }
 
             }
@@ -177,7 +164,7 @@ public class BaseActivity extends AppCompatActivity implements
 
             case R.id.nav_myaccount: {
                 if (session.checkLogin()) {
-// Session Manager
+                    // Session Manager
                     SessionManagement session = new SessionManagement(getApplicationContext());
                     // get user data from session
                     HashMap<String, String> user = session.getUserFirebaseAuthId();
@@ -298,8 +285,9 @@ public class BaseActivity extends AppCompatActivity implements
                     pickedDate =
                             String.valueOf(new StringBuilder()
                                     // Month is 0 based so add 1
-                                    .append(Utilities.getMonthName(mMonth + 1)).append("-")
-                                    .append(mDate).append("-")
+
+                                    .append(mDate).append(" ")
+                                    .append(Utilities.getMonthName(mMonth + 1)).append(" ")
                                     .append(mYear).append(" "));
 
                     System.out.println("Date from Date Picker Widget : " + pickedDate);
@@ -315,9 +303,7 @@ public class BaseActivity extends AppCompatActivity implements
 
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
-            Toast.makeText(getApplicationContext(), "check to show log in or log out", Toast
-                    .LENGTH_LONG)
-                    .show();
+
 
 
     }

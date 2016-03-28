@@ -16,6 +16,7 @@ import com.example.android.easyfitness.data.EasyFitnessContract;
 import com.example.android.easyfitness.data.UserDetails;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -173,6 +174,8 @@ public class Utilities {
                     userObject.getAge());
             userAccountInfoValues.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_WEIGHT,
                     userObject.getWeight());
+            userAccountInfoValues.put(EasyFitnessContract.UserDetailEntry.COLUMN_USER_GOALWEIGHT,
+                    userObject.getGoalWeight());
             userAccountInfoValues.put(EasyFitnessContract.UserDetailEntry
                     .COLUMN_USER_CREATED, System.currentTimeMillis());
 
@@ -222,7 +225,7 @@ public class Utilities {
 
 
     static public long addUserRecordedWorkout(Context c, String userauthId, String workout_desc, int
-            workout_duration,int year,int month,int date,String day,int flag) {
+            workout_duration,int year,int month,int date,String day,String push_id) {
         long locationId;
         /*// First, check if the location with this city name exists in the db
         Cursor userRecoredeworkoutCursor = c.getContentResolver().query(
@@ -243,7 +246,7 @@ public class Utilities {
 
 
 
-
+        Date record_workout_fulldate = new Date(year, month, date);
             ContentValues userRecoredeworkoutValues = new ContentValues();
 
             // Then add the data, along with the corresponding name of the data type,
@@ -264,10 +267,18 @@ public class Utilities {
             userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord
                     .COLUMN_WORKOUT_RECORDED_DATE_DAY, day);
             userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord
-                .COLUMN_WORKOUT_RECORDED_DATE_DAY, day);
+                .COLUMN_PUSH_ID, push_id);
+            userRecoredeworkoutValues.put(EasyFitnessContract.UserWorkOutRecord
+                .COLUMN_FULL_DATE, String.valueOf(record_workout_fulldate));
 
 
-            // Finally, insert location data into the database.
+
+
+
+
+
+
+        // Finally, insert location data into the database.
             Uri insertedUri = c.getContentResolver().insert(
                     EasyFitnessContract.UserWorkOutRecord.CONTENT_URI,
                     userRecoredeworkoutValues
@@ -335,7 +346,22 @@ public class Utilities {
         return shareIntent;
     }
 
+    public static boolean checkConnectivity(Context context) {
 
+         boolean isOnline;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context
+                .CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+           /* if (cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+                    .isConnectedOrConnecting()
+                    || cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                    .isConnectedOrConnecting())*/
+        if(activeNetwork !=null && activeNetwork.isConnectedOrConnecting())
+            isOnline = true;
+        else
+            isOnline = false;
+        return isOnline;
+    }
 
 
 }

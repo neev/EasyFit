@@ -102,6 +102,17 @@
                           android:hint="Weight"/>
             </android.support.design.widget.TextInputLayout>
 
+             <!-- Goal weight Label -->
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <EditText android:id="@+id/user_goal_weight"
+                                      android:layout_width="match_parent"
+                                      android:layout_height="wrap_content"
+                                      android:inputType="number"
+                                      android:hint="Goal Weight"/>
+                        </android.support.design.widget.TextInputLayout>
+
             <!-- save user info Button -->
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_save"

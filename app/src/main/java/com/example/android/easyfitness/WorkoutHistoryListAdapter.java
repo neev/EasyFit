@@ -58,6 +58,7 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
         System.out.println("HISTORY VALUES: " + cursor.getString(COL_DESC) + cursor.getString
                 (COL_DURATION));
 
+
        /* mHolder.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +69,7 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
         });*/
 
     }
+
     public Intent createShareForecastIntent(String ShareText) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);

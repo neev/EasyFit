@@ -39,7 +39,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
     static final int WORKOUT_RECORD = 400;
     static final int WORKOUT_RECORD_WITHID = 401;
     static final int WORKOUT_RECORD_WITHIDANDMONTH = 402;
-    static final int WORKOUT_RECORD_WITHIDANDDATE = 403;
+    static final int WORKOUT_RECORD_WITHIDANDTHISWEEK = 500;
 
     private static final SQLiteQueryBuilder sUserDeatilByWorkoutIdQueryBuilder;
     static{
@@ -68,13 +68,11 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 EasyFitnessContract.WorkOutOptions.TABLE_NAME );
     }
 
-    private static final SQLiteQueryBuilder sWorkoutRecordByAuthIdandDateQueryBuilder;
+    private static final SQLiteQueryBuilder sWorkoutRecordQueryBuilder;
     static{
-        sWorkoutRecordByAuthIdandDateQueryBuilder = new SQLiteQueryBuilder();
+        sWorkoutRecordQueryBuilder = new SQLiteQueryBuilder();
 
-        sWorkoutRecordByAuthIdandDateQueryBuilder.setTables(
-
-                EasyFitnessContract.UserWorkOutRecord.TABLE_NAME );
+        sWorkoutRecordQueryBuilder.setTables(EasyFitnessContract.UserWorkOutRecord.TABLE_NAME);
     }
 
 
@@ -97,15 +95,22 @@ public class EasyfitnessDataProvider extends ContentProvider {
             EasyFitnessContract.UserWorkOutRecord.TABLE_NAME+
                     "." + EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? AND " +
                     EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_YEAR + " = ? AND " +
-                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_MONTH + "= ? AND " +
-                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DATE + " = ? ";
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_MONTH +  " = ? AND " +
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_DATE + "=? ";
+
+    //UserWorkOutRecord.UserAuthId = ? AND year,month,date(THIS WEEK)
+    private static final String sWorkoutRecordWithUserAuthIdandThisWeek =
+            EasyFitnessContract.UserWorkOutRecord.TABLE_NAME+
+                    "." + EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? AND "  +
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_FULL_DATE +
+                    " BETWEEN  DATE(?) AND DATE(?,'+7 DAYS')";
 
     //UserWorkOutRecord.UserAuthId = ? AND month
     private static final String sWorkoutRecordWithUserAuthIdandMonth =
             EasyFitnessContract.UserWorkOutRecord.TABLE_NAME+
                     "." + EasyFitnessContract.UserWorkOutRecord.COLUMN_USERDEATIL_AUTHENTIFICATION_ID + " = ? AND " +
+                    EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_YEAR + " = ? AND " +
                     EasyFitnessContract.UserWorkOutRecord.COLUMN_WORKOUT_RECORDED_DATE_MONTH +  " = ? ";
-
 
 
     //UserWorkOutRecord.UserAuthId = ? AND day
@@ -139,24 +144,26 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 sortOrder
         );
     }
-    private Cursor getWorkoutRecordByAuthIdandDate(Uri uri, String[] projection, String sortOrder) {
+    private Cursor getWorkoutRecordByAuthIdandThisWeek(Uri uri, String[] projection, String
+            sortOrder) {
 
         String userAuthId = EasyFitnessContract.UserWorkOutRecord.getUserAuthIdFromUri(uri);
+       /* int year = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordYearFromUri(uri);
+        int month = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordMonthFromUri(uri);*/
+        String startdate = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordStartDateFromUri(uri);
+        String enddate = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordEndDateFromUri(uri);
 
-        int month = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordMonthFromUri(uri);
-        int date = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordDateFromUri(uri);
-        int year = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordYearFromUri(uri);
+
 
         String[] selectionArgs;
         String selection;
 
-            selectionArgs = new String[]{userAuthId, Integer.toString
-                    (month),Integer.toString(date),Integer.toString(year),};
-            selection = sWorkoutRecordWithUserAuthIdandDate;
+            selectionArgs = new String[]{userAuthId,startdate,enddate};
+            selection = sWorkoutRecordWithUserAuthIdandThisWeek;
 
 
 
-        return sWorkoutRecordByAuthIdandDateQueryBuilder .query(mOpenHelper.getReadableDatabase(),
+        return sWorkoutRecordQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -170,20 +177,20 @@ public class EasyfitnessDataProvider extends ContentProvider {
             sortOrder) {
 
         String userAuthId = EasyFitnessContract.UserWorkOutRecord.getUserAuthIdFromUri(uri);
-
+        int year = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordYearFromUri(uri);
         int month = EasyFitnessContract.UserWorkOutRecord.getworkoutRecordMonthFromUri(uri);
-
 
         String[] selectionArgs;
         String selection;
 
-        selectionArgs = new String[]{userAuthId,  Integer.toString
+        selectionArgs = new String[]{userAuthId , Integer.toString
+                (year), Integer.toString
                 (month)};
         selection = sWorkoutRecordWithUserAuthIdandMonth;
 
 
 
-        return sWorkoutRecordByAuthIdandDateQueryBuilder .query(mOpenHelper.getReadableDatabase(),
+        return sWorkoutRecordQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -192,6 +199,8 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 sortOrder
         );
     }
+
+
     private Cursor getWorkoutRecordByAuthId(Uri uri, String[] projection, String sortOrder) {
 
         String userAuthId = EasyFitnessContract.UserWorkOutRecord.getUserAuthIdFromUri(uri);
@@ -204,7 +213,7 @@ public class EasyfitnessDataProvider extends ContentProvider {
 
 
 
-        return sWorkoutRecordByAuthIdandDateQueryBuilder .query(mOpenHelper.getReadableDatabase(),
+        return sWorkoutRecordQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -233,8 +242,10 @@ public class EasyfitnessDataProvider extends ContentProvider {
 
         matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD, WORKOUT_RECORD );
         matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD + "/*", WORKOUT_RECORD_WITHID );
-        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD + "/*/#", WORKOUT_RECORD_WITHIDANDMONTH );
-        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD + "/*/#/#/#", WORKOUT_RECORD_WITHIDANDDATE );
+        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD + "/*/#/#",
+                WORKOUT_RECORD_WITHIDANDMONTH );
+        matcher.addURI(authority, EasyFitnessContract.PATH_WORKOUTRECORD + "/*/*/*",
+                WORKOUT_RECORD_WITHIDANDTHISWEEK);
 
         return matcher;
     }
@@ -273,11 +284,11 @@ public class EasyfitnessDataProvider extends ContentProvider {
             case WORKOUT_RECORD :
                 return EasyFitnessContract.UserWorkOutRecord.CONTENT_TYPE;
             case WORKOUT_RECORD_WITHID :
-                return EasyFitnessContract.UserDetailEntry.CONTENT_TYPE;
+                return EasyFitnessContract.UserWorkOutRecord.CONTENT_TYPE;
             case WORKOUT_RECORD_WITHIDANDMONTH :
-                return EasyFitnessContract.UserDetailEntry.CONTENT_ITEM_TYPE;
-            case WORKOUT_RECORD_WITHIDANDDATE :
-                return EasyFitnessContract.UserDetailEntry.CONTENT_ITEM_TYPE;
+                return EasyFitnessContract.UserWorkOutRecord.CONTENT_TYPE;
+            case WORKOUT_RECORD_WITHIDANDTHISWEEK:
+                return EasyFitnessContract.UserWorkOutRecord.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -333,9 +344,9 @@ public class EasyfitnessDataProvider extends ContentProvider {
                 break;
             }
             //Workout Record
-            case WORKOUT_RECORD_WITHIDANDDATE :
+            case WORKOUT_RECORD_WITHIDANDTHISWEEK:
             {
-                retCursor = getWorkoutRecordByAuthIdandDate(uri, projection, sortOrder);
+                retCursor = getWorkoutRecordByAuthIdandThisWeek(uri, projection, sortOrder);
                 break;
             }
             // "weather/*"

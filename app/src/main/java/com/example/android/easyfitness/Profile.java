@@ -24,8 +24,8 @@ public class Profile extends BaseActivity   {
     private ImageView mProfileImage;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
-public UserDetails parcel_userObject;
-    
+    public UserDetails parcel_userObject;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +44,7 @@ public UserDetails parcel_userObject;
         // get user data from session
         HashMap<String, String> user = session.getUserFirebaseAuthId();
         // name
-       String  authId = user.get(SessionManagement.KEY_NAME);
+        String  authId = user.get(SessionManagement.KEY_NAME);
 
         // Find fields to populate in inflated template
         TextView text_name = (TextView) findViewById(R.id.tvNumber4);
@@ -52,9 +52,9 @@ public UserDetails parcel_userObject;
         TextView text_weight = (TextView) findViewById(R.id.tvNumber1);
         TextView text_goal = (TextView) findViewById(R.id.tvNumber2);
         TextView text_age = (TextView) findViewById(R.id.tvNumberAge);
-       bindProfileToolbar();
+        bindProfileToolbar();
 
-      // mProfileImage.setImageResource(R.drawable.google_thumb);
+        // mProfileImage.setImageResource(R.drawable.google_thumb);
 
 
         SQLiteDatabase db=(new EasyfitnessDbHelper(this)).getReadableDatabase();
@@ -76,6 +76,8 @@ public UserDetails parcel_userObject;
 
             weight = cursor.getInt(cursor.getColumnIndexOrThrow(EasyFitnessContract
                     .UserDetailEntry.COLUMN_USER_WEIGHT));
+            goal_weight = cursor.getInt(cursor.getColumnIndexOrThrow(EasyFitnessContract
+                    .UserDetailEntry.COLUMN_USER_GOALWEIGHT));
             age = cursor.getInt(cursor.getColumnIndexOrThrow(EasyFitnessContract.UserDetailEntry
                     .COLUMN_USER_AGE));
             created_date = cursor.getString(cursor.getColumnIndexOrThrow(EasyFitnessContract
@@ -98,19 +100,19 @@ public UserDetails parcel_userObject;
         text_email.setText(email);
         text_age.setText(String.valueOf(age));
         text_weight.setText(String.valueOf(weight) + " lbs");
+        text_goal.setText(String.valueOf(goal_weight) + " lbs");
 
        /* DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
         mProfileImage.setMinimumHeight(dm.heightPixels);
         mProfileImage.setMinimumWidth(dm.widthPixels);
         mProfileImage.setImageBitmap(imageProfilebitmap);*/
 
 
 
-System.out.println("+++++++++++" + name+email+weight+goal_weight+"***"+selectedImage+ "////"+
-        created_date);
-        parcel_userObject = new UserDetails(name,email,age,weight);
+        System.out.println("+++++++++++" + name+email+weight+goal_weight+"***"+selectedImage+ "////"+
+                created_date);
+        parcel_userObject = new UserDetails(name,email,age,weight,goal_weight);
         System.out.println("Profile Page" +parcel_userObject.getFullName()+email+age+weight);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -136,5 +138,3 @@ System.out.println("+++++++++++" + name+email+weight+goal_weight+"***"+selectedI
     }
 
 }
-
-     

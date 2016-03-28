@@ -1,6 +1,8 @@
 package com.example.android.easyfitness;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,7 +47,8 @@ public class Login extends BaseActivity   {
     private AccessTokenTracker mFacebookAccessTokenTracker;
     // Session Manager Class
     SessionManagement session;
-
+    //To check internet connection
+    boolean isOnline ;
 
     String email ;
     String password ;
@@ -159,7 +162,35 @@ public class Login extends BaseActivity   {
             return;
         }
 
-        _loginButton.setEnabled(true);
+       isOnline = Utilities.checkConnectivity(getBaseContext());
+
+        if (isOnline) {
+
+            _loginButton.setEnabled(true);
+            //with firebase
+            loginWithPassword();
+
+        }else {
+
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(this,R.style
+                    .AppTheme_Dark_Dialog).create();
+
+            alertDialog.setTitle("Network Not Connected...");
+            alertDialog.setMessage("Please connect to a network and try again");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                   finish();
+                }
+            });
+            alertDialog.setIcon(R.drawable.images_navicon);
+
+            alertDialog.show();
+        }
+
+
 
          final ProgressDialog progressDialog = new ProgressDialog(this,
                 R.style.AppTheme_Dark_Dialog);
@@ -171,8 +202,7 @@ public class Login extends BaseActivity   {
 
         // TODO: Implement your own authentication logic here.
 
-       //with firebase
-        loginWithPassword();
+
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -232,6 +262,7 @@ public class Login extends BaseActivity   {
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
         finish();
+
         Intent intent = new Intent(Login.this, MainActivity.class);
         startActivity(intent);
     }
@@ -312,8 +343,8 @@ public class Login extends BaseActivity   {
             if (this.mAuthData.getProvider().equals("facebook")) {
                 /* Logout from Facebook */
                 LoginManager.getInstance().logOut();
-                Toast.makeText(getApplicationContext(), "User logout successfull", Toast.LENGTH_LONG)
-                        .show();
+               /* Toast.makeText(getApplicationContext(), "User logout successfull", Toast.LENGTH_LONG)
+                        .show();*/
             }
 
 

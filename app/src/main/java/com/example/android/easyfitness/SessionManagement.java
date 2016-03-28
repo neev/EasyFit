@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+import com.firebase.client.Firebase;
+
 import java.util.HashMap;
 
 /**
@@ -25,6 +27,9 @@ public class SessionManagement {
 
     // Shared pref mode
     int PRIVATE_MODE = 0;
+
+    /* A reference to the Firebase */
+    private Firebase mFirebaseRef;
 
     // Sharedpref file name
     private static final String PREF_NAME = "EasyFitnessPref";
@@ -46,6 +51,10 @@ public class SessionManagement {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
+        // Initialize Firebase with the application context
+        Firebase.setAndroidContext(context);
+         /* Create the Firebase ref that is used for all authentication with Firebase */
+        mFirebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
     }
     /**
      * Create login session
@@ -143,7 +152,8 @@ public class SessionManagement {
             // Clearing all data from Shared Preferences
             editor.clear();
             editor.commit();
-
+            /* logout of Firebase */
+            mFirebaseRef.unauth();
            /* try {
                 Login.class.newInstance().logout();
             } catch (InstantiationException e) {

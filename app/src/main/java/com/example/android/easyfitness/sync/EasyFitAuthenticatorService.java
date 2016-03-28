@@ -5,16 +5,16 @@ import android.content.Intent;
 import android.os.IBinder;
 
 /**
- * The service which allows the sync adapter framework to access the authenticator.
+ * Created by neeraja on 10/22/2015.
  */
-public class SunshineAuthenticatorService extends Service {
+public class EasyFitAuthenticatorService extends Service {
     // Instance field that stores the authenticator object
-    private SunshineAuthenticator mAuthenticator;
+    private EasyFitAuthenticator mAuthenticator;
 
     @Override
     public void onCreate() {
         // Create a new authenticator object
-        mAuthenticator = new SunshineAuthenticator(this);
+        mAuthenticator = new EasyFitAuthenticator(this);
     }
 
     /*

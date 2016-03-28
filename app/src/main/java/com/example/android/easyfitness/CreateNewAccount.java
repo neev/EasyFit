@@ -32,7 +32,7 @@ public class CreateNewAccount extends BaseActivity  {
     String name;
     String email;
     String password;
-
+    boolean isOnline;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +44,8 @@ public class CreateNewAccount extends BaseActivity  {
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 signup();
             }
         });
@@ -51,6 +53,9 @@ public class CreateNewAccount extends BaseActivity  {
         _loginLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
                 // Finish the registration screen and return to the Login activity
                 Intent intent = new Intent(CreateNewAccount.this, Login.class);
                 startActivity(intent);
@@ -97,6 +102,9 @@ public class CreateNewAccount extends BaseActivity  {
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
+
+
+
         Intent intent = new Intent(CreateNewAccount.this, Login.class);
         startActivity(intent);
         finish();
