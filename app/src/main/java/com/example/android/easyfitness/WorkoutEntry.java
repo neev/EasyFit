@@ -84,11 +84,11 @@ String pickedDate;
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
     {
        /* Toast.makeText(this, "onLoadFinished", Toast.LENGTH_SHORT).show();*/
-
+        int i=0;
         cursor.moveToFirst();
-        for(int j=0;j<cursor.getCount();j++)
+        while (!cursor.isAfterLast())
         {
-
+            i++;
             cursor.moveToNext();
         }
         //Log.v(FetchScoreTask.LOG_TAG,"Loader query: " + String.valueOf(i));

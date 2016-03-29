@@ -3,7 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
               android:elevation="@dimen/cardview_compat_inset_shadow"
-              android:background="@drawable/side_nav_bar"
+              android:background="#FCE4EC"
              android:paddingLeft="@dimen/list_item_extra_padding"
              android:paddingRight="@dimen/list_item_extra_padding"
               android:orientation="vertical"

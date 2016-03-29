@@ -271,10 +271,11 @@ public class WorkoutHistory extends AppCompatActivity {
         {
            // Toast.makeText(getActivity(), "onLoadFinished", Toast.LENGTH_SHORT).show();
 
+            int i = 0;
             cursor.moveToFirst();
-          for(int i=0; i<cursor.getCount();i++)
+            while (!cursor.isAfterLast())
             {
-
+                i++;
                 cursor.moveToNext();
             }
             //Log.v(FetchScoreTask.LOG_TAG,"Loader query: " + String.valueOf(i));

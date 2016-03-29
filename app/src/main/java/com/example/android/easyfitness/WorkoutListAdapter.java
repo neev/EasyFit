@@ -108,7 +108,7 @@ public class WorkoutListAdapter extends CursorAdapter
                                 cursor.moveToPosition(rowPosition);
 
                                 logged_workoutDecs = cursor.getString(1);
-                                selected_row = cursor.getPosition();
+                                selected_row =rowPosition;
                                 _switchButtonListerner.onSwitchButtonClickListner(cursor.getPosition(),
                                         logged_workoutDecs);
                                 timePickerDialog.setTitle("Set hours and minutes");
@@ -135,6 +135,7 @@ public class WorkoutListAdapter extends CursorAdapter
 
                                     }
                                 });
+
                                 timePickerDialog.show();
                                 swichbtn_flag = true;
                                 durationView(context, view, cursor);
@@ -161,10 +162,6 @@ public class WorkoutListAdapter extends CursorAdapter
             public void onClick(View v) {
                 //Is the switch is on?
                 boolean on = ((Switch) v).isChecked();
-
-
-
-
                 if (on) {
                     //Do something when switch is on/checked
                     if (_switchButtonListerner != null) {
@@ -172,7 +169,7 @@ public class WorkoutListAdapter extends CursorAdapter
                         cursor.moveToPosition(rowPosition);
 
                         logged_workoutDecs = cursor.getString(1);
-                        selected_row = cursor.getPosition();
+                        selected_row = rowPosition;
                         _switchButtonListerner.onSwitchButtonClickListner(cursor.getPosition(),
                                 logged_workoutDecs);
                         timePickerDialog.setTitle("Set hours and minutes");
@@ -191,14 +188,15 @@ public class WorkoutListAdapter extends CursorAdapter
                             @Override
                             public void onDismiss(DialogInterface dialog) {
 
-                                    // Actions on Cancel button click.
-                                    cursor.moveToPosition(rowPosition);
-                                    // Actions on Cancel button click.
-                                    disabled_View.workoutOptionSwitch.setChecked(false);
-                                    container.setVisibility(View.GONE);
+                                // Actions on Cancel button click.
+                                cursor.moveToPosition(rowPosition);
+                                // Actions on Cancel button click.
+                                disabled_View.workoutOptionSwitch.setChecked(false);
+                                container.setVisibility(View.GONE);
 
                             }
                         });
+
                         timePickerDialog.show();
                         swichbtn_flag = true;
                         durationView(context, view, cursor);
@@ -249,12 +247,13 @@ public class WorkoutListAdapter extends CursorAdapter
         container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
                 , ViewGroup.LayoutParams.MATCH_PARENT));
 
-        workoutTimeDur.setOnClickListener(new View.OnClickListener() {
+                workoutTimeDur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Add the time picker here
 
                 if (workout_dur_editText.getText() != "") {
+
                     cursor.moveToPosition(selected_row);
                     myviewHolder.loggedStatusText.setText("Logged Duration");
                     myviewHolder.loggedDurationTimeText.setText(logged_workoutDuration);
@@ -300,28 +299,6 @@ public class WorkoutListAdapter extends CursorAdapter
             }
         }
 
-        /*@Override
-        public void onClick(DialogInterface d , int which){
-            if (which== DialogInterface.BUTTON_NEGATIVE) {
-                // show dialog to ask to check duration
-                AlertDialog alert = new AlertDialog.Builder(getContext()).create();
-                alert.setTitle("Workout Duartion");
-                alert.setMessage("Please select the workout time duration");
-                //alert.setCancelMessage(null);
-
-                alert.setButton("OK", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface alert, int which) {
-                        // TODO Auto-generated method stub
-                        //Do something
-                        Intent i = new Intent(getContext(), MainActivity.class);
-                        getContext().startActivity(i);
-                    }
-                });
-                alert.show();
-            }
-        }*/
 
 
         public static  int getRoundedMinute(int minute){
@@ -420,15 +397,9 @@ public class WorkoutListAdapter extends CursorAdapter
         int day_of_week = c.get(Calendar.DAY_OF_WEEK);
         String _day = Utilities.getWeekName(day_of_week);
 
-        if(_flag < 8){
-            _flag++;}
-        else if(_flag == 8){
-            _flag=0;}
-        /*else if(_flag == 0){
-            _flag++;
-        }*/
 
-        session.createFlagSession(_flag,_flag);
+
+
         // ADDING THE RECORDS TO THE TABLE IN LOCAL DB
        /* long workoutRecord_stored = Utilities.addUserRecordedWorkout(context,authId,
                 logged_workoutDecs,mMinutes,y,m,d,_day,pushId);
