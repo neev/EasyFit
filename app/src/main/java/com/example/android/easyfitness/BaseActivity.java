@@ -236,7 +236,17 @@ public class BaseActivity extends AppCompatActivity implements
 
             }
             return true;
+            case R.id.nav_about: {
 
+                if (session.checkLogin()) {
+                    Intent intent = new Intent(this, About.class);
+                    startActivity(intent);
+
+
+                }
+
+            }
+            return true;
 
         }
 

@@ -6,14 +6,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.android.easyfitness.data.UserDetails;
 import com.firebase.client.Firebase;
@@ -41,11 +39,15 @@ public class UserAccountInfo extends BaseActivity  {
     EditText _age;
     @Bind(R.id.btn_save)
     Button _saveButton;
+    @Bind(R.id.imageView_profile)
+    ImageView imageView;
+
+    @Bind(R.id.btn_pick)
     Button pickImageButton;
     Boolean isPickImageButtonClicked = false;
     //Image picker
     private final int PICK_IMAGE_REQUEST = 1;
-    private ImageView imageView;
+
     Bitmap selectedImage;
     /* A reference to the Firebase */
     private Firebase mFirebaseRef;
@@ -58,7 +60,7 @@ public class UserAccountInfo extends BaseActivity  {
     String weight ="";
     String goalWeight ="";
     Intent photoPickerIntent;
-
+    byte[] byteArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,53 @@ public class UserAccountInfo extends BaseActivity  {
         ButterKnife.bind(this);
         // Initialize Firebase with the application context
         Firebase.setAndroidContext(this);
+
+
+        // Session Manager
+        SessionManagement session = new SessionManagement(getApplicationContext());
+        // get user data from session
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
+        // name
+        authId = user.get(SessionManagement.KEY_NAME);
+        // email
+        email = user.get(SessionManagement.KEY_EMAIL);
+        _emailText.setText(email);
+        if (savedInstanceState != null) {
+
+           // _emailText.setText(savedInstanceState.getString("USER_EMAIL"));
+            _name.setText(savedInstanceState.getString("USER_NAME"));
+            _age.setText(savedInstanceState.getString("USER_AGE"));
+            _weight.setText(savedInstanceState.getString("USER_WEIGHT"));
+            _goalWeight.setText(savedInstanceState.getString("USER_GOALWEIGHT"));
+            isPickImageButtonClicked = savedInstanceState.getBoolean("USER_PROFILE_PIC_CHECKED");
+            if(savedInstanceState.getByteArray("USER_PROFILE_PICTURE") != null) {
+                selectedImage = Utilities.getImage(savedInstanceState.getByteArray("USER_PROFILE_PICTURE"));
+            }
+
+            if(selectedImage !=null){
+                ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
+                if(imageView !=null){
+                    imageView.setImageBitmap(selectedImage);
+                }
+            }
+            if(isPickImageButtonClicked == true){
+                pickImageButton = (Button) findViewById(R.id.btn_pick);
+                pickImageButton.setText(" Change Photo");
+                pickImageButton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        isPickImageButtonClicked = true;
+                        photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), PICK_IMAGE_REQUEST);
+                    }
+                });
+            }
+
+        }
+
         if (savedInstanceState == null) {
             pickImageButton = (Button) findViewById(R.id.btn_pick);
             pickImageButton.setOnClickListener(new View.OnClickListener() {
@@ -79,21 +128,8 @@ public class UserAccountInfo extends BaseActivity  {
                     startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), PICK_IMAGE_REQUEST);
                 }
             });
+
         }
-
-
-
-
-        // Session Manager
-        SessionManagement session = new SessionManagement(getApplicationContext());
-        // get user data from session
-        HashMap<String, String> user = session.getUserFirebaseAuthId();
-        // name
-        authId = user.get(SessionManagement.KEY_NAME);
-
-        // email
-        email = user.get(SessionManagement.KEY_EMAIL);
-
         Intent intent = getIntent();
         if(intent.getParcelableExtra("USER_PARCEL_OBJECT")!=null) {
             UserDetails user_object = intent.getParcelableExtra("USER_PARCEL_OBJECT");
@@ -105,6 +141,12 @@ public class UserAccountInfo extends BaseActivity  {
             age = String.valueOf(age_int);
             weight = String.valueOf(weight_int);
             goalWeight = String.valueOf(goalWeight_int);
+
+            _name.setText(name);
+            _emailText.setText(email);
+            _age.setText(age);
+            _weight.setText(weight);
+            _goalWeight.setText(goalWeight);
 
         }
 
@@ -170,9 +212,16 @@ public class UserAccountInfo extends BaseActivity  {
     public void onSuccess() {
         _saveButton.setEnabled(true);
         setResult(RESULT_OK, null);
-        Intent intent = new Intent(UserAccountInfo.this, Profile.class);
+        if(byteArray != null) {
+            Intent intent = new Intent(UserAccountInfo.this, Profile.class);
+            intent.putExtra("PROFILE_IMAGE", byteArray );
+            startActivity(intent);
+        }
+        else if(byteArray == null) {
+            Intent intent = new Intent(UserAccountInfo.this, Profile.class);
+            startActivity(intent);
+        }
 
-        startActivity(intent);
         finish();
     }
     public void onFailed() {
@@ -221,8 +270,9 @@ public class UserAccountInfo extends BaseActivity  {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
             selectedImage.recycle();
-            byte[] byteArray = stream.toByteArray();
-            String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            byteArray = stream.toByteArray();
+        }
+            /*String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
             userRef.child("Images").child(authId).setValue(imageFile, new Firebase
                     .CompletionListener() {
 
@@ -245,7 +295,7 @@ public class UserAccountInfo extends BaseActivity  {
 
         Toast.makeText(getBaseContext(), "Image Data saved successfully  : " + userInfo_stored,
                 Toast.LENGTH_LONG)
-                .show();
+                .show();*/
         //finish();
         onSuccess();
 
@@ -313,7 +363,7 @@ public class UserAccountInfo extends BaseActivity  {
                         RoundedBitmapDrawableFactory.create(getBaseContext().getResources(), bitmap);
                 circularBitmapDrawable.setCircular(true);*/
 
-                ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
+               // ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
 
                /* Glide.with(this).load(bitmap).centerCrop().into(imageView);
                 Glide.with(this)
@@ -332,11 +382,14 @@ public class UserAccountInfo extends BaseActivity  {
                             }
                         });*/
                 selectedImage = bitmap_profile_pic;
-                imageView.setImageBitmap(selectedImage);
-                pickImageButton.setText("change photo");
+
 
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if(selectedImage != null) {
+                imageView.setImageBitmap(selectedImage);
+                pickImageButton.setText("change photo");
             }
         }
     }
@@ -349,6 +402,7 @@ public class UserAccountInfo extends BaseActivity  {
     @Override
     protected void onResume() {
         super.onResume();
+
         if(selectedImage !=null){
             ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
             if(imageView !=null){
@@ -370,14 +424,32 @@ public class UserAccountInfo extends BaseActivity  {
                 }
             });
         }
-// Get the extra text from the Intent
-        System.out.println("Intent EXTRA" + name+email+age+weight+goalWeight);
+        if(isPickImageButtonClicked == false){
+            pickImageButton = (Button) findViewById(R.id.btn_pick);
+            pickImageButton.setText(" Add Photo");
+            pickImageButton.setOnClickListener(new View.OnClickListener() {
 
-        _name.setText(name);
-        _emailText.setText(email);
-        _age.setText(age);
-        _weight.setText(weight);
-        _goalWeight.setText(goalWeight);
+                @Override
+                public void onClick(View view) {
+                    isPickImageButtonClicked = true;
+                    photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), PICK_IMAGE_REQUEST);
+                }
+            });
+        }
+// Get the extra text from the Intent
+        System.out.println("Intent EXTRA" + name + email + age + weight + goalWeight);
+
+        _saveButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                signup();
+            }
+        });
 
     }
 
@@ -386,12 +458,12 @@ public class UserAccountInfo extends BaseActivity  {
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
-
-        outState.putString("USER_EMAIL", email);
-        outState.putString("USER_NAME", name);
-        outState.putString("USER_AGE", age);
-        outState.putString("USER_WEIGHT", weight);
-        outState.putString("USER_GOALWEIGHT", goalWeight);
+        imageView.setFocusable(true);
+        outState.putString("USER_EMAIL", _emailText.getText().toString());
+        outState.putString("USER_NAME", _name.getText().toString());
+        outState.putString("USER_AGE", _age.getText().toString());
+        outState.putString("USER_WEIGHT", _weight.getText().toString());
+        outState.putString("USER_GOALWEIGHT", _goalWeight.getText().toString());
         outState.putBoolean("USER_PROFILE_PIC_CHECKED", isPickImageButtonClicked);
         if(selectedImage != null){
             outState.putByteArray("USER_PROFILE_PICTURE",Utilities.getBytes(selectedImage));
@@ -400,20 +472,5 @@ public class UserAccountInfo extends BaseActivity  {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState)
-    {
 
-
-        email = savedInstanceState.getString("USER_EMAIL");
-        name = savedInstanceState.getString("USER_NAME");
-        age = savedInstanceState.getString("USER_AGE");
-        weight = savedInstanceState.getString("USER_WEIGHT");
-        goalWeight = savedInstanceState.getString("USER_GOALWEIGHT");
-        isPickImageButtonClicked = savedInstanceState.getBoolean("USER_PROFILE_PIC_CHECKED");
-        if(selectedImage != null) {
-            selectedImage = Utilities.getImage(savedInstanceState.getByteArray("USER_PROFILE_PICTURE"));
-        }
-        super.onRestoreInstanceState(savedInstanceState);
-    }
 }

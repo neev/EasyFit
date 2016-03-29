@@ -4,6 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
+              android:background="@drawable/newlogo"
               tools:context="com.example.android.easyfitness.WorkoutEntry">
     <TextView
         android:layout_width="wrap_content"
@@ -12,7 +13,7 @@
         android:id="@+id/pickedDatetext"
 
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="20dp" android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
         android:textStyle="bold" android:textColor="@color/blue"/>
 
 

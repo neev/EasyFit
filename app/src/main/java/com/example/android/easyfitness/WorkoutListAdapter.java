@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -95,6 +96,64 @@ public class WorkoutListAdapter extends CursorAdapter
 
         final int rowPosition = cursor.getPosition();
 
+        mHolder.workoutOptionSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            // do something when check is selected
+                            //Do something when switch is on/checked
+                            if (_switchButtonListerner != null) {
+
+                                cursor.moveToPosition(rowPosition);
+
+                                logged_workoutDecs = cursor.getString(1);
+                                selected_row = cursor.getPosition();
+                                _switchButtonListerner.onSwitchButtonClickListner(cursor.getPosition(),
+                                        logged_workoutDecs);
+                                timePickerDialog.setTitle("Set hours and minutes");
+                                timePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        timeSetStatus = 2;
+                                        cursor.moveToPosition(rowPosition);
+                                        disabled_View.workoutOptionSwitch.setChecked(false);
+                                        container.setVisibility(View.GONE);
+                                        // Actions on clicks outside the dialog.
+                                    }
+                                });
+
+                                timePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+
+                                        // Actions on Cancel button click.
+                                        cursor.moveToPosition(rowPosition);
+                                        // Actions on Cancel button click.
+                                        disabled_View.workoutOptionSwitch.setChecked(false);
+                                        container.setVisibility(View.GONE);
+
+                                    }
+                                });
+                                timePickerDialog.show();
+                                swichbtn_flag = true;
+                                durationView(context, view, cursor);
+
+
+                            } else {
+                                //do something when unchecked
+
+
+                                swichbtn_flag = false;
+                                //container.removeAllViews();
+                                container.setVisibility(View.GONE);
+                                selected_position = -1;
+                            }
+                            notifyDataSetChanged();
+                        }
+                    }
+                }
+        );
 
         mHolder.workoutOptionSwitch.setOnClickListener(new View.OnClickListener() {
 

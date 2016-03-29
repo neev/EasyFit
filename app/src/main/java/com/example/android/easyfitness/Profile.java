@@ -3,6 +3,7 @@ package com.example.android.easyfitness;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -52,13 +53,18 @@ public class Profile extends BaseActivity   {
         TextView text_weight = (TextView) findViewById(R.id.tvNumber1);
         TextView text_goal = (TextView) findViewById(R.id.tvNumber2);
         TextView text_age = (TextView) findViewById(R.id.tvNumberAge);
+        ImageView mProfileImage = (ImageView) findViewById(R.id.profile_ImageView);
+
+
+
         bindProfileToolbar();
 
         // mProfileImage.setImageResource(R.drawable.google_thumb);
 
 
         SQLiteDatabase db=(new EasyfitnessDbHelper(this)).getReadableDatabase();
-        Cursor cursor=db.rawQuery("SELECT _id,user_name,user_email,user_weight,user_goal_weight," +
+        Cursor cursor = db.rawQuery("SELECT _id,user_name,user_email,user_weight," +
+                        "user_goal_weight," +
                         "user_create_date," +
                         "enter_age," +
                         "image_data" +
@@ -88,14 +94,17 @@ public class Profile extends BaseActivity   {
             cursor.moveToNext();
         }
         db.close();
+        Bitmap imageProfilebitmap = null;
+        Intent intent = getIntent();
+        if(intent.getParcelableExtra("PROFILE_IMAGE")!=null) {
+            byte[] byteValue = intent.getByteArrayExtra("PROFILE_IMAGE");
+            // byte[] byteValue = selectedImage.getBytes();
+             imageProfilebitmap = Utilities.getImage(byteValue);
+        }
 
+        if(imageProfilebitmap != null)
+        mProfileImage.setImageBitmap(imageProfilebitmap);
 
-   /* byte[] byteValue = selectedImage.getBytes();
-    Bitmap imageProfilebitmap = Utilities.getImage(byteValue);*/
-
-
-
-        // Populate fields with extracted properties
         text_name.setText(name);
         text_email.setText(email);
         text_age.setText(String.valueOf(age));
@@ -132,7 +141,7 @@ public class Profile extends BaseActivity   {
     }
     private void bindProfileToolbar() {
         mToolbar        = (Toolbar) findViewById(R.id.toolbarProfile);
-        mProfileImage   = (ImageView) findViewById(R.id.profileimageview);
+        mProfileImage   = (ImageView) findViewById(R.id.profile_ImageView);
 
         mAppBarLayout   = (AppBarLayout) findViewById(R.id.app_barProfile);
     }

@@ -4,10 +4,10 @@
     <dimen name="nav_header_height">160dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">26dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <!--for the list item in workout options-->
-    <dimen name="list_item_extra_padding">0dp</dimen>
+    <dimen name="list_item_extra_padding">10dp</dimen>
     <dimen name="list_icon">40dp</dimen>
     <dimen name="list_horizonal_matgin">2dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
