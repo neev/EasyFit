@@ -1,4 +1,4 @@
-package com.example.android.easyfitness;
+package com.neeraja.android.easyfit;
 
 import org.junit.Test;
 

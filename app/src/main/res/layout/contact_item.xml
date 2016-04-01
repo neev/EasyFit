@@ -23,7 +23,7 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_toEndOf="@id/ivContactItem"
         android:layout_toRightOf="@id/ivContactItem"
-        android:text="+91 972-426-8906"
+        android:text="@string/text_91978654321"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_marginTop="8dp"
         android:layout_toEndOf="@id/ivContactItem"
         android:layout_toRightOf="@id/ivContactItem"
-        android:text="Mobile"
+        android:text="@string/text_mobile"
         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
     <ImageView

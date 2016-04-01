@@ -41,7 +41,7 @@
 
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="User Name"
+                android:text="@string/text_username"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
@@ -53,7 +53,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
 
-                android:text="Name"
+                android:text="@string/text_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="#727272" />
 
@@ -75,7 +75,7 @@
 
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="User Age"
+                    android:text="@string/text_userage"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="#212121" />
 
@@ -87,7 +87,7 @@
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="8dp"
 
-                    android:text="Age"
+                    android:text="@string/text_age"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="#727272" />
 
@@ -122,7 +122,7 @@
 
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="chintan@letsnurture.com"
+                android:text="@string/text_useremail"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
@@ -135,7 +135,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_toEndOf="@id/ivContactItem3"
                 android:layout_toRightOf="@id/ivContactItem3"
-                android:text="Personal"
+                android:text="@string/text_personal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="#727272" />
 
@@ -164,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:text="100 lbs"
+                android:text="@string/text_100lbs"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
@@ -175,24 +175,11 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
-                android:text="Weight"
+                android:text="@string/text_weight"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="#727272" />
 
-            <!-- <ToggleButton
-                 android:id="@+id/chkState1"
-                 android:layout_width="24dp"
-                 android:layout_height="24dp"
-                 android:layout_alignParentEnd="true"
-                 android:layout_alignParentRight="true"
-                 android:layout_centerVertical="true"
-                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                 android:background="@drawable/toggle_selector"
-                 android:checked="true"
-                 android:padding="6dp"
-                 android:textOff=""
-                 android:textOn="" />-->
+
 
         </RelativeLayout>
 
@@ -212,7 +199,7 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
 
-                android:text="80 lbs"
+                android:text="@string/text_80lbs"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
@@ -224,7 +211,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
 
-                android:text="Goal Weight"
+                android:text="@string/text_goalweight"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="#727272" />
 

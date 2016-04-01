@@ -1,0 +1,36 @@
+<resources>
+    <string name="change_image">添加照片</string>
+    <string name="about_text">开发商：Neeraja\n\n
+                Easyfit是一个简单的应用程序登录日记体力活动和锻炼。\n
+
+
+    </string>
+    <string name="tilte_activity_about">关于</string>
+    <string name="nav_text_home">家</string>
+    <string name="nav_text_login">登录</string>
+    <string name="nav_text_logout">登出</string>
+    <string name="nav_text_profile">轮廓</string>
+    <string name="nav_text_recordworkout">锻炼记录</string>
+    <string name="nav_text_calendar">日历视图</string>
+    <string name="nav_text_workouthistory">体育锻炼历史记录</string>
+    <string name="nav_text_about">关于</string>
+    <string name="text_name">名称</string>
+    <string name="text_username">用户名</string>
+    <string name="text_userage">用户年龄</string>
+    <string name="text_age">年龄</string>
+    <string name="text_useremail">username@email.com</string>
+    <string name="text_personal">个人</string>
+    <string name="text_100lbs">100 磅</string>
+    <string name="text_weight">重量</string>
+    <string name="text_80lbs">80 磅</string>
+    <string name="text_goalweight">目标权重</string>
+    <string name="text_91978654321">+91 972-426-8906</string>
+    <string name="text_mobile">Mobile</string>
+    <string name="text_email">电子邮件</string>
+    <string name="text_save">保存</string>
+    <string name="text_password">密码</string>
+    <string name="text_login">登录</string>
+    <string name="text_noaccountyet_createone">没有帐号？创建一个</string>
+    <string name="text_createaccount">创建帐号</string>
+    <string name="text_alreadymember_login">已经是会员？ 登录</string>
+</resources>

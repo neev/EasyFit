@@ -5,7 +5,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_marginTop="10dp"
-                tools:context="com.example.android.easyfitness.WorkoutHistory$PlaceholderFragment">
+                tools:context="com.neeraja.android.easyfit.WorkoutHistory$PlaceholderFragment">
 
 
 
@@ -27,7 +27,7 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingStart="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"

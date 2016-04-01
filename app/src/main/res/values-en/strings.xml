@@ -1,0 +1,38 @@
+<resources>
+
+
+    <string name="change_image">Add Photo</string>
+    <string name="about_text">Developer : Neeraja\n\n
+        Easyfit is a simple app to log physical activities and workouts in a journal.\n
+
+
+    </string>
+    <string name="tilte_activity_about">About</string>
+    <string name="nav_text_home">Home</string>
+    <string name="nav_text_login">LogIn</string>
+    <string name="nav_text_logout">LogOut</string>
+    <string name="nav_text_profile">Profile</string>
+    <string name="nav_text_recordworkout">Record Workout</string>
+    <string name="nav_text_calendar">Calendar View</string>
+    <string name="nav_text_workouthistory">Workout History</string>
+    <string name="nav_text_about">About</string>
+    <string name="text_name">Name</string>
+    <string name="text_username">User Name</string>
+    <string name="text_userage">User Age</string>
+    <string name="text_age">Age</string>
+    <string name="text_useremail">username@email.com</string>
+    <string name="text_personal">Personal</string>
+    <string name="text_100lbs">100 lbs</string>
+    <string name="text_weight">Weight</string>
+    <string name="text_80lbs">80 lbs</string>
+    <string name="text_goalweight">Goal Weight</string>
+    <string name="text_91978654321">+91 972-426-8906</string>
+    <string name="text_mobile">Mobile</string>
+    <string name="text_email">Email</string>
+    <string name="text_save">Save</string>
+    <string name="text_password">Password</string>
+    <string name="text_login">Login</string>
+    <string name="text_noaccountyet_createone">No account yet? Create one</string>
+    <string name="text_createaccount">Create Account</string>
+    <string name="text_alreadymember_login">Already a member? Login</string>
+</resources>

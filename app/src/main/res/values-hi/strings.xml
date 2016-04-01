@@ -1,0 +1,36 @@
+<resources>
+    <string name="change_image">तस्वीर जोड़ो</string>
+    <string name="about_text">डेवलपर: नीरजा \n\n आसान फिट एक लॉग \n में शारीरिक गतिविधियों और लॉग
+        इन करने के लिए एक एकल app है।
+
+
+    </string>
+    <string name="tilte_activity_about">के बारे में</string>
+    <string name="nav_text_home">घर</string>
+    <string name="nav_text_login">लॉगिन</string>
+    <string name="nav_text_logout">लोग आउट</string>
+    <string name="nav_text_profile">प्रोफाइल</string>
+    <string name="nav_text_recordworkout">रिकार्ड कसरत</string>
+    <string name="nav_text_calendar">कैलेंडर देखें</string>
+    <string name="nav_text_workouthistory">कसरत इतिहास</string>
+    <string name="nav_text_about">के बारे में</string>
+    <string name="text_name">नाम</string>
+    <string name="text_username">उपयोगकर्ता नाम</string>
+    <string name="text_userage">उपयोगकर्ता की आयु</string>
+    <string name="text_age">आयु</string>
+    <string name="text_useremail">username@email.com</string>
+    <string name="text_personal">निजी</string>
+    <string name="text_100lbs">100 lbs</string>
+    <string name="text_weight">वजन</string>
+    <string name="text_80lbs">80 lbs</string>
+    <string name="text_goalweight">लक्षित भार</string>
+    <string name="text_91978654321">+91 972-426-8906</string>
+    <string name="text_mobile">Mobile</string>
+    <string name="text_email">ईमेल पता</string>
+    <string name="text_save">बचाना</string>
+    <string name="text_password">पासवर्ड</string>
+    <string name="text_login">लॉगिन</string>
+    <string name="text_noaccountyet_createone">खाता नहीं है? साइन अप करें</string>
+    <string name="text_createaccount">खाता बनाएं</string>
+    <string name="text_alreadymember_login">पहले से सदस्य हैं ? लॉगिन</string>
+</resources>

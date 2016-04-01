@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.android.easyfitness.CreateNewAccount">
+    tools:context="com.neeraja.android.easyfit.CreateNewAccount">
 
     <include
         android:id="@+id/navigation_header_container"
@@ -30,7 +30,7 @@
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:inputType="textEmailAddress"
-                      android:hint="Email" />
+                      android:hint="@string/text_email" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -41,7 +41,7 @@
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:inputType="textPassword"
-                      android:hint="Password"/>
+                      android:hint="@string/text_password"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Signup Button -->
@@ -56,13 +56,13 @@
             android:layout_gravity="center_horizontal" android:textColor="#ffffff"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:typeface="sans" android:textStyle="bold"
-            android:text="Create Account"/>
+            android:text="@string/text_createaccount"/>
 
         <TextView android:id="@+id/link_login"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:layout_marginBottom="24dp"
-                  android:text="Already a member? Login"
+                  android:text="@string/text_alreadymember_login"
                   android:gravity="center"
                   android:textSize="16dip"/>
 
