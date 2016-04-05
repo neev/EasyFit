@@ -91,17 +91,13 @@ public class MainActivity extends BaseActivity
         }*/
 
         flower_flag = NumberofRECORDSthisWEEK();
-
-
-        //Flower Image Display check
-//mFlowerImage.setImageResource(Utilities.today_flowerimage(flower_flag));
         Glide.with(MainActivity.this)
                 .load(Utilities.today_flowerimage(flower_flag))
                 .fitCenter()
                 .into(mFlowerImage);
 
 
-
+        EasyFitSyncAdapter.syncImmediately(this);
 
     }
 
@@ -156,7 +152,6 @@ public class MainActivity extends BaseActivity
 
     protected void onResume(){
         super.onResume();
-        HashMap<String, String> user = session.getUserFirebaseAuthId();
 
      /*   isOnline = Utilities.checkConnectivity(getBaseContext());
         // get user data from session
@@ -190,16 +185,9 @@ public class MainActivity extends BaseActivity
 
             alertDialog.show();
         }*/
-
-
-
         EasyFitSyncAdapter.syncImmediately(this);
         flower_flag = NumberofRECORDSthisWEEK();
-
-
-        //Flower Image Display check
-//mFlowerImage.setImageResource(Utilities.today_flowerimage(flower_flag));
-            Glide.with(MainActivity.this)
+        Glide.with(MainActivity.this)
                     .load(Utilities.today_flowerimage(flower_flag))
                     .fitCenter()
                     .into(mFlowerImage);
@@ -229,7 +217,7 @@ public class MainActivity extends BaseActivity
         SQLiteDatabase db;
 
         // Session Manager
-        SessionManagement session = new SessionManagement(getApplicationContext());
+        SessionManagement session = new SessionManagement(this);
         // get user data from session
         HashMap<String, String> user = session.getUserFirebaseAuthId();
         // name

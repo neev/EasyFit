@@ -231,6 +231,8 @@ public class EasyFitSyncAdapter extends AbstractThreadedSyncAdapter {
                                  }
                              });
         }
+
+        updateWidgets();
         System.out.println("*****ASYNC TASK ENDED*****");
 
 

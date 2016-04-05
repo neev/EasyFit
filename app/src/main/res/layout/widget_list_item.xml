@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/widget_list_item"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/touch_selector_white"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+
+        android:orientation="horizontal" android:weightSum="3">
+            <TextView
+                android:id="@+id/widget_month_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/forecast_widget_text_size"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:text="@string/test_text" android:layout_weight="1"/>
+
+
+
+        <TextView
+            android:id="@+id/widget_workout_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/black"
+            android:textSize="@dimen/forecast_widget_text_size"
+            android:text="@string/test_text"
+
+            android:textStyle="bold" android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/widget_workout_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/black"
+            android:text="@string/test_text"
+            android:textSize="@dimen/forecast_widget_text_size"
+            android:textStyle="bold" android:layout_weight="1" android:singleLine="false"
+            android:gravity="left"/>
+
+
+    </LinearLayout>
+</FrameLayout>

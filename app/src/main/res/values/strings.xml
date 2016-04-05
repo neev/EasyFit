@@ -17,11 +17,13 @@
     <string name="error_invalid_password" translatable="false">This password is too short</string>
     <string name="error_incorrect_password" translatable="false">This password is incorrect</string>
     <string name="error_field_required" translatable="false">This field is required</string>
-    <string name="permission_rationale" translatable="false">"Contacts permissions are needed for providing email
+    <string name="permission_rationale" translatable="false">"Contacts permissions are needed for
+        providing email
         completions."
     </string>
 
-    <string name="empty_workoutOptions_list" translatable="false">No workout options available</string>
+    <string name="empty_workoutOptions_list" translatable="false">No workout options available
+    </string>
     <string name="workout_duration" translatable="false">Add Workout Duration</string>
     <string name="workout_logit" translatable="false">Log It</string>
 
@@ -45,6 +47,13 @@
 
 
     </string>
+
+    <!-- Language-specific constants -->
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <!-- For labelling tomorrow's forecast [CHAR LIMIT=15] -->
+    <string name="tomorrow">Tomorrow</string>
+
     <string name="tilte_activity_about">About</string>
     <string name="nav_text_home">Home</string>
     <string name="nav_text_login">LogIn</string>
@@ -73,4 +82,9 @@
     <string name="text_noaccountyet_createone">No account yet? Create one</string>
     <string name="text_createaccount">Create Account</string>
     <string name="text_alreadymember_login">Already a member? Login</string>
+    <string name="widget_minutes_textsize">12</string>
+
+
+
+
 </resources>

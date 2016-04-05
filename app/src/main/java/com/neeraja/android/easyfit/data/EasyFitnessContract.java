@@ -211,6 +211,9 @@ public class EasyFitnessContract {
         public static int getworkoutRecordMonthFromUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(3));
         }
+        public static int getworkoutRecordDateFromUri(Uri uri) {
+            return Integer.parseInt(uri.getPathSegments().get(4));
+        }
 
         public static String getworkoutRecordStartDateFromUri(Uri uri) {
             return uri.getPathSegments().get(2);
