@@ -2,6 +2,8 @@ package com.neeraja.android.easyfit.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -11,26 +13,34 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.neeraja.android.easyfit.MainActivity;
 import com.neeraja.android.easyfit.R;
 import com.neeraja.android.easyfit.SessionManagement;
 import com.neeraja.android.easyfit.Utilities;
 import com.neeraja.android.easyfit.data.EasyFitnessContract;
 import com.neeraja.android.easyfit.data.WorkoutOptions;
 import com.neeraja.android.easyfit.data.WorkoutRecord;
+import com.neeraja.android.easyfit.notification.MyAlarmService;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -45,7 +55,7 @@ public class EasyFitSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-
+    private static final int WEATHER_NOTIFICATION_ID = 3004;
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID,  LOCATION_STATUS_UNKNOWN, LOCATION_STATUS_INVALID})
     public @interface LocationStatus {}
@@ -222,6 +232,8 @@ public class EasyFitSyncAdapter extends AbstractThreadedSyncAdapter {
                                          }
 
                                          public void onCancelled(FirebaseError error) {
+
+
                                          }
                                      });
                                  }
@@ -233,10 +245,10 @@ public class EasyFitSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         updateWidgets();
+        Intent service = new Intent(getContext(), MyAlarmService.class);
+        getContext().startService(service);
+        //notifyWorkoutStatus();
         System.out.println("*****ASYNC TASK ENDED*****");
-
-
-
 
         return;
     }
@@ -251,6 +263,92 @@ public class EasyFitSyncAdapter extends AbstractThreadedSyncAdapter {
                 .setPackage(context.getPackageName());
         context.sendBroadcast(dataUpdatedIntent);
     }
+    private void notifyWeather() {
+        Context context = getContext();
+        final Calendar currentDate = Calendar.getInstance();
+        int mYear = currentDate.get(Calendar.YEAR);
+        int mMonth = currentDate.get(Calendar.MONTH);
+        int mDate = currentDate.get(Calendar.DATE);
+        Date startDate = new Date((mYear-1900),(mMonth),mDate);
+
+        // Session Manager
+        SessionManagement session = new SessionManagement(context);
+        // get user data from session
+        HashMap<String, String> user = session.getUserFirebaseAuthId();
+        // name
+        String authId = user.get(SessionManagement.KEY_NAME);
+        Uri recordForThisWeekUri = EasyFitnessContract.UserWorkOutRecord
+                .buildWorkoutRecordWithUserAuthIdandThisWeek
+                        (authId, String.valueOf(startDate), String
+                                .valueOf(startDate));
+                Cursor cursor = context.getContentResolver().query(recordForThisWeekUri,
+                        null,
+                        null,
+                        null,
+                        "workout_recorded_year desc, " +
+                                "workout_recorded_month desc, workout_recorded_date desc");
+        // these indices must match the projection
+        final int COL_DESC = 2;
+        final int COL_DURATION = 1;
+        final int COL_YEAR = 3;
+        final int COL_MONTH = 4;
+        final int COL_DATE = 5;
+        final int COL_DAY = 6;
+                if (cursor.moveToFirst()) {
+
+                    String description = cursor.getString(COL_DESC);
+                    String duration = cursor.getString(COL_DURATION);
+
+                    String _year = cursor.getString(COL_YEAR);
+                    String _month = cursor.getString(COL_MONTH);
+                    String _date = cursor.getString(COL_DATE);
+                    String _day = cursor.getString(COL_DAY);
+
+
+                    Resources resources = context.getResources();
+
+
+                    String title = context.getString(R.string.app_name);
+
+                    // Define the text of the forecast.
+                    String contentText = "Please log in your Workout today";
+                    // NotificationCompatBuilder is a very convenient way to build backward-compatible
+                    // notifications.  Just throw in some data.
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(getContext())
+                                    .setColor(resources.getColor(R.color.colorPrimaryDark))
+                                    .setSmallIcon(R.drawable.run)
+
+                                    .setContentTitle(title)
+                                    .setContentText(contentText);
+
+                    // Make something interesting happen when the user clicks on the notification.
+                    // In this case, opening the app is sufficient.
+                    Intent resultIntent = new Intent(context, MainActivity.class);
+
+                    // The stack builder object will contain an artificial back stack for the
+                    // started Activity.
+                    // This ensures that navigating backward from the Activity leads out of
+                    // your application to the Home screen.
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
+                    mNotificationManager.notify(WEATHER_NOTIFICATION_ID, mBuilder.build());
+
+
+                }
+                cursor.close();
+            }
+
 
     /**
      * Helper method to have the sync adapter sync immediately

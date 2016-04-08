@@ -20,7 +20,7 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
     public static final int COL_DATE = 5;
     public static final int COL_DAY = 6;
 
-    private String FOOTBALL_SCORES_HASHTAG = "#Football_Scores";
+    private String EASYFIT_HASHTAG = "#EasyFit";
     public WorkoutHistoryListAdapter(Context context,Cursor cursor,int flags)
     {
         super(context,cursor,flags);
@@ -42,7 +42,7 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
 
 
         mHolder.recorded_workout_desc.setText(cursor.getString(COL_DESC));
-        mHolder.recorded_workout_duration.setText(cursor.getString(COL_DURATION));
+        mHolder.recorded_workout_duration.setText(cursor.getString(COL_DURATION)+" min");
         String _year = cursor.getString(COL_YEAR);
         String _month = cursor.getString(COL_MONTH);
         String _date = cursor.getString(COL_DATE);
@@ -57,7 +57,15 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
         mHolder.recorded_date.setText(_displayDate);
         System.out.println("HISTORY VALUES: " + cursor.getString(COL_DESC) + cursor.getString
                 (COL_DURATION));
-
+        mHolder.share_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //add Share Action
+                context.startActivity(createShareForecastIntent(mHolder.recorded_date.getText()+" "
+                        +mHolder.recorded_workout_desc.getText()+" "+mHolder.recorded_workout_duration.getText() + " "));
+            }
+        });
 
        /* mHolder.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +82,7 @@ public class WorkoutHistoryListAdapter extends CursorAdapter {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, ShareText + FOOTBALL_SCORES_HASHTAG);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, ShareText + EASYFIT_HASHTAG);
         return shareIntent;
     }
 

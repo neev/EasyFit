@@ -147,6 +147,7 @@ public class BaseActivity extends AppCompatActivity implements
         switch (id) {
             case R.id.nav_home:
                 startActivity(new Intent(this, MainActivity.class));
+                overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
                 return true;
 
             case R.id.nav_login: {
@@ -156,7 +157,7 @@ public class BaseActivity extends AppCompatActivity implements
                     navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
                     Intent intent = new Intent(this, Login.class);
                     startActivity(intent);
-
+                    overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
                 }
 
             }
@@ -181,10 +182,12 @@ public class BaseActivity extends AppCompatActivity implements
                    if(cursor.getCount()>0){
                        Intent intent = new Intent(this, Profile.class);
                        startActivity(intent);
+                       overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
                    }
                     else {
                        Intent intent = new Intent(this, UserAccountInfo.class);
                        startActivity(intent);
+                       overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
                    }
                     db.close();
 
@@ -198,6 +201,7 @@ public class BaseActivity extends AppCompatActivity implements
                 if (session.checkLogin()) {
                     Intent intent = new Intent(this, CalenderView.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
                 }
 
             }
@@ -207,6 +211,7 @@ public class BaseActivity extends AppCompatActivity implements
                 if (session.checkLogin()) {
                     Intent intent = new Intent(this, WorkoutHistory.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
                 }
 
             }
@@ -241,6 +246,7 @@ public class BaseActivity extends AppCompatActivity implements
                 if (session.checkLogin()) {
                     Intent intent = new Intent(this, About.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
 
                 }
@@ -277,8 +283,10 @@ public class BaseActivity extends AppCompatActivity implements
         //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (fullLayout.isDrawerOpen(GravityCompat.START)) {
             fullLayout.closeDrawer(GravityCompat.START);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         } else {
             super.onBackPressed();
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         }
     }
 

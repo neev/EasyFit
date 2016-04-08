@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.neeraja.android.easyfit.data.EasyFitnessContract;
 import com.neeraja.android.easyfit.data.EasyfitnessDbHelper;
+import com.neeraja.android.easyfit.sync.EasyFitSyncAdapter;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
@@ -49,7 +50,7 @@ public class CalenderView extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calender_view);
-
+        EasyFitSyncAdapter.syncImmediately(this);
         final SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 
         // Setup caldroid fragment

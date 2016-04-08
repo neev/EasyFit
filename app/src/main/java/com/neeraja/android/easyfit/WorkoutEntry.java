@@ -1,5 +1,7 @@
 package com.neeraja.android.easyfit;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.neeraja.android.easyfit.data.EasyFitnessContract;
+import com.neeraja.android.easyfit.sync.EasyFitSyncAdapter;
 
 public class WorkoutEntry extends BaseActivity  implements LoaderManager
         .LoaderCallbacks<Cursor>, SwitchButtonListener {
@@ -58,7 +61,30 @@ String pickedDate;
                 } );*/
 
         getSupportLoaderManager().initLoader(WORKOUT_LOADER, null, this);
+       boolean isOnline = Utilities.checkConnectivity(getBaseContext());
+        if (isOnline) {
+            EasyFitSyncAdapter.syncImmediately(this);
 
+
+        }else {
+
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(this,R.style
+                    .AppTheme_Dark_Dialog).create();
+
+            alertDialog.setTitle("Network Not Connected...");
+            alertDialog.setMessage("Please connect to a network and try again");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                    finish();
+                }
+            });
+            alertDialog.setIcon(R.drawable.images_navicon);
+
+            alertDialog.show();
+        }
 
 
 

@@ -116,11 +116,11 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 HashMap<String, String> user = session.getUserFirebaseAuthId();
                 // name
                 String authId = user.get(SessionManagement.KEY_NAME);
-                Uri weatherForLocationUri = EasyFitnessContract.UserWorkOutRecord
+                Uri recordsForthisWeekUri = EasyFitnessContract.UserWorkOutRecord
                         .buildWorkoutRecordWithUserAuthIdandThisWeek
                                 (authId, String.valueOf(startDate), String
                                         .valueOf(startDate));
-                data = getContentResolver().query(weatherForLocationUri,
+                data = getContentResolver().query(recordsForthisWeekUri,
                         WORKOUT_RECORD_COLUMNS,
                         null,
                         null,

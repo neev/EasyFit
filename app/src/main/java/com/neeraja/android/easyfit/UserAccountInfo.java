@@ -1,7 +1,11 @@
 package com.neeraja.android.easyfit;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,10 +16,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import com.neeraja.android.easyfit.data.UserDetails;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.neeraja.android.easyfit.data.UserDetails;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,9 +40,13 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class UserAccountInfo extends BaseActivity  {
+public class UserAccountInfo extends BaseActivity
+        implements GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = "UserAccountInfo";
-    private static final int REQUEST_SIGNUP = 0;
+    private static final int GOOGLE_API_CLIENT_ID = 0;
+    private GoogleApiClient mGoogleApiClient;
+    private static final int PERMISSION_REQUEST_CODE = 100;
     @Bind(R.id.user_name)
     EditText _name;
     @Bind(R.id.user_weight)
@@ -35,13 +55,18 @@ public class UserAccountInfo extends BaseActivity  {
     EditText _goalWeight;
     @Bind(R.id.user_email)
     EditText _emailText;
+
+
     @Bind(R.id.user_age)
     EditText _age;
     @Bind(R.id.btn_save)
     Button _saveButton;
     @Bind(R.id.imageView_profile)
     ImageView imageView;
-
+    @Bind(R.id.location_pickerimage)
+    ImageView current_location_imagepicker;
+    @Bind(R.id.user_current_location)
+    EditText _address;
     @Bind(R.id.btn_pick)
     Button pickImageButton;
     Boolean isPickImageButtonClicked = false;
@@ -61,6 +86,7 @@ public class UserAccountInfo extends BaseActivity  {
     String goalWeight ="";
     Intent photoPickerIntent;
     byte[] byteArray;
+    private static final int PLACE_PICKER_REQUEST = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +139,10 @@ public class UserAccountInfo extends BaseActivity  {
                 });
             }
 
+
+
+
+
         }
 
         if (savedInstanceState == null) {
@@ -160,13 +190,102 @@ public class UserAccountInfo extends BaseActivity  {
 
             @Override
             public void onClick(View v) {
+               boolean isOnline = Utilities.checkConnectivity(getBaseContext());
+                if (isOnline) {
+                    signup();
 
-                signup();
+
+                }else {
+
+
+                    final AlertDialog alertDialog = new AlertDialog.Builder(UserAccountInfo.this,
+                            R.style
+                            .AppTheme_Dark_Dialog).create();
+
+                    alertDialog.setTitle("Network Not Connected...");
+                    alertDialog.setMessage("Please connect to a network and try again");
+                    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            finish();
+                        }
+                    });
+                    alertDialog.setIcon(R.drawable.images_navicon);
+
+                    alertDialog.show();
+                }
+
             }
         });
+        //place picker for current place
+
+        mGoogleApiClient = new GoogleApiClient.Builder(UserAccountInfo.this)
+                .enableAutoManage(this, 0, this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
+                .addConnectionCallbacks(UserAccountInfo.this )
+                .addOnConnectionFailedListener( UserAccountInfo.this )
+                .build();
+
+
+        current_location_imagepicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayPlacePicker();
+            }
+        });
+    }
+    @Override
+    public void onConnected( Bundle bundle ) {
 
     }
 
+    @Override
+    public void onConnectionSuspended( int i ) {
+
+    }
+
+
+    private void callPlaceDetectionApi() throws SecurityException {
+        PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
+                .getCurrentPlace(mGoogleApiClient, null);
+        result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
+            @Override
+            public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
+                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
+                    Log.i(TAG, String.format("Place '%s' with " +
+                                    "likelihood: %g",
+                            placeLikelihood.getPlace().getName(),
+                            placeLikelihood.getLikelihood()));
+                }
+                likelyPlaces.release();
+            }
+        });
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    callPlaceDetectionApi();
+                }
+                break;
+        }
+    }
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Google Places API connection failed with error code: "
+                + connectionResult.getErrorCode());
+
+        Toast.makeText(this,
+                "Google Places API connection failed with error code:" +
+                        connectionResult.getErrorCode(),
+                Toast.LENGTH_LONG).show();
+    }
     public void signup() {
         Log.d(TAG, "Signup");
 
@@ -358,7 +477,7 @@ public class UserAccountInfo extends BaseActivity  {
                         RoundedBitmapDrawableFactory.create(getBaseContext().getResources(), bitmap);
                 circularBitmapDrawable.setCircular(true);*/
 
-               // ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
+                // ImageView imageView = (ImageView) findViewById(R.id.imageView_profile);
 
                /* Glide.with(this).load(bitmap).centerCrop().into(imageView);
                 Glide.with(this)
@@ -382,12 +501,38 @@ public class UserAccountInfo extends BaseActivity  {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(selectedImage != null) {
+            if (selectedImage != null) {
                 imageView.setImageBitmap(selectedImage);
                 pickImageButton.setText("change photo");
             }
         }
+
+        //place picker
+
+        if (requestCode == PLACE_PICKER_REQUEST
+                && resultCode == Activity.RESULT_OK) {
+
+            final Place place = PlacePicker.getPlace(data, UserAccountInfo.this);
+            final CharSequence name = place.getName();
+            final CharSequence address = place.getAddress();
+           // String attributions = (String) place.getAttributions();
+           /* if (attributions == null) {
+                attributions = "";
+            }*/
+            String addressString = String.valueOf(new StringBuilder().append(name).append(" ")
+                    .append(address));
+            System.out.println("ADDRESS : " + addressString);
+            _address.setText(addressString);
+            /*mName.setText(name);
+            mAddress.setText(address);
+            mAttributions.setText(Html.fromHtml(attributions));*/
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -448,8 +593,35 @@ public class UserAccountInfo extends BaseActivity  {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if( mGoogleApiClient != null )
+            mGoogleApiClient.connect();
+    }
 
+    @Override
+    protected void onStop() {
+        if( mGoogleApiClient != null && mGoogleApiClient.isConnected() ) {
 
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+    private void displayPlacePicker() {
+        if( mGoogleApiClient == null || !mGoogleApiClient.isConnected() )
+            return;
+
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+        try {
+            startActivityForResult( builder.build( getApplicationContext() ), PLACE_PICKER_REQUEST );
+        } catch ( GooglePlayServicesRepairableException e ) {
+            Log.d( "PlacesAPI Demo", "GooglePlayServicesRepairableException thrown" );
+        } catch ( GooglePlayServicesNotAvailableException e ) {
+            Log.d( "PlacesAPI Demo", "GooglePlayServicesNotAvailableException thrown" );
+        }
+    }
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {

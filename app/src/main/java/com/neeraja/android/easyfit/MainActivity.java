@@ -1,5 +1,7 @@
 package com.neeraja.android.easyfit;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,9 +10,13 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.neeraja.android.easyfit.data.EasyfitnessDbHelper;
 import com.neeraja.android.easyfit.sync.EasyFitSyncAdapter;
 
@@ -52,30 +58,15 @@ public class MainActivity extends BaseActivity
         startActivity(intent);
         }
 
-      /*  // Session Manager
-        SessionManagement session = new SessionManagement(getApplicationContext());
-        // get user data from session
-        HashMap<String, String> user = session.getUserFirebaseAuthId();
-        // name
-        final String authId = user.get(SessionManagement.KEY_NAME);
-
-        System.out.println("CALLING ASYNC TASK");
-
-        FetchRecordsFromFirebase mFetchRecordsfromFirebase = new
-                FetchRecordsFromFirebase(getBaseContext());
-        mFetchRecordsfromFirebase.execute(authId);
-
-        System.out.println("RETURNED FROM ASYNC TASK");*/
-
-
-
-
-
-
-
         mFlowerImage = (ImageView) findViewById(R.id.flower_imageview);
 
-
+mFlowerImage.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Toast.makeText(MainActivity.this,"Please on the menu to record a workout",Toast
+                .LENGTH_LONG);
+    }
+});
 
        /* try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -90,6 +81,7 @@ public class MainActivity extends BaseActivity
         } catch (NoSuchAlgorithmException e) {
         }*/
 
+
         flower_flag = NumberofRECORDSthisWEEK();
         Glide.with(MainActivity.this)
                 .load(Utilities.today_flowerimage(flower_flag))
@@ -97,7 +89,33 @@ public class MainActivity extends BaseActivity
                 .into(mFlowerImage);
 
 
-        EasyFitSyncAdapter.syncImmediately(this);
+        isOnline = Utilities.checkConnectivity(getBaseContext());
+        if (isOnline) {
+            EasyFitSyncAdapter.syncImmediately(this);
+
+
+        }else {
+
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(this,R.style
+                    .AppTheme_Dark_Dialog).create();
+
+            alertDialog.setTitle("Network Not Connected...");
+            alertDialog.setMessage("Please connect to a network and try again");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                    finish();
+                }
+            });
+            alertDialog.setIcon(R.drawable.images_navicon);
+
+            alertDialog.show();
+        }
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
     }
 
@@ -185,7 +203,31 @@ public class MainActivity extends BaseActivity
 
             alertDialog.show();
         }*/
-        EasyFitSyncAdapter.syncImmediately(this);
+        isOnline = Utilities.checkConnectivity(getBaseContext());
+        if (isOnline) {
+            EasyFitSyncAdapter.syncImmediately(this);
+
+
+        }else {
+
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(this,R.style
+                    .AppTheme_Dark_Dialog).create();
+
+            alertDialog.setTitle("Network Not Connected...");
+            alertDialog.setMessage("Please connect to a network and try again");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                    finish();
+                }
+            });
+            alertDialog.setIcon(R.drawable.images_navicon);
+
+            alertDialog.show();
+        }
+
         flower_flag = NumberofRECORDSthisWEEK();
         Glide.with(MainActivity.this)
                     .load(Utilities.today_flowerimage(flower_flag))

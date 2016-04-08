@@ -5,7 +5,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_marginTop="10dp"
-                tools:context="com.neeraja.android.easyfit.WorkoutHistory$PlaceholderFragment">
+                tools:context="com.neeraja.android.easyfit.WorkoutHistory$PlaceholderFragment"
+                android:gravity="center_vertical|center_horizontal">
 
 
 
@@ -15,7 +16,8 @@
         android:id = "@+id/scores_list"
         android:divider="@android:color/transparent"
         android:dividerHeight="15sp"
-        android:layout_gravity="center_horizontal|top"/>
+        android:layout_gravity="center" android:layout_marginLeft="30dp"
+        android:layout_marginRight="20dp" />
 
     <!-- empty list -->
     <TextView
@@ -24,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:gravity="center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
         android:layout_marginTop="10dp"
         android:paddingEnd="@dimen/activity_horizontal_margin"
         android:paddingStart="@dimen/activity_horizontal_margin"

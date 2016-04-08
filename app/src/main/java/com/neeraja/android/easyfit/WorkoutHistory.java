@@ -1,5 +1,8 @@
 package com.neeraja.android.easyfit;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.neeraja.android.easyfit.data.EasyFitnessContract;
 import com.neeraja.android.easyfit.sync.EasyFitSyncAdapter;
@@ -84,7 +88,30 @@ public class WorkoutHistory extends AppCompatActivity {
                 FetchRecordsFromFirebase(getBaseContext());
         mFetchRecordsfromFirebase.execute(authId);*/
 
-        EasyFitSyncAdapter.syncImmediately(this);
+       boolean isOnline = Utilities.checkConnectivity(getBaseContext());
+        if (isOnline) {
+            EasyFitSyncAdapter.syncImmediately(this);
+
+
+        }else {
+
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(this,R.style
+                    .AppTheme_Dark_Dialog).create();
+
+            alertDialog.setTitle("Network Not Connected...");
+            alertDialog.setMessage("Please connect to a network and try again");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                    finish();
+                }
+            });
+            alertDialog.setIcon(R.drawable.images_navicon);
+
+            alertDialog.show();
+        }
     }
 
 
@@ -291,6 +318,39 @@ public class WorkoutHistory extends AppCompatActivity {
             mAdapter.swapCursor(null);
         }
 
+        private void updateEmptyView() {
+            if ( mAdapter.getCount() == 0 ) {
+                TextView tv = (TextView) getView().findViewById(R.id.listview_forecast_empty);
+                if ( null != tv ) {
+                    // if cursor is empty, why? do we have an invalid location
+                    int message = R.string.empty_forecast_list;
+                    @EasyFitSyncAdapter.LocationStatus int location = Utilities.getLocationStatus
+                            (getActivity());
+                    switch (location) {
+                        case EasyFitSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                            message = R.string.empty_forecast_list_server_down;
+                            break;
+                        case EasyFitSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                            message = R.string.empty_forecast_list_server_error;
+                            break;
+                        case EasyFitSyncAdapter.LOCATION_STATUS_INVALID:
+                            message = R.string.empty_forecast_list_invalid_location;
+                            break;
+                        default:
+                            if (!Utilities.isNetworkAvailable(getActivity()) ) {
+                                message = R.string.empty_forecast_list_no_network;
+                            }
+                    }
+                    tv.setText(message);
+                }
+            }
+        }
+
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if ( key.equals(getString(R.string.pref_location_status_key)) ) {
+                updateEmptyView();
+            }
+        }
     }
 
     /**
@@ -333,4 +393,8 @@ public class WorkoutHistory extends AppCompatActivity {
             return title;
         }
     }
+
+
+
+
 }

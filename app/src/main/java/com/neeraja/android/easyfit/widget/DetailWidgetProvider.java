@@ -146,7 +146,7 @@ public class DetailWidgetProvider extends AppWidgetProvider {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget);
         }
     }
 

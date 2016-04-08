@@ -112,7 +112,42 @@
                                       android:inputType="number"
                                       android:hint="@string/text_goalweight"/>
                         </android.support.design.widget.TextInputLayout>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
 
+                android:orientation="horizontal" android:layout_weight="1">
+            <!-- current location Label -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" android:layout_weight="0.29">
+                <EditText android:id="@+id/user_current_location"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:inputType="text"
+                          android:hint="@string/text_current_location"/>
+            </android.support.design.widget.TextInputLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/location_pickerimage"
+                    android:src="@drawable/ic_current_location"
+                    android:contentDescription="@string/pref_current_location_desc"
+                    android:layout_gravity="end|center_vertical"
+                    android:tint="@color/material_deep_teal_500" android:layout_marginRight="40dp"/>
+
+
+               <!-- <include layout="@layout/pref_current_location"/>-->
+
+            </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/poweredBy"
+                android:src="@drawable/powered_by_google_light"/>
             <!-- save user info Button -->
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_save"
@@ -129,6 +164,8 @@
 
 
         </LinearLayout>
+
+
     </RelativeLayout>
 </ScrollView>
 
