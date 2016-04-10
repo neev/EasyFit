@@ -6,13 +6,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
@@ -40,7 +42,7 @@ public class MainActivity extends BaseActivity
     //To check the internet conection
 
     boolean isOnline;
-
+    CoordinatorLayout coordinatorLayout;
 
 
 
@@ -59,14 +61,23 @@ public class MainActivity extends BaseActivity
         }
 
         mFlowerImage = (ImageView) findViewById(R.id.flower_imageview);
+         coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .baseActivity_coorid_layout);
+        mFlowerImage.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View v, MotionEvent event) {
+                                                if(event.getActionMasked() == MotionEvent.ACTION_UP){
 
-mFlowerImage.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(MainActivity.this,"Please on the menu to record a workout",Toast
-                .LENGTH_LONG);
-    }
-});
+                                                    Snackbar snackbar = Snackbar
+                                                        .make(coordinatorLayout, "Please click the menu or slide right  to view " +
+                                                                "more!", Snackbar.LENGTH_LONG);
+
+                                                    return true;
+                                                }
+                                                return false;
+                                            }
+                                        }
+        );
 
        /* try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -82,7 +93,7 @@ mFlowerImage.setOnClickListener(new View.OnClickListener() {
         }*/
 
 
-        flower_flag = NumberofRECORDSthisWEEK();
+                flower_flag = NumberofRECORDSthisWEEK();
         Glide.with(MainActivity.this)
                 .load(Utilities.today_flowerimage(flower_flag))
                 .fitCenter()

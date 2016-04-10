@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'Key store path'
+            keyPassword 'Ishanth1'
+            storeFile file('C:/Users/neeraja/AndroidStudioProjects/EasyFitness/Key store path.jks')
+            storePassword 'Ishanth1'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
     defaultConfig {
@@ -12,10 +20,13 @@ android {
         multiDexEnabled true
     }
     buildTypes {
+
         release {
+            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
@@ -28,7 +39,6 @@ android {
     productFlavors {
     }
 }
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'

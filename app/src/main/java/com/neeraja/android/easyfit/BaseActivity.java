@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.LayoutRes;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,11 +34,16 @@ public class BaseActivity extends AppCompatActivity implements
 
     public NavigationView navigationView;
     private DrawerLayout fullLayout;
-    private Toolbar toolbar;
+
     private ActionBarDrawerToggle drawerToggle;
     private int selectedNavItemId;
     SessionManagement session;
+    private Toolbar mToolbar;
+    private CoordinatorLayout coordinatorLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
+    private AppBarLayout appBarLayout;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     private int mYear;
     private int mMonth;
@@ -43,28 +52,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     static final int DATE_DIALOG_ID = 0;
     String pickedDate;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
 
-
-    /*@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-    }*/
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -83,17 +71,20 @@ public class BaseActivity extends AppCompatActivity implements
          * instead we pass it our inflated layout.
          */
         super.setContentView(fullLayout);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .baseActivity_coorid_layout);
+        mToolbar = (Toolbar) findViewById(R.id.toolbarProfile);
+        appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
 
 
 
         if (useToolbar()) {
-            setSupportActionBar(toolbar);
+            setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } else {
-            toolbar.setVisibility(View.GONE);
+            mToolbar.setVisibility(View.GONE);
         }
 
         setUpNavView();
@@ -109,7 +100,7 @@ public class BaseActivity extends AppCompatActivity implements
         session=new SessionManagement(this);
 
         if (useDrawerToggle()) { // use the hamburger menu
-            drawerToggle = new ActionBarDrawerToggle(this, fullLayout, toolbar,
+            drawerToggle = new ActionBarDrawerToggle(this, fullLayout, mToolbar,
                     R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
             fullLayout.setDrawerListener(drawerToggle);

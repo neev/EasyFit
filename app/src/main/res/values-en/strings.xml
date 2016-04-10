@@ -4,7 +4,11 @@
     <string name="change_image">Add Photo</string>
     <string name="about_text">Developer : Neeraja\n\n
         Easyfit is a simple app to log physical activities and workouts in a journal.\n
-
+        <!-- Language-specific constants -->
+        <string name="today">Today</string>
+        <string name="yesterday">Yesterday</string>
+        <!-- For labelling tomorrow's forecast [CHAR LIMIT=15] -->
+        <string name="tomorrow">Tomorrow</string>
 
     </string>
     <string name="tilte_activity_about">About</string>
@@ -35,4 +39,8 @@
     <string name="text_noaccountyet_createone">No account yet? Create one</string>
     <string name="text_createaccount">Create Account</string>
     <string name="text_alreadymember_login">Already a member? Login</string>
+    <string name="widget_minutes_textsize">12</string>
+    <string name="share_text">Share</string>
+    <string name="pref_current_location_desc">Use my location</string>
+    <string name="text_current_location">Enter City Name, State</string>
 </resources>

@@ -89,11 +89,11 @@
 
 
 
-    <string name="empty_forecast_list_server_down">No weather information available. The server is not returning data.</string>
-    <string name="empty_forecast_list_server_error">No weather information available. The server
-        is not returning valid data. Please check for an updated version of this Football App
-        .</string>
-    <string name="empty_forecast_list_invalid_location">No weather information available. The location in settings is not recognized by the weather server.</string>
-    <string name="empty_forecast_list_no_network">No information available. The network is not
+    <string name="empty_forecast_list_server_down" translatable="false">No workout entries available. The server is
+        not returning data.</string>
+    <string name="empty_forecast_list_server_error" translatable="false">No workout entries available. The server
+        is not returning valid data.</string>
+    <string name="empty_forecast_list_invalid_location" translatable="false">No workout entries available.</string>
+    <string name="empty_forecast_list_no_network" translatable="false">No information available. The network is not
         available to fetch data</string>
 </resources>

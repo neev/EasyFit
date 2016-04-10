@@ -6,7 +6,8 @@
                 android:orientation="vertical"
                 android:layout_marginTop="10dp"
                 tools:context="com.neeraja.android.easyfit.WorkoutHistory$PlaceholderFragment"
-                android:gravity="center_vertical|center_horizontal">
+                android:gravity="center_vertical|center_horizontal"
+                android:background="@color/white">
 
 
 

@@ -1,5 +1,15 @@
 <resources>
     <string name="change_image">Ajouter une photo</string>
+
+    <!-- Language-specific constants -->
+    <string name="today">Aujourd\'hui</string>
+    <string name="yesterday">Hier</string>
+    <!-- For labelling tomorrow's forecast [CHAR LIMIT=15] -->
+    <string name="tomorrow">Demain</string>
+
+
+
+
     <string name="about_text">Developpeur: Neeraja \n \n
                  Easyfit est une application simple pour enregistrer les activités physiques et
         des séances d\'entraînement dans un journal. \n
@@ -32,4 +42,9 @@
     <string name="text_noaccountyet_createone">Ne pas avoir un compte\? signer</string>
     <string name="text_createaccount">Créer un compte</string>
     <string name="text_alreadymember_login">Déjà membre? S\'identifier</string>
+    <string name="widget_minutes_textsize">12</string>
+    <string name="share_text">Partager</string>
+    <string name="pref_current_location_desc">Utiliser ma position
+    </string>
+    <string name="text_current_location">Entrez Nom de la ville, État</string>
 </resources>

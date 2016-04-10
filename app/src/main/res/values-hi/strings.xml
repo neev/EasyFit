@@ -1,9 +1,18 @@
 <resources>
     <string name="change_image">तस्वीर जोड़ो</string>
+
+    <!-- Language-specific constants -->
+    <string name="today">आज</string>
+    <string name="yesterday">बिता कल
+    </string>
+    <!-- For labelling tomorrow's forecast [CHAR LIMIT=15] -->
+    <string name="tomorrow">आने वाला कल</string>
+
+
+
+
     <string name="about_text">डेवलपर: नीरजा \n\n आसान फिट एक लॉग \n में शारीरिक गतिविधियों और लॉग
         इन करने के लिए एक एकल app है।
-
-
     </string>
     <string name="tilte_activity_about">के बारे में</string>
     <string name="nav_text_home">घर</string>
@@ -33,4 +42,9 @@
     <string name="text_noaccountyet_createone">खाता नहीं है? साइन अप करें</string>
     <string name="text_createaccount">खाता बनाएं</string>
     <string name="text_alreadymember_login">पहले से सदस्य हैं ? लॉगिन</string>
+
+    <string name="widget_minutes_textsize">12</string>
+    <string name="share_text">शेयर</string>
+    <string name="pref_current_location_desc">मेरे स्थान का उपयोग करें</string>
+    <string name="text_current_location">शहर का नाम दर्ज है, राज्य</string>
 </resources>

@@ -1,9 +1,16 @@
 <resources>
     <string name="change_image">添加照片</string>
+
+    <!-- Language-specific constants -->
+    <string name="today">今天</string>
+    <string name="yesterday">昨天
+    </string>
+    <!-- For labelling tomorrow's forecast [CHAR LIMIT=15] -->
+    <string name="tomorrow">明天</string>
+
+
     <string name="about_text">开发商：Neeraja\n\n
                 Easyfit是一个简单的应用程序登录日记体力活动和锻炼。\n
-
-
     </string>
     <string name="tilte_activity_about">关于</string>
     <string name="nav_text_home">家</string>
@@ -33,4 +40,9 @@
     <string name="text_noaccountyet_createone">没有帐号？创建一个</string>
     <string name="text_createaccount">创建帐号</string>
     <string name="text_alreadymember_login">已经是会员？ 登录</string>
+
+    <string name="widget_minutes_textsize">12</string>
+    <string name="share_text">分享</string>
+    <string name="pref_current_location_desc">使用我的位置</string>
+    <string name="text_current_location">输入城市名称，州</string>
 </resources>
