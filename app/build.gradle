@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'Key store path'
             keyPassword 'Ishanth1'
-            storeFile file('C:/Users/neeraja/AndroidStudioProjects/EasyFitness/Key store path.jks')
+            storeFile file('Key store path.jks')
             storePassword 'Ishanth1'
         }
     }
